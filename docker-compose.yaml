@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=user
+      - DB_PASS=password
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./database/migrations:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
+volumes:
+  postgres-data:
