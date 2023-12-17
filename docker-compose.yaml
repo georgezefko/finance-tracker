@@ -1,28 +1,38 @@
 version: '3.8'
 services:
   backend:
+    container_name: backend
     build: ./backend
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=postgres
-      - DB_USER=user
-      - DB_PASS=password
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
     depends_on:
-      - postgres
+      - warehouse
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "80:80"
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "80:80"
 
-  postgres:
-    image: postgres:12
+  warehouse:
+    container_name: warehouse
+    image: postgres:13
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: tracker
     volumes:
       - ./database/migrations:/docker-entrypoint-initdb.d
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      interval: 5s
+      retries: 5
+    restart: always
+    ports:
+      - "5432:5432"
 volumes:
   postgres-data:
