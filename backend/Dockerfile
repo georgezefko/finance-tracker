@@ -12,9 +12,10 @@ RUN npm install
 
 # Bundle app source inside Docker image
 COPY . .
+RUN npm run build
 
 # Make port available to the world outside this container
 EXPOSE 3000
 
 # Define the command to run your app
-CMD ["node", "app.js"]
+CMD npm run start:prod
