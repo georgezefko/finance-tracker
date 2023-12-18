@@ -22,3 +22,13 @@ export const createPost = async (req: Request, res: Response, _next: NextFunctio
     res.status(500).json({ message: 'Error saving post to database' });
   }
 };
+
+export const getExpenseCategories = async (_req: Request, res: Response, _next: NextFunction) => {
+  try {
+    const result = await query('SELECT type_name FROM expense_types');
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching expense categories' });
+  }
+};

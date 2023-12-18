@@ -9,4 +9,8 @@ router.get('/posts', feedController.getPosts);
 // POST /feed/post
 router.post('/post', feedController.createPost);
 
+// Get /feed/expense-categories
+router.get('/expense-categories', feedController.getExpenseCategories);
+
+
 export default router;
