@@ -3,7 +3,8 @@ import './ExpenseForm.css';
 
 
 interface Category {
-  category_name: string;
+  type_name: string;
+  type_id: number;
 }
 
 const ExpenseForm = () => {
@@ -22,10 +23,24 @@ const ExpenseForm = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log({ amount, selectedCategory });
-    // TODO: Handle form submission
+    // Prepare data to be sent
+  const transactionData = {
+    date: new Date().toISOString().slice(0, 10), // Example: current date
+    amount: parseFloat(amount),
+    typeId: categories.find(cat => cat.type_name === selectedCategory)?.type_id // You need to modify your state to include type_id
+  }
+  // Send POST request to backend
+  fetch('http://localhost:3000/feed/transaction', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(transactionData),
+  })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error submitting transaction:', error));
   };
-
   return (
     <form className="expense-form" onSubmit={handleSubmit}>
       <div>
@@ -44,8 +59,8 @@ const ExpenseForm = () => {
         >
           <option value="">Select a category</option>
           {categories.map((category, index) => (
-            <option key={index} value={category.category_name}>
-              {category.category_name}
+            <option key={index} value={category.type_id}>
+              {category.type_name}
             </option>
           ))}
         </select>

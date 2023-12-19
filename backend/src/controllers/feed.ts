@@ -23,6 +23,7 @@ export const createPost = async (req: Request, res: Response, _next: NextFunctio
   }
 };
 
+// function to get the expenses
 export const getExpenseCategories = async (_req: Request, res: Response, _next: NextFunction) => {
   try {
     const result = await query('SELECT type_name FROM expense_types');
@@ -32,3 +33,20 @@ export const getExpenseCategories = async (_req: Request, res: Response, _next: 
     res.status(500).json({ message: 'Error fetching expense categories' });
   }
 };
+
+// Function to create expenses
+export const createTransaction = async (req: Request, res: Response, _next: NextFunction) => {
+  const { date, amount, typeId } = req.body; // Assuming these are the fields you're sending
+  
+  try {
+    const result = await query('INSERT INTO transactions (date, amount, type_id) VALUES ($1, $2, $3) RETURNING *', [date, amount, typeId]);
+    res.status(201).json({
+      message: 'Transaction created successfully!',
+      transaction: result.rows[0]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error saving transaction to database' });
+  }
+};
+
