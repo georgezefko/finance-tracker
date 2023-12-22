@@ -26,7 +26,7 @@ export const createPost = async (req: Request, res: Response, _next: NextFunctio
 // function to get the expenses
 export const getExpenseCategories = async (_req: Request, res: Response, _next: NextFunction) => {
   try {
-    const result = await query('SELECT type_name FROM expense_types');
+    const result = await query('SELECT type_id,type_name FROM expense_types');
     res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
