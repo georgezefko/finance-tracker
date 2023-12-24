@@ -2,6 +2,7 @@
 import React from 'react';
 import './App.css';
 import ExpenseForm from './ExpenseForm'; // Import your ExpenseForm component
+import TimeSeriesChart from './timeSeriesChart';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <main>
         {/* Expense Form Component */}
         <ExpenseForm />
+        <TimeSeriesChart />
       </main>
     </div>
   );
