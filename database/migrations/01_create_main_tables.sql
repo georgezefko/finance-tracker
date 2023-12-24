@@ -16,8 +16,10 @@ CREATE TABLE transactions (
     id SERIAL PRIMARY KEY,
     date DATE NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    type_id INT,
-    FOREIGN KEY (type_id) REFERENCES expense_types(id)
+    type_id INT NOT NULL,
+    category_id INT NOT NULL,
+    FOREIGN KEY (type_id) REFERENCES expense_types(id),
+    FOREIGN KEY (category_id) REFERENCES expense_categories(id)
 );
 
 COMMIT;
