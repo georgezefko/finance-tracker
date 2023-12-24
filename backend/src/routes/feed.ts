@@ -11,4 +11,8 @@ router.post('/transaction', feedController.createTransaction);
 
 // Get /feed/timeseries
 router.get('/timeseries', feedController.getTimeSeries);
+
+// Get /feed/income-expenses
+router.get('/income-expenses', feedController.getIncomeExpenses);
+
 export default router;
