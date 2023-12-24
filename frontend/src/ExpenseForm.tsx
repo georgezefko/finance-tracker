@@ -17,7 +17,7 @@ const ExpenseForm = () => {
     fetch('http://localhost:3000/feed/expense-categories')
       .then(response => response.json())
       .then(data =>{
-        console.log('this is my data',data)
+        console.log('this is my data',data) //for debugging
        setCategories(data)})
       .catch(error => console.error('Error fetching categories:', error));
   }, []);
