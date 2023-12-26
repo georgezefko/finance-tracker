@@ -75,3 +75,26 @@ export const getIncomeExpenses = async (_req: Request, res: Response, _next: Nex
     res.status(500).json({ message: 'Error fetching income/expenses' });
   }
 };
+
+
+// function to get cashflow
+export const getCasflow = async (_req: Request, res: Response, _next: NextFunction) => {
+  try {
+    const result = await query(
+      `SELECT 
+        ec.category_name,
+        et.type_name,
+        TO_CHAR(t.date, 'Month') as month, 
+        SUM(t.amount) as total_amount
+      FROM transactions t
+      JOIN expense_types et ON et.id = t.type_id
+      JOIN expense_categories ec ON ec.id=t.category_id
+      GROUP BY 1, 2, 3
+      ORDER BY ec.category_name, month`
+      );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching casflow' });
+  }
+};
