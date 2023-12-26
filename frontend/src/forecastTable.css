@@ -1,0 +1,32 @@
+/* FinancialForecastTable.css */
+.financial-forecast-container {
+    width: 100%;
+    overflow-x: auto; /* For horizontal scrolling if the table is too wide */
+}
+
+.financial-forecast-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.financial-forecast-table th,
+.financial-forecast-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.financial-forecast-table th {
+    background-color: #f4f4f4;
+}
+
+/* Style for category rows */
+.categoryRow td {
+    font-weight: bold;
+    background-color: #f0f0f0; /* Light grey background for category rows */
+}
+
+/* Style for type rows */
+.typeRow td {
+    padding-left: 20px; /* Indent for type rows, adjust as needed */
+}

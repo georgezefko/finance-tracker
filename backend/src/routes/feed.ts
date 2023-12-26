@@ -15,4 +15,7 @@ router.get('/timeseries', feedController.getTimeSeries);
 // Get /feed/income-expenses
 router.get('/income-expenses', feedController.getIncomeExpenses);
 
+// Get /feed/casflow
+router.get('/casflow', feedController.getCasflow);
+
 export default router;

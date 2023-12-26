@@ -1,8 +1,8 @@
 /* Common styles for both charts */
-.chartContainer {
+.barChartContainer {
     width: 100%;
-    max-width: 800px; /* Adjust as needed */
-    margin: 20px auto;
+    max-width: 450px; /* Adjust as needed for size */
+    margin: 0 0 30px 10px; /* Top, right, bottom, left margins */
     padding: 15px;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
