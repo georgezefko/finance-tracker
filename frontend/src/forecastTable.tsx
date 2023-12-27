@@ -8,12 +8,25 @@ interface RawDataItem {
     total_amount: string;
 }
 
+interface MonthlyAmounts {
+    [key: string]: number;
+}
+
+
+interface CategoryData {
+    [type: string]: MonthlyAmounts | TotalData | PercentageData;
+}
+
+interface TotalData {
+    Total: number;
+}
+
+interface PercentageData {
+    Total: string;  // For percentage values
+}
+
 interface PivotedData {
-    [category: string]: {
-        [type: string]: {
-            [month: string]: number;
-        };
-    };
+    [category: string]: CategoryData;
 }
 
 const FinancialForecastTable = () => {
@@ -30,31 +43,90 @@ const FinancialForecastTable = () => {
             .catch(error => console.error('Error:', error));
     }, []);
 
-    const pivotData = (): PivotedData => {
-        let pivotedData: PivotedData = {};
-    
-        rawData.forEach(({ category_name, type_name, month, total_amount }) => {
-            // Trim the month to ensure it matches the months array
-            const trimmedMonth = month.trim();
-    
-            if (!pivotedData[category_name]) {
-                pivotedData[category_name] = {};
-            }
-            if (!pivotedData[category_name][type_name]) {
-                pivotedData[category_name][type_name] = months.reduce((acc, m) => ({ ...acc, [m]: 0 }), {});
-            }
-            if (months.includes(trimmedMonth)) {
-                pivotedData[category_name][type_name][trimmedMonth] = parseFloat(total_amount);
-            } else {
-                console.warn(`Unexpected month format: ${month}`);
-            }
-        });
-        console.log('pivoted',pivotedData)
-        return pivotedData;
-    };
-    
+    // Type guard to check if the object is a MonthlyAmounts type
+const isMonthlyAmounts = (obj: any): obj is { [key: string]: number } => {
+    return Object.keys(obj).some(key => months.includes(key));
+};
 
-    const formattedData = pivotData();
+const pivotData = (): PivotedData => {
+    let pivotedData: PivotedData = {};
+
+    rawData.forEach(({ category_name, type_name, month, total_amount }) => {
+        const trimmedMonth = month.trim();
+
+        if (!pivotedData[category_name]) {
+            pivotedData[category_name] = {};
+        }
+        if (!pivotedData[category_name][type_name]) {
+            pivotedData[category_name][type_name] = months.reduce((acc, m) => ({ ...acc, [m]: 0 }), {});
+        }
+        if (months.includes(trimmedMonth)) {
+            const amounts = pivotedData[category_name][type_name];
+            if (isMonthlyAmounts(amounts)) {
+                amounts[trimmedMonth] = parseFloat(total_amount);
+            }
+        } else {
+            console.warn(`Unexpected month format: ${month}`);
+        }
+    });
+
+    return pivotedData;
+};
+
+    
+const calculateTotalsAndPercentages = (data: PivotedData): PivotedData => {
+    let revenueTotal: { [month: string]: number } = {};
+
+    // Initialize revenueTotal for each month
+    months.forEach(month => { revenueTotal[month] = 0; });
+
+    // Calculate total revenue for each month
+    if (data['Income']) {
+        Object.entries(data['Income']).forEach(([_, monthlyAmounts]) => {
+            months.forEach(month => {
+                revenueTotal[month] += (monthlyAmounts as MonthlyAmounts)[month];
+            });
+        });
+    }
+
+    // Calculate total and percentage for each category
+    Object.keys(data).forEach(category => {
+        months.forEach(month => {
+            let monthlyCategoryTotal = 0;
+
+            Object.entries(data[category]).forEach(([type, monthlyAmounts]) => {
+                if (type !== 'Total' && type !== 'Percentage of Revenue') {
+                    if (typeof monthlyAmounts === 'object' && 'Total' in monthlyAmounts === false) {
+                        // Here, we ensure that monthlyAmounts is of the type MonthlyAmounts
+                        monthlyCategoryTotal += (monthlyAmounts as MonthlyAmounts)[month];
+                    }
+                }
+            });
+
+            // Update or initialize 'Total' for each category
+            if (!data[category]['Total']) {
+                data[category]['Total'] = months.reduce((acc, m) => ({ ...acc, [m]: 0 }), {});
+            }
+            (data[category]['Total'] as MonthlyAmounts)[month] = monthlyCategoryTotal;
+
+            if (category !== 'Income') {
+                // Ensure data['Income']['Total'] is of type MonthlyAmounts before accessing it
+                const incomeTotal = data['Income'] && 'Total' in data['Income'] && typeof data['Income']['Total'] === 'object' 
+                    ? (data['Income']['Total'] as MonthlyAmounts)[month] 
+                    : 0;
+
+                const percentageOfRevenue = incomeTotal > 0 ? (monthlyCategoryTotal / incomeTotal) * 100 : 0;
+                if (!data[category]['Percentage of Revenue']) {
+                    data[category]['Percentage of Revenue'] = {};
+                }
+                (data[category]['Percentage of Revenue'] as MonthlyAmounts)[month] = percentageOfRevenue;
+                }
+            });
+        });
+
+        return data;
+    };
+    const formattedData = calculateTotalsAndPercentages(pivotData());
 
     return (
         <div className="financial-forecast-container">
@@ -70,24 +142,51 @@ const FinancialForecastTable = () => {
                 <tbody>
                     {Object.entries(formattedData).map(([category, types]) => (
                         <React.Fragment key={category}>
+                            {/* Category Row */}
                             <tr className="categoryRow">
-                                <td>{category}</td>
-                                {months.map(month => <td key={month}></td>)}
-                                <td></td> {/* Empty cell for total if needed */}
+                                <td><b>{category}</b></td>
+                                {months.map(month => <td key={month} className="categoryCell" />)}
+                                <td />
                             </tr>
-                            {Object.entries(types).map(([type, amounts]) => (
-                                <tr key={type} className="typeRow">
-                                    <td>{type}</td>
-                                    {months.map(month => <td key={month}>{amounts[month]}</td>)}
-                                    <td>{Object.values(amounts).reduce((a, b) => a + b, 0)}</td>
-                                </tr>
-                            ))}
+
+                            {/* Type Rows and Total/Percentage Rows */}
+                            {Object.entries(types).map(([type, monthlyData]) => {
+                                // Explicitly handle Total and Percentage of Revenue rows
+                                if (type === 'Total' || type === 'Percentage of Revenue') {
+                                    return (
+                                        <tr key={type} className={type === 'Total' ? 'totalRow' : 'percentageRow'}>
+                                            <td>{type}</td>
+                                            {months.map(month => (
+                                                <td key={month}>
+                                                    {type === 'Total' 
+                                                        ? (monthlyData as MonthlyAmounts)[month] 
+                                                        : `${((monthlyData as MonthlyAmounts)[month]).toFixed(2)}%`}
+                                                </td>
+                                            ))}
+                                            <td />
+                                        </tr>
+                                    );
+                                }
+
+                                // Handle regular type rows
+                                return (
+                                    <tr key={type} className="typeRow">
+                                        <td>{type}</td>
+                                        {months.map(month => (
+                                            <td key={month}>{(monthlyData as MonthlyAmounts)[month]}</td>
+                                        ))}
+                                        <td>{Object.values(monthlyData as MonthlyAmounts).reduce((a, b) => a + b, 0)}</td>
+                                    </tr>
+                                );
+                            })}
                         </React.Fragment>
                     ))}
                 </tbody>
             </table>
         </div>
     );
-};
+    
+    
+} 
 
 export default FinancialForecastTable;
