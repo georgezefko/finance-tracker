@@ -30,3 +30,25 @@
 .typeRow td {
     padding-left: 20px; /* Indent for type rows, adjust as needed */
 }
+
+.categoryRow td {
+    font-weight: bold;
+    background-color: #f0f0f0; /* Light grey background for category cells */
+}
+
+.categoryCell {
+    background-color: #f0f0f0; /* Light grey background for category cells */
+}
+
+.totalRow{
+    font-weight: bold;
+    font-style: italic;
+    background-color: #ffffe0; 
+    /* Styles for total and percentage rows, if needed */
+}
+
+.percentageRow {
+    font-weight: bold; /* Makes the text bold */
+    font-style: italic; /* Makes the text italic */
+    background-color: #ffffe0; /* Light yellow background */
+}
