@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './timeSeriesChart.css'; 
 
 interface RawDataItem {
@@ -27,26 +27,30 @@ const TimeSeriesChart = () => {
   }, []);
 
   return (
-    <LineChart
-      width={600}
-      height={300}
-      data={chartData}
-      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="time" />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      {Object.keys(chartData[0] || {}).filter(key => key !== 'time').map((key, index) => (
-        <Line
-          key={key}
-          type="monotone"
-          dataKey={key}
-          stroke={getRandomColor(index)} // Implement getRandomColor to assign colors
-        />
-      ))}
-    </LineChart>
+    <div className="timeSeriesChartContainer">
+      <h2 className="chartTitle">Breakdown</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart
+          className="timeSeriesChart" // Apply the class here
+          data={chartData}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="time" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {Object.keys(chartData[0] || {}).filter(key => key !== 'time').map((key, index) => (
+            <Line
+              key={key}
+              type="monotone"
+              dataKey={key}
+              stroke={getRandomColor(index)} // Implement getRandomColor to assign colors
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 

@@ -28,11 +28,14 @@ const ExpenseIncomeBarPlot = () => {
   }, []);
 
   return (
-    <ResponsiveContainer width="35%" height={400}>
-      <BarChart
-        data={chartData}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-      >
+    <div className="barChartContainer">
+      <h2 className="chartTitle">Expense vs Income</h2> {/* Add a title if needed */}
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart
+          className="barPlot"
+          data={chartData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="time" />
         <YAxis />
@@ -40,8 +43,9 @@ const ExpenseIncomeBarPlot = () => {
         <Legend />
         <Bar dataKey="Expense" fill="#8884d8" />
         <Bar dataKey="Income" fill="#82ca9d" />
-      </BarChart>
-    </ResponsiveContainer>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
