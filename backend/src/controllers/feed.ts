@@ -28,7 +28,7 @@ export const createTransaction = async (req: Request, res: Response, _next: Next
   }
 };
 
-// function to get timeseris
+// function to get timeseries
 export const getTimeSeries = async (_req: Request, res: Response, _next: NextFunction) => {
   try {
     const result = await query(
