@@ -24,6 +24,7 @@ INSERT INTO expense_types (type_name, category_id) VALUES
 ('Books', 3),
 ('Restaurants', 3),
 ('Fast Food', 3),
+('Drinks', 3),
 ('Other Non Housing', 3),
 ('Rent', 4),
 ('Tickets', 5),

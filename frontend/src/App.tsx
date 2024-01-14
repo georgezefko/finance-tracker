@@ -1,44 +1,41 @@
-import React, { useState } from 'react';
-import './App.css';
-import ExpenseForm from './ExpenseForm';
-import TimeSeriesChart from './timeSeriesChart';
-import ExpenseIncomeBarPlot from './expenseIncomeBarPlot';
-import FinancialForecastTable from './forecastTable';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
+import React, { useState, useMemo } from "react";
+import { Box, ThemeProvider, createTheme } from "@mui/material";
+import { themeSettings } from "./theme";
+import CssBaseline from "@mui/material/CssBaseline";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/cashflow";
+import Navbar from "./pages/navbar";
+import Sidebar from "./pages/sidebar";
+import Transaction from "./pages/transactions";
 
 function App() {
-  const [selectedTab, setSelectedTab] = useState(0);
+    const theme = useMemo(() => createTheme(themeSettings), []);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Correctly typed parameters for the event handler
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setSelectedTab(newValue);
-  };
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Finance Tracker</h1>
-      </header>
-      <main>
-        <ExpenseForm />
-        
-        <Tabs value={selectedTab} onChange={handleTabChange} centered>
-          <Tab label="Overview" />
-          <Tab label="Cashflow" />
-        </Tabs>
-
-        <Box component="div" hidden={selectedTab !== 0}>
-          <ExpenseIncomeBarPlot />
-          <TimeSeriesChart />
-        </Box>
-        <Box component="div" hidden={selectedTab !== 1}>
-          <FinancialForecastTable />
-        </Box>
-      </main>
-    </div>
-  );
+    return (
+        <div className="app">
+            <BrowserRouter>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    
+                        <Navbar onToggleSidebar={toggleSidebar} />
+                        <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+                        <Box width="100%" height="100%" padding="1rem 2rem 4rem 2rem">
+                            <Routes>
+                                <Route path="/" element={<Dashboard />} />
+                                {/* Add other routes as needed */}
+                             <Route path="/addExpenses" element={<Transaction />} /> 
+                            </Routes>
+                        </Box>
+                   
+                </ThemeProvider>
+            </BrowserRouter>
+        </div>
+    );
 }
 
 export default App;
