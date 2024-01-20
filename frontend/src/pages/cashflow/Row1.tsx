@@ -1,57 +1,70 @@
+import React, { useState, useEffect } from 'react';
+import { Box } from '@mui/material';
 import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
 import FinancialMetricBox from '../../components/FinancialMetricsBox';
-import { Box } from '@mui/material';
-import React, { useMemo } from 'react';
-import { useTheme } from '@mui/material';
-import FlexBetween from '../../components/FlexBetween';
 
-
-
-// Example data, replace with real data fetching logic
-const financialData = {
-    totalIncome: 100000,
-    totalNetIncome: 75000,
-    accNetIncome: 300000,
-    savingsRate: 0.2, // Example as a decimal
-    expenses: 25000,
-    housingCosts: 10000,
-    personalCosts: 5000,
-    travelCosts: 3000,
-};
+interface FinancialData {
+    report_month: string;
+    total_income_value: string;
+    expense_category: string;
+    total_expense_value: string;
+    net_income_value: string;
+    savings_rate_value: string;
+}
 
 const Row1: React.FC = () => {
-    const { palette } = useTheme();
+    const [financialData, setFinancialData] = useState<FinancialData[]>([]);
+    const [isLoading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    const processedFinancialData = useMemo(() => {
-        // Processing logic here
-        return financialData;
-    }, [financialData]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/feed/financial-overview');
+                const data: FinancialData[] = await response.json();
+                setFinancialData(data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching financial data:', error);
+                setError(error instanceof Error ? error : new Error('An unknown error occurred'));
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error loading data.</div>;
+    if (!financialData.length) return <div>No data available.</div>;
+
+    const latestMonth = financialData[financialData.length - 1]?.report_month;
+    const latestMonthData = financialData.filter(data => data.report_month === latestMonth);
+    const { total_income_value, net_income_value, savings_rate_value } = latestMonthData[0] || {};
+
     return (
         <>
-        <DashboardBox sx={{
-            gridArea: 'a',
-            display: 'grid',
-            //gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '1rem',
-            padding: '1rem',
-        }}>
-             <BoxHeader title="Financial Overview" subtitle="Key financial metrics overview" sideText="Updated now" />
-             
-            <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
-                <FinancialMetricBox title="Total Income" value={financialData.totalIncome} unit="$" />
-                <FinancialMetricBox title="Total Net Income" value={financialData.totalNetIncome} unit="$" />
-                <FinancialMetricBox title="Accumulative Net Income" value={financialData.accNetIncome} unit="$" />
-                <FinancialMetricBox title="Savings Rate" value={financialData.savingsRate * 100} unit="%" />
-            </Box>
-            <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
-                <FinancialMetricBox title="Expenses" value={financialData.expenses} unit="$" />
-                <FinancialMetricBox title="Housing Fixed Costs" value={financialData.housingCosts} unit="$" />
-                <FinancialMetricBox title="Personal Fixed Costs" value={financialData.personalCosts} unit="$" />
-                <FinancialMetricBox title="Travel Costs" value={financialData.travelCosts} unit="$" />
-            </Box>
-        </DashboardBox>
-        
+            <DashboardBox sx={{
+                gridArea: 'a',
+                display: 'grid',
+                gap: '1rem',
+                padding: '1rem',
+            }}>
+                <BoxHeader title="Financial Overview" subtitle="Key financial metrics overview" sideText={`Updated: ${latestMonth || ''}`} />
+                
+                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+                    <FinancialMetricBox title="Total Income" value={parseFloat(total_income_value) || 0} unit="DKK" />
+                    <FinancialMetricBox title="Total Net Income" value={parseFloat(net_income_value) || 0} unit="DKK" />
+                    <FinancialMetricBox title="Savings Rate" value={parseFloat(parseFloat(savings_rate_value).toFixed(2)) || 0} unit="%" />
+
+                </Box>
+
+                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+                    {latestMonthData.map((data, index) => (
+                        <FinancialMetricBox key={index} title={data.expense_category} value={parseFloat(data.total_expense_value) || 0} unit="$" />
+                    ))}
+                </Box>
+            </DashboardBox>
         </>
     );
 };
