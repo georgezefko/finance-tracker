@@ -98,3 +98,16 @@ export const getCasflow = async (_req: Request, res: Response, _next: NextFuncti
     res.status(500).json({ message: 'Error fetching casflow' });
   }
 };
+
+// function to get financial Overview
+export const getFinancialOverview = async (_req: Request, res: Response, _next: NextFunction) => {
+  try {
+    const result = await query(
+      `SELECT * from get_financial_metrics()`
+      );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching financial overview' });
+  }
+};
