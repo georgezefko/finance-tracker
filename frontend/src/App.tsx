@@ -26,9 +26,10 @@ function App() {
                         <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
                         <Box width="100%" height="100%" padding="1rem 2rem 4rem 2rem">
                             <Routes>
+                            <Route path="/addExpenses" element={<Transaction />} /> 
                                 <Route path="/" element={<Dashboard />} />
                                 {/* Add other routes as needed */}
-                             <Route path="/addExpenses" element={<Transaction />} /> 
+                             
                             </Routes>
                         </Box>
                    
