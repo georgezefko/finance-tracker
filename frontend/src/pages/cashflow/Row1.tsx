@@ -11,6 +11,7 @@ interface FinancialData {
     total_expense_value: string;
     net_income_value: string;
     savings_rate_value: string;
+    total_monthly_expenses:string;
 }
 
 const Row1: React.FC = () => {
@@ -40,7 +41,7 @@ const Row1: React.FC = () => {
 
     const latestMonth = financialData[financialData.length - 1]?.report_month;
     const latestMonthData = financialData.filter(data => data.report_month === latestMonth);
-    const { total_income_value, net_income_value, savings_rate_value } = latestMonthData[0] || {};
+    const { total_income_value, net_income_value, savings_rate_value,total_monthly_expenses } = latestMonthData[0] || {};
 
     return (
         <>
@@ -56,12 +57,13 @@ const Row1: React.FC = () => {
                     <FinancialMetricBox title="Total Income" value={parseFloat(total_income_value) || 0} unit="DKK" />
                     <FinancialMetricBox title="Total Net Income" value={parseFloat(net_income_value) || 0} unit="DKK" />
                     <FinancialMetricBox title="Savings Rate" value={parseFloat(parseFloat(savings_rate_value).toFixed(2)) || 0} unit="%" />
+                    <FinancialMetricBox title="Total Expenses" value={parseFloat(total_monthly_expenses) || 0} unit="DKK" />
 
                 </Box>
 
                 <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
                     {latestMonthData.map((data, index) => (
-                        <FinancialMetricBox key={index} title={data.expense_category} value={parseFloat(data.total_expense_value) || 0} unit="$" />
+                        <FinancialMetricBox key={index} title={data.expense_category} value={parseFloat(data.total_expense_value) || 0} unit="DKK" />
                     ))}
                 </Box>
             </DashboardBox>

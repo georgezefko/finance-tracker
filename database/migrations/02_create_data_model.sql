@@ -5,8 +5,7 @@ INSERT INTO expense_categories (category_name) VALUES
 ('Personal Fixed Costs'),
 ('Personal Running Costs'),
 ('Housing Fixed Costs'),
-('Travel Costs'),
-('Other');
+('Travel Costs');
 
 INSERT INTO expense_types (type_name, category_id) VALUES 
 ('Salary', 1),
@@ -30,6 +29,6 @@ INSERT INTO expense_types (type_name, category_id) VALUES
 ('Tickets', 5),
 ('Accommodation', 5),
 ('Travel Expenses', 5),
-('Transportation',6);
+('Transportation',3);
 
 COMMIT;
