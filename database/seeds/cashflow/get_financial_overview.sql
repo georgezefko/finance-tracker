@@ -8,6 +8,7 @@ RETURNS TABLE(
     total_expense_value DECIMAL,
     total_monthly_expenses DECIMAL,
     net_income_value DECIMAL,
+      cumulative_net_income_value DECIMAL,
     savings_rate_value DECIMAL
 ) AS $$
 BEGIN
@@ -55,19 +56,27 @@ BEGIN
             (i.total_income - COALESCE(m.total_monthly_expenses, 0)) AS total_net_income
         FROM income_total i
         JOIN monthly_expenses m ON i.month = m.month
+    ),
+      cumulative_net_income AS (
+        SELECT 
+            month,
+            SUM(total_net_income) OVER (ORDER BY month) AS cumulative_income
+        FROM net_income
     )
     SELECT 
         i.month AS report_month,
         i.total_income AS total_income_value,
         e.category_name AS expense_category,
-        e.total_expense AS total_expense_value,
-        m.total_monthly_expenses AS total_monthly_expenses,
-        n.total_net_income AS net_income_value,
+        (e.total_expense / NULLIF(i.total_income, 0)) * 100 AS total_expense_value,
+        (m.total_monthly_expenses / NULLIF(i.total_income, 0)) * 100 AS total_monthly_expenses,
+        n.total_net_income  AS net_income_value,
+        c.cumulative_income AS cumulative_net_income_value, 
         (n.total_net_income / NULLIF(i.total_income, 0)) * 100 AS savings_rate_value
     FROM income_total i
     JOIN expense_total e ON i.month = e.month
     JOIN monthly_expenses m ON i.month = m.month
     JOIN net_income n ON i.month = n.month
+    JOIN cumulative_net_income c ON i.month = c.month
     ORDER BY i.month, e.category_name;
 END;
 $$ LANGUAGE plpgsql;

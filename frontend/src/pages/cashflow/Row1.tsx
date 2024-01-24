@@ -3,6 +3,9 @@ import { Box } from '@mui/material';
 import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
 import FinancialMetricBox from '../../components/FinancialMetricsBox';
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,Label,LabelList
+} from 'recharts';
 
 interface FinancialData {
     report_month: string;
@@ -12,12 +15,43 @@ interface FinancialData {
     net_income_value: string;
     savings_rate_value: string;
     total_monthly_expenses:string;
+    cumulative_net_income_value:string;
 }
+
+interface FinancialDetails {
+    dates: string;
+    category: string;
+    amount: string;
+}
+
+interface TransformedDataItem {
+    month: string;
+    [key: string]: string | number;
+}
+
+const transformDataForChart = (financialDetails: FinancialDetails[]): TransformedDataItem[] => {
+    const transformedData: Record<string, TransformedDataItem> = {};
+
+    financialDetails.forEach(({ dates, category, amount }) => {
+        const month = dates; // Assuming dates are already in 'YYYY-MM' format
+        if (!transformedData[month]) {
+            transformedData[month] = { month };
+        }
+        transformedData[month][category] = (parseFloat(amount) || 0) + (parseFloat(transformedData[month][category] as string) || 0);
+
+    });
+
+    return Object.values(transformedData);
+};
+
+const barColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']; // Add more colors as needed
 
 const Row1: React.FC = () => {
     const [financialData, setFinancialData] = useState<FinancialData[]>([]);
+    const [chartData, setChartData] = useState<TransformedDataItem[]>([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,6 +59,12 @@ const Row1: React.FC = () => {
                 const response = await fetch('http://localhost:3000/feed/financial-overview');
                 const data: FinancialData[] = await response.json();
                 setFinancialData(data);
+
+                const financialResponse = await fetch('http://localhost:3000/feed/financial-details');
+                const financialDetails: FinancialDetails[] = await financialResponse.json();
+                const transformedChartData = transformDataForChart(financialDetails);
+                setChartData(transformedChartData);
+
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching financial data:', error);
@@ -38,10 +78,11 @@ const Row1: React.FC = () => {
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading data.</div>;
     if (!financialData.length) return <div>No data available.</div>;
+    if (!chartData.length) return <div>No data available.</div>;
 
     const latestMonth = financialData[financialData.length - 1]?.report_month;
     const latestMonthData = financialData.filter(data => data.report_month === latestMonth);
-    const { total_income_value, net_income_value, savings_rate_value,total_monthly_expenses } = latestMonthData[0] || {};
+    const { total_income_value, net_income_value, savings_rate_value,total_monthly_expenses,cumulative_net_income_value } = latestMonthData[0] || {};
 
     return (
         <>
@@ -55,17 +96,53 @@ const Row1: React.FC = () => {
                 
                 <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
                     <FinancialMetricBox title="Total Income" value={parseFloat(total_income_value) || 0} unit="DKK" />
-                    <FinancialMetricBox title="Total Net Income" value={parseFloat(net_income_value) || 0} unit="DKK" />
+                    <FinancialMetricBox title="Total Net Income" value={(parseFloat(net_income_value)) || 0} unit="DKK" />
+                    <FinancialMetricBox title="Acc Net Income" value={(parseFloat(cumulative_net_income_value)) || 0} unit="DKK" />
                     <FinancialMetricBox title="Savings Rate" value={parseFloat(parseFloat(savings_rate_value).toFixed(2)) || 0} unit="%" />
-                    <FinancialMetricBox title="Total Expenses" value={parseFloat(total_monthly_expenses) || 0} unit="DKK" />
+                    <FinancialMetricBox title="Total Expenses" value={parseFloat(parseFloat(total_monthly_expenses).toFixed(2)) || 0} unit="%" />
 
                 </Box>
 
                 <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
                     {latestMonthData.map((data, index) => (
-                        <FinancialMetricBox key={index} title={data.expense_category} value={parseFloat(data.total_expense_value) || 0} unit="DKK" />
+                        <FinancialMetricBox key={index} title={data.expense_category} value={parseFloat(parseFloat(data.total_expense_value).toFixed(2)) || 0} unit="%" />
                     ))}
                 </Box>
+            </DashboardBox>
+            <DashboardBox sx={{ 
+                    gridArea: 'b', 
+                    display: 'grid',
+                    gap: '1rem',
+                    padding: '1rem', }}>
+            <BoxHeader title="Expense Categories" subtitle="Values of expense categpries" sideText={`Updated: ${latestMonth || ''}`} />
+            <BarChart
+                width={500}
+                height={300}
+                data={chartData}
+                margin={{
+                    top: 20, right: 30, left: 20, bottom: 5,
+                }}
+                barGap={-10} // Adjust this to control the gap between bars of the same group
+                barCategoryGap={0} // Adjust this to control the gap between bars of different groups
+                >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month"/>
+                <YAxis>
+                    <Label value="DKK" angle={-90} position="insideLeft"  />
+                </YAxis>
+                <Tooltip />
+                <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
+                {Object.keys(chartData[0] || {}).filter(key => key !== 'month').map((key, idx) => (
+                    <Bar 
+                        key={idx} 
+                        dataKey={key} 
+                        stackId="a" 
+                        fill={barColors[idx % barColors.length]} 
+                        barSize={30} // Adjust bar size as needed
+                    />
+                ))}
+            </BarChart>
+
             </DashboardBox>
         </>
     );
