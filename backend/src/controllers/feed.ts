@@ -111,3 +111,59 @@ export const getFinancialOverview = async (_req: Request, res: Response, _next: 
     res.status(500).json({ message: 'Error fetching financial overview' });
   }
 };
+
+
+// function to get stack bar plot
+export const getFinancialDetails = async (_req: Request, res: Response, _next: NextFunction) => {
+  try {
+    const result = await query(
+      `SELECT
+        TO_CHAR(t.date, 'YYYY-MM') as dates, 
+        ec.category_name as category, 
+        SUM(t.amount) as amount
+      FROM transactions t 
+      JOIN expense_categories ec ON ec.id = t.category_id 
+      WHERE ec.category_name != 'Income'
+      AND TO_CHAR(t.date, 'YYYY') > '2023'
+      GROUP BY 1,2
+      ORDER BY SUM(t.amount) DESC
+      `
+      );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching financial overview' });
+  }
+};
+
+
+// function to get accumulative net income
+export const getAcc = async (_req: Request, res: Response, _next: NextFunction) => {
+  try {
+    const result = await query(
+      `
+      SELECT
+        TO_CHAR(t.date, 'YYYY-MM') date,
+        SUM(CASE WHEN ec.category_name = 'Income' THEN t.amount ELSE 0 END) as income,
+        SUM(CASE WHEN ec.category_name != 'Income' THEN t.amount ELSE 0 END) as expense,
+        (SUM(CASE WHEN ec.category_name = 'Income' THEN t.amount ELSE 0 END) - 
+        SUM(CASE WHEN ec.category_name != 'Income' THEN t.amount ELSE 0 END)) as net_income,
+        SUM(SUM(CASE WHEN ec.category_name = 'Income' THEN t.amount ELSE 0 END) - 
+            SUM(CASE WHEN ec.category_name != 'Income' THEN t.amount ELSE 0 END)) 
+            OVER (ORDER BY  TO_CHAR(t.date, 'YYYY-MM')) AS cumulative_net_income
+      FROM
+        transactions t
+      JOIN
+        expense_categories ec ON ec.id = t.category_id
+      GROUP BY
+        TO_CHAR(t.date, 'YYYY-MM')
+      ORDER BY
+        TO_CHAR(t.date, 'YYYY-MM');
+      `
+      );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching financial overview' });
+  }
+};
