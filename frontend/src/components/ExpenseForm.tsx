@@ -18,7 +18,7 @@ const ExpenseForm = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:3000/feed/expense-categories')
+    fetch('http://localhost:8000/feed/expense-categories')
       .then(response => response.json())
       .then(data => {
         console.log('this is my data', data);
@@ -49,7 +49,7 @@ const ExpenseForm = () => {
       categoryId: selectedCategoryId
     };
 
-    fetch('http://localhost:3000/feed/transaction', {
+    fetch('http://localhost:8000/feed/transaction', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
