@@ -52,22 +52,7 @@ export const getTimeSeries = async (_req: Request, res: Response, _next: NextFun
 export const getIncomeExpenses = async (_req: Request, res: Response, _next: NextFunction) => {
   try {
     const result = await query(
-      `WITH cat AS(
-        SELECT 
-          id,
-        CASE 
-          WHEN category_name <> 'Income' then 'Expense'
-          ELSE 'Income'
-        END as names
-        FROM expense_categories
-      )
-      SELECT 
-        sum(t.amount) AS total, 
-        TO_CHAR(t.date, 'YYYY') AS time,
-        ec.names 
-      FROM transactions t 
-      JOIN cat ec ON ec.id = t.category_id 
-      GROUP BY 2,3`
+      ` SELECT * FROM get_income_expense()`
       );
     res.status(200).json(result.rows);
   } catch (err) {
@@ -132,13 +117,13 @@ export const getFinancialDetails = async (_req: Request, res: Response, _next: N
     res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Error fetching financial overview' });
+    res.status(500).json({ message: 'Error fetching financial details' });
   }
 };
 
 
-// function to get accumulative net income
-export const getAcc = async (_req: Request, res: Response, _next: NextFunction) => {
+// function to get income/exp/save per month
+export const getOverallMonth = async (_req: Request, res: Response, _next: NextFunction) => {
   try {
     const result = await query(
       `
@@ -147,10 +132,7 @@ export const getAcc = async (_req: Request, res: Response, _next: NextFunction) 
         SUM(CASE WHEN ec.category_name = 'Income' THEN t.amount ELSE 0 END) as income,
         SUM(CASE WHEN ec.category_name != 'Income' THEN t.amount ELSE 0 END) as expense,
         (SUM(CASE WHEN ec.category_name = 'Income' THEN t.amount ELSE 0 END) - 
-        SUM(CASE WHEN ec.category_name != 'Income' THEN t.amount ELSE 0 END)) as net_income,
-        SUM(SUM(CASE WHEN ec.category_name = 'Income' THEN t.amount ELSE 0 END) - 
-            SUM(CASE WHEN ec.category_name != 'Income' THEN t.amount ELSE 0 END)) 
-            OVER (ORDER BY  TO_CHAR(t.date, 'YYYY-MM')) AS cumulative_net_income
+        SUM(CASE WHEN ec.category_name != 'Income' THEN t.amount ELSE 0 END)) as savings
       FROM
         transactions t
       JOIN

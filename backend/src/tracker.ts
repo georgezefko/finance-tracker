@@ -18,4 +18,4 @@ app.use((_req: Request, res: Response, next: NextFunction)=>{
 })
 app.use('/feed', feedRoutes);
 
-app.listen(3000);
+app.listen(8000);
