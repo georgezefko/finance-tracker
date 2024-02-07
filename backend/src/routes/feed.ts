@@ -10,7 +10,7 @@ router.get('/expense-categories', feedController.getExpenseCategories);
 router.post('/transaction', feedController.createTransaction);
 
 // Get /feed/timeseries
-//router.get('/timeseries', feedController.getTimeSeries);
+router.get('/timeseries', feedController.getTimeSeries);
 
 // Get /feed/income-expenses
 router.get('/income-expenses', feedController.getIncomeExpenses);

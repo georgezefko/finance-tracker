@@ -4,7 +4,7 @@ import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
 import FinancialMetricBox from '../../components/FinancialMetricsBox';
 import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,Label,LabelList
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,Label,
 } from 'recharts';
 
 interface FinancialData {
@@ -102,8 +102,10 @@ const Row1: React.FC = () => {
                 display: 'grid',
                 gap: '1rem',
                 padding: '1rem',
+                height: '320px', // Set a fixed height
+                width: '100%',
             }}>
-                <BoxHeader title="Financial Overview" subtitle="Key financial metrics overview" sideText={`Updated: ${latestMonth || ''}`} />
+                <BoxHeader title="Financial Overview" subtitle="Avg Annual of Key financial metrics" sideText={`Updated: ${latestMonth || ''}`} />
                 
                 <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
                     <FinancialMetricBox title="Acc Income" value={parseFloat(total_income_value) || 0} unit="DKK" />
@@ -123,11 +125,13 @@ const Row1: React.FC = () => {
                     gridArea: 'b', 
                     display: 'grid',
                     gap: '1rem',
-                    padding: '1rem', }}>
+                    padding: '1rem', 
+                    height: '400px', // Set a fixed height
+                    width: '100%', }}>
             <BoxHeader title="Expense/Income" subtitle="Monthly cashflow" sideText={`Updated: ${latestMonth || ''}`} />
             <BarChart
                 width={500}
-                height={300}
+                height={250}
                 data={chartExpense}
                 margin={{
                     top: 20, right: 30, left: 20, bottom: 5,
@@ -158,11 +162,13 @@ const Row1: React.FC = () => {
                     gridArea: 'c', 
                     display: 'grid',
                     gap: '1rem',
-                    padding: '1rem', }}>
-            <BoxHeader title="Expense Categories" subtitle="Monthly values of expense categories" sideText={`Updated: ${latestMonth || ''}`} />
+                    padding: '1rem',
+                    height: '400px', // Set a fixed height
+                    width: '100%', }}>
+            <BoxHeader title="Expense Types" subtitle="Monthly values of expense types" sideText={`Updated: ${latestMonth || ''}`} />
             <BarChart
                 width={500}
-                height={300}
+                height={250}
                 data={chartData}
                 margin={{
                     top: 20, right: 30, left: 20, bottom: 5,
