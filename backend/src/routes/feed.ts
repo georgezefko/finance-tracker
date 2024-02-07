@@ -24,4 +24,8 @@ router.get('/financial-overview', feedController.getFinancialOverview);
 
 // Get /feed/financial-details
 router.get('/financial-details', feedController.getFinancialDetails);
+
+
+// Get /feed/financial-month
+//router.get('/financial-month', feedController.getFinancialDetails);
 export default router;

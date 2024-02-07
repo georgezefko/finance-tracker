@@ -3,7 +3,7 @@ import { Box, ThemeProvider, createTheme } from "@mui/material";
 import { themeSettings } from "./theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/cashflow";
+import CashFlow from "./pages/cashflow";
 import Navbar from "./pages/navbar";
 import Sidebar from "./pages/sidebar";
 import Transaction from "./pages/transactions";
@@ -26,8 +26,8 @@ function App() {
                         <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
                         <Box width="100%" height="100%" padding="1rem 2rem 4rem 2rem">
                             <Routes>
-                            <Route path="/addExpenses" element={<Transaction />} /> 
-                                <Route path="/" element={<Dashboard />} />
+                            <Route path="/" element={<Transaction />} /> 
+                                <Route path="/cashflow" element={<CashFlow />} />
                                 {/* Add other routes as needed */}
                              
                             </Routes>
