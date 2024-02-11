@@ -25,6 +25,10 @@ router.get('/financial-overview', feedController.getFinancialOverview);
 // Get /feed/financial-details
 router.get('/financial-details', feedController.getFinancialDetails);
 
+// Get /feed/list-expenses
+router.get('/list-expenses', feedController.getExpenseTable);
+
+
 
 // Get /feed/financial-month
 //router.get('/financial-month', feedController.getFinancialDetails);

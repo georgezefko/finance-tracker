@@ -69,9 +69,7 @@ const Row1: React.FC = () => {
                 setChartData(transformedChartData);
 
                 const financialExpense = await fetch('http://localhost:8000/feed/income-expenses');
-                console.log(financialExpense)
                 const financialDetailsExpense: FinancialDetails[] = await financialExpense.json();
-                console.log(financialDetailsExpense)
                 const transformedChartDataExpense = transformDataForChart(financialDetailsExpense);
                 setChartExpense(transformedChartDataExpense);
 
@@ -90,7 +88,7 @@ const Row1: React.FC = () => {
     if (!financialData.length) return <div>No data available.</div>;
     if (!chartData.length) return <div>No data available.</div>;
     if (!chartExpense.length) return <div>No data available.</div>;
-
+    console.log(chartExpense)
     const latestMonth = financialData[financialData.length - 1]?.report_year;
     const latestMonthData = financialData.filter(data => data.report_year === latestMonth);
     const { total_income_value, savings_rate_value,total_yearly_expenses,cumulative_net_income_value } = latestMonthData[0] || {};
@@ -102,12 +100,12 @@ const Row1: React.FC = () => {
                 display: 'grid',
                 gap: '1rem',
                 padding: '1rem',
-                height: '320px', // Set a fixed height
+                height: '400px', // Set a fixed height
                 width: '100%',
             }}>
                 <BoxHeader title="Financial Overview" subtitle="Avg Annual of Key financial metrics" sideText={`Updated: ${latestMonth || ''}`} />
                 
-                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
                     <FinancialMetricBox title="Acc Income" value={parseFloat(total_income_value) || 0} unit="DKK" />
                     <FinancialMetricBox title="Acc Net Income" value={(parseFloat(cumulative_net_income_value)) || 0} unit="DKK" />
                     <FinancialMetricBox title="Savings Rate" value={parseFloat(parseFloat(savings_rate_value).toFixed(2)) || 0} unit="%" />
@@ -115,7 +113,7 @@ const Row1: React.FC = () => {
 
                 </Box>
 
-                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
                     {latestMonthData.map((data, index) => (
                         <FinancialMetricBox key={index} title={data.expense_category} value={parseFloat(parseFloat(data.total_expense_value).toFixed(2)) || 0} unit="%" />
                     ))}
@@ -124,76 +122,72 @@ const Row1: React.FC = () => {
             <DashboardBox sx={{ 
                     gridArea: 'b', 
                     display: 'grid',
-                    gap: '1rem',
+                    gap: '0rem',
                     padding: '1rem', 
                     height: '400px', // Set a fixed height
                     width: '100%', }}>
-            <BoxHeader title="Expense/Income" subtitle="Monthly cashflow" sideText={`Updated: ${latestMonth || ''}`} />
-            <BarChart
-                width={500}
-                height={250}
-                data={chartExpense}
-                margin={{
-                    top: 20, right: 30, left: 20, bottom: 5,
-                }}
-                barGap={-10} // Adjust this to control the gap between bars of the same group
-                barCategoryGap={0} // Adjust this to control the gap between bars of different groups
-                >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month"/>
-                <YAxis>
-                    <Label value="DKK" angle={-90} position="insideLeft"  />
-                </YAxis>
-                <Tooltip />
-                <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
-                {Object.keys(chartExpense[0] || {}).filter(key => key !== 'month').map((key, idx) => (
-                    <Bar 
-                        key={idx} 
-                        dataKey={key} 
-                        stackId="a" 
-                        fill={expenseColors[idx % expenseColors.length]} 
-                        barSize={30} // Adjust bar size as needed
-                    />
-                ))}
-            </BarChart>
-
+                <BoxHeader title="Expense/Income" subtitle="Monthly cashflow" sideText={`Updated: ${latestMonth || ''}`} />
+                <BarChart
+                    width={500}
+                    height={250}
+                    data={chartExpense}
+                    margin={{
+                        top: 20, right: 30, left: 20, bottom: 5,
+                    }}
+                    barGap={10} // Adjust this to control the gap between bars of the same group
+                    barCategoryGap={20} // Adjust this to control the gap between bars of different groups
+                    >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month"/>
+                    <YAxis>
+                        <Label value="DKK" angle={-90} position="insideLeft"  />
+                    </YAxis>
+                    <Tooltip />
+                    <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
+                    {Object.keys(chartExpense[0] || {}).filter(key => key !== 'month' && key !== 'Savings').map((key, idx) => (
+                        <Bar 
+                            key={idx} 
+                            dataKey={key} 
+                            fill={expenseColors[idx % expenseColors.length]} 
+                            barSize={20} // Adjust bar size as needed
+                        />
+                    ))}
+                </BarChart>
             </DashboardBox>
+
             <DashboardBox sx={{ 
                     gridArea: 'c', 
                     display: 'grid',
                     gap: '1rem',
-                    padding: '1rem',
+                    padding: '1rem', 
                     height: '400px', // Set a fixed height
                     width: '100%', }}>
-            <BoxHeader title="Expense Types" subtitle="Monthly values of expense types" sideText={`Updated: ${latestMonth || ''}`} />
-            <BarChart
-                width={500}
-                height={250}
-                data={chartData}
-                margin={{
-                    top: 20, right: 30, left: 20, bottom: 5,
-                }}
-                barGap={-10} // Adjust this to control the gap between bars of the same group
-                barCategoryGap={0} // Adjust this to control the gap between bars of different groups
-                >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month"/>
-                <YAxis>
-                    <Label value="DKK" angle={-90} position="insideLeft"  />
-                </YAxis>
-                <Tooltip />
-                <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
-                {Object.keys(chartData[0] || {}).filter(key => key !== 'month').map((key, idx) => (
-                    <Bar 
-                        key={idx} 
-                        dataKey={key} 
-                        stackId="a" 
-                        fill={barColors[idx % barColors.length]} 
-                        barSize={30} // Adjust bar size as needed
-                    />
-                ))}
-            </BarChart>
-
+                <BoxHeader title="Savings Rate" subtitle="Monthly savings rate" sideText={`Updated: ${latestMonth || ''}`} />
+                <BarChart
+                    width={500}
+                    height={250}
+                    data={chartExpense}
+                    margin={{
+                        top: 20, right: 30, left: 20, bottom: 5,
+                    }}
+                    barGap={10} // Adjust this to control the gap between bars of the same group
+                    barCategoryGap={20} // Adjust this to control the gap between bars of different groups
+                    >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month"/>
+                    <YAxis>
+                        <Label value="DKK" angle={-90} position="insideLeft"  />
+                    </YAxis>
+                    <Tooltip />
+                    <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
+                    {chartExpense.some(data => data.Savings) && (
+                        <Bar 
+                            dataKey="Savings" 
+                            fill={expenseColors[0]} // Adjust as needed for Savings color
+                            barSize={20} // Adjust bar size as needed
+                        />
+                    )}
+                </BarChart>
             </DashboardBox>
         </>
     );

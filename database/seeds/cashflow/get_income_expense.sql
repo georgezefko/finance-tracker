@@ -47,7 +47,7 @@ BEGIN
         SELECT 
             time as dates,
             'Savings' AS category,
-            (income - expense)::text AS amount
+            ROUND( ( (income - expense)/income ) * 100, 2)::text AS amount
         FROM monthly_income_expense
         ORDER BY dates, category;
 END;
