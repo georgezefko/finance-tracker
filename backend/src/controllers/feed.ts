@@ -149,3 +149,27 @@ export const getOverallMonth = async (_req: Request, res: Response, _next: NextF
     res.status(500).json({ message: 'Error fetching financial overview' });
   }
 };
+
+
+// function to get income/exp/save per month
+export const getExpenseTable = async (_req: Request, res: Response, _next: NextFunction) => {
+  try {
+    const result = await query(
+      `SELECT  
+        TO_CHAR(t.date, 'YYYY-MM-DD') as date,
+        t.amount,
+        et.type_name as type,
+        ec.category_name as category
+      FROM transactions t
+      INNER JOIN expense_categories ec ON ec.id = t.category_id 
+      INNER JOIN expense_types et on et.id = t.type_id 
+      WHERE ec.category_name != 'Income'
+      ORDER BY t.amount desc
+      `
+      );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching expenses list' });
+  }
+};

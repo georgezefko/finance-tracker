@@ -6,13 +6,13 @@ const gridTemplateLargeScreens = `
     "a b c"
     "a b c"
     "a b c"
-    "a b f"
+    "a b c"
+    "a b c"
     "d e f"
-    "d e f"
-    "d h i"
-    "g h i"
-    "g h j"
-    "g h j"
+    "d h f"
+    "g h f"
+    "g h f"
+    "g h f"
 `;
 
 const gridTemplateSmallScreens = `
