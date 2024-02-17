@@ -12,13 +12,13 @@ services:
     depends_on:
       - warehouse
 
-  # frontend:
-  #   container_name: frontend
-  #   build: ./frontend
-  #   ports:
-  #     - "3001:80"
-  #   depends_on:
-  #     - backend
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
 
   warehouse:
     container_name: warehouse
@@ -28,7 +28,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: tracker
     volumes:
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - .database/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
       - ./database/migrations:/sql/migrations
       - ./database/seeds/cashflow:/sql/seeds
       - postgres-data:/var/lib/postgresql/data
