@@ -103,7 +103,7 @@ const Row1: React.FC = () => {
                 height: '400px', // Set a fixed height
                 width: '100%',
             }}>
-                <BoxHeader title="Financial Overview" subtitle="Avg Annual of Key financial metrics" sideText={`Updated: ${latestMonth || ''}`} />
+                <BoxHeader title="Financial Overview" subtitle="Avg annual values of main financial metrics" sideText={`Updated: ${latestMonth || ''}`} />
                 
                 <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
                     <FinancialMetricBox title="Acc Income" value={parseFloat(total_income_value) || 0} unit="DKK" />
