@@ -1,12 +1,20 @@
 # Built an App for tracking personal finances using NodeJS, ExpressJS, PostgreSQL, ReactJS, Typescript
 
 ## Motivation
-I have always kept track of my finances using excel spreadsheets and throughtout the years became hard to keep good record of all my expenses and investments.
-Although there are plenty of apps out there this was a good chance for me to practise my skills on building an end-to-end application.
+Through this project, I had the opportunity to strengthen my skills and gain a comprehensive understanding of several key areas:
 
-**NOTE** 
+1. Developing a basic REST API using ExpressJS/Typescript to handle backend operations.
+2. Designing and implementing a data model in PostgreSQL tailored to my specific requirements.
+3. Creating a user-friendly dashboard with ReactJS for the frontend.
+4. Containerizing the application's components using Docker to simplify deployment and ensure consistency across environments.
+5. Orchestrating all these components to work seamlessly together, providing a cohesive user experience.
 
-This is still an in progress side project of mine. 
+I chose to create a finance app because I was in search of a robust solution for documenting and managing my finances. 
+The goal was to move away from the current approach of using multiple, extensive Excel spreadsheets, and instead, consolidate everything into a single, efficient platform.
+
+**NOTE**  
+This is still an in progress project and intended for personl use.
+Hence there is plenty room for development and adjustments if you want to use it and tailor it to your needs 
 
 ## App Structure
 
