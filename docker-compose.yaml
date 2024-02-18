@@ -9,6 +9,7 @@ services:
       - DB_HOST=${DB_HOST}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
+      - PORT=${PORT}
     depends_on:
       - warehouse
 
@@ -17,6 +18,8 @@ services:
     build: ./frontend
     ports:
       - "3001:80"
+    environment:
+      - BASE_URL=${BASE_URL}
     depends_on:
       - backend
 
