@@ -75,8 +75,6 @@ TBF
 TBF
 ## Frontend
 
-Frontend isn't my cup of tea and this was my first attempt to build something in ReactJS.
-
 The template, idea and resources for this dashboard were inspired by the following repo and corresponding youtube tutorial
 
 Github: https://github.com/ed-roh/finance-app
