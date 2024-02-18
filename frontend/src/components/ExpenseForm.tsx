@@ -11,6 +11,7 @@ interface Category {
 }
 
 const ExpenseForm = () => {
+  const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
   const theme = useTheme();
   const [amount, setAmount] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
@@ -18,14 +19,14 @@ const ExpenseForm = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/feed/expense-categories')
+    fetch(`${baseUrl}/feed/expense-categories`)
       .then(response => response.json())
       .then(data => {
         console.log('this is my data', data);
         setCategories(data);
       })
       .catch(error => console.error('Error fetching categories:', error));
-  }, []);
+  }, [baseUrl]);
 
   const handleTypeChange = (event: SelectChangeEvent<number>) => {
     const id = parseInt(event.target.value as string);

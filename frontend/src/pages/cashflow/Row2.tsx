@@ -66,11 +66,11 @@ const transformData = (data: RawDataItem[]): ChartData[] => {
     return Object.values(dataMap);
   };
 
-const barColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']; // Add more colors as needed
+const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
+const barColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']; 
 const generateColor = (index: number) => {
-    // Generate a color in a way that spreads out the colors
-    // This uses the HSL color space
-    return `hsl(${index * 137.508}, 50%, 60%)`; // 137.508 is the golden angle in degrees
+   
+    return `hsl(${index * 137.508}, 50%, 60%)`; 
 };
 
 const Row2: React.FC = () => {
@@ -89,25 +89,25 @@ const Row2: React.FC = () => {
         { field: 'type', headerName: 'Type', width: 100 },
         { field: 'category', headerName: 'Category', width: 150 },
       
-        // Add more columns as needed
+        
     ];
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:8000/feed/timeseries');
+                const response = await fetch(`${baseUrl}/feed/timeseries`);
                 const data: RawDataItem[] = await response.json();
                 const transformedData = transformData(data);
                 setChartData(transformedData);
                 
 
-                const financialResponse = await fetch('http://localhost:8000/feed/financial-details');
+                const financialResponse = await fetch(`${baseUrl}/feed/financial-details`);
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
                 const transformedChartData = transformDataForChart(financialDetails);
                 setStuckData(transformedChartData);
 
 
-                const tableResponse = await fetch('http://localhost:8000/feed/list-expenses');
+                const tableResponse = await fetch(`${baseUrl}/feed/list-expenses`);
                 const listExpenses: TransformedList[] = await tableResponse.json();
                 const formattedData = listExpenses.map((item, index) => ({
                 ...item,

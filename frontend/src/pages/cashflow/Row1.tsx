@@ -33,7 +33,7 @@ const transformDataForChart = (financialDetails: FinancialDetails[] ): Transform
     const transformedData: Record<string, TransformedDataItem> = {};
 
     financialDetails.forEach(({ dates, category, amount }) => {
-        const month = dates; // Assuming dates are already in 'YYYY-MM' format
+        const month = dates; 
         if (!transformedData[month]) {
             transformedData[month] = { month };
         }
@@ -45,7 +45,7 @@ const transformDataForChart = (financialDetails: FinancialDetails[] ): Transform
 };
 
 
-const barColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']; // Add more colors as needed
+
 const expenseColors = ["#82ca9d", "#8884d8", "#ffc658"]; // Add more colors as needed
 
 const Row1: React.FC = () => {
@@ -54,21 +54,23 @@ const Row1: React.FC = () => {
     const [chartExpense, setChartExpense] = useState<TransformedDataItem[]>([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
 
 
     useEffect(() => {
+        
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:8000/feed/financial-overview');
+                const response = await fetch(`${baseUrl}/feed/financial-overview`);
                 const data: FinancialData[] = await response.json();
                 setFinancialData(data);
 
-                const financialResponse = await fetch('http://localhost:8000/feed/financial-details');
+                const financialResponse = await fetch(`${baseUrl}/feed/financial-details`);
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
                 const transformedChartData = transformDataForChart(financialDetails);
                 setChartData(transformedChartData);
 
-                const financialExpense = await fetch('http://localhost:8000/feed/income-expenses');
+                const financialExpense = await fetch(`${baseUrl}/feed/income-expenses`);
                 const financialDetailsExpense: FinancialDetails[] = await financialExpense.json();
                 const transformedChartDataExpense = transformDataForChart(financialDetailsExpense);
                 setChartExpense(transformedChartDataExpense);
@@ -81,7 +83,7 @@ const Row1: React.FC = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [baseUrl]);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading data.</div>;
