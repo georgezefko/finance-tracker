@@ -4,6 +4,8 @@ import cors from 'cors';
 
 import feedRoutes from './routes/feed';
 
+const port = process.env.PORT || 8000
+
 const app: Express = express();
 
 app.use(cors())
@@ -18,4 +20,4 @@ app.use((_req: Request, res: Response, next: NextFunction)=>{
 })
 app.use('/feed', feedRoutes);
 
-app.listen(8000);
+app.listen(port);
