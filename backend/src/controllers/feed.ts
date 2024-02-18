@@ -164,7 +164,7 @@ export const getExpenseTable = async (_req: Request, res: Response, _next: NextF
       INNER JOIN expense_categories ec ON ec.id = t.category_id 
       INNER JOIN expense_types et on et.id = t.type_id 
       WHERE ec.category_name != 'Income'
-      ORDER BY t.amount desc
+      ORDER BY TO_CHAR(t.date, 'YYYY-MM-DD') desc
       `
       );
     res.status(200).json(result.rows);

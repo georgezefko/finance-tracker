@@ -33,12 +33,17 @@ To run the project you first need to clone the repo
 git clone {repo}
 ```
 
-Then to buld the images and start the containers you run
+Then to start the containers you run
 
 ```
-docker-compose build
 docker-compose up -d
 ```
+
+you can also build your container by
+````
+docker-compose up --build
+````
+
 eventually you can access the frontend from
 
 http://localhost/3001
