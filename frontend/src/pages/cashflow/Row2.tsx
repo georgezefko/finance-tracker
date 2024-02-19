@@ -5,6 +5,7 @@ import BoxHeader from '../../components/BoxHeader';
 import { DataGrid } from "@mui/x-data-grid";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer, BarChart, Bar, Label } from 'recharts';
 
+const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
 
 interface RawDataItem {
     total: string;
@@ -66,7 +67,7 @@ const transformData = (data: RawDataItem[]): ChartData[] => {
     return Object.values(dataMap);
   };
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
+
 const barColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']; 
 const generateColor = (index: number) => {
    
