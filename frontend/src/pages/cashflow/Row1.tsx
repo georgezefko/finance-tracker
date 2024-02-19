@@ -7,6 +7,9 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,Label,
 } from 'recharts';
 
+
+const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
+
 interface FinancialData {
     report_year: string;
     total_income_value: string;
@@ -54,7 +57,7 @@ const Row1: React.FC = () => {
     const [chartExpense, setChartExpense] = useState<TransformedDataItem[]>([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
-    const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
+   
 
 
     useEffect(() => {
@@ -83,14 +86,13 @@ const Row1: React.FC = () => {
             }
         };
         fetchData();
-    }, [baseUrl]);
+    }, []);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading data.</div>;
     if (!financialData.length) return <div>No data available.</div>;
     if (!chartData.length) return <div>No data available.</div>;
     if (!chartExpense.length) return <div>No data available.</div>;
-    console.log(chartExpense)
     const latestMonth = financialData[financialData.length - 1]?.report_year;
     const latestMonthData = financialData.filter(data => data.report_year === latestMonth);
     const { total_income_value, savings_rate_value,total_yearly_expenses,cumulative_net_income_value } = latestMonthData[0] || {};
