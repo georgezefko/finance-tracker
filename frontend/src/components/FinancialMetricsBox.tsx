@@ -20,13 +20,13 @@ const getColorByCategory = (category: string, value:number) => {
     if (category === 'Total Expenses' && value < 70) {
         return 'lightgreen';
     }
-    if (category === 'Housing Fixed Costs' && value < 15) {
+    if (category === 'Housing Fixed Costs' && value < 30) {
         return 'lightgreen';
     }
     if (category === 'Personal Fixed Costs' && value < 7) {
         return 'lightgreen';
     }
-    if (category === 'Personal Running Costs' && value < 7) {
+    if (category === 'Personal Running Costs' && value < 14) {
         return 'lightgreen';
     }
     if (category === 'Travel Costs' && value < 11) {

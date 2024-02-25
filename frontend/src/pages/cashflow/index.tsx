@@ -4,15 +4,7 @@ import Row2 from "./Row2";
 
 const gridTemplateLargeScreens = `
     "a b c"
-    "a b c"
-    "a b c"
-    "a b c"
-    "a b c"
     "d e f"
-    "d h f"
-    "g h f"
-    "g h f"
-    "g h f"
 `;
 
 const gridTemplateSmallScreens = `
@@ -27,25 +19,19 @@ const gridTemplateSmallScreens = `
     "c"
     "c"
     "c"
+    "c"
+    "d"
     "d"
     "d"
     "d"
     "e"
     "e"
+    "e"
+    "e"
     "f"
     "f"
     "f"
-    "g"
-    "g"
-    "g"
-    "h"
-    "h"
-    "h"
-    "h"
-    "i"
-    "i"
-    "j"
-    "j"
+    "f"
 `;
 
 const CashFlow = () => {
@@ -61,7 +47,7 @@ const CashFlow = () => {
                 isAboveMediumScreens
                     ? {
                           gridTemplateColumns: "repeat(3, minmax(370px, 1fr))",
-                          gridTemplateRows: " repeat(10, minmax(60px, 1fr))",
+                          gridTemplateRows: " repeat(2, minmax(60px, 1fr))",
                           gridTemplateAreas: gridTemplateLargeScreens,
                       }
                     : {
