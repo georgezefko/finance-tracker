@@ -69,10 +69,21 @@ Below is how the dashboard looks like with some demo data
 
 Currency is hardcoded as danish crowns (DKK) in the frontend
 
-## Backend
-TBF
-## Database
-TBF
+
+## Backend/Database
+Backend communicates with Frontend via a REST API and stores the data in PostgeSQL.
+
+The Data model consists of 3 tables that contain all the relevant information for the dashboard.
+
+Transactions: The day to day expenses and income
+
+Expense Categories: The main expenses areas (eg. Personal running costs)
+
+Expense Types: More detailed expenses that belong to one of the main categories (eg. Restaurants)
+
+![](images/fincaneDM.png)
+
+
 ## Frontend
 
 The template, idea and resources for this dashboard were inspired by the following repo and corresponding youtube tutorial
