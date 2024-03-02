@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { query } from '../database/db'
+import { query } from '../db_conn/db'
 
 // function to get the expenses
 export const getExpenseCategories = async (_req: Request, res: Response, _next: NextFunction) => {
