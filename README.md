@@ -81,7 +81,7 @@ Expense Categories: The main expenses areas (eg. Personal running costs)
 
 Expense Types: More detailed expenses that belong to one of the main categories (eg. Restaurants)
 
-![](images/fincaneDM.png)
+![](images/financeDM.png)
 
 
 ## Frontend
