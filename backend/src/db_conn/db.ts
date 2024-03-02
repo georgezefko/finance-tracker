@@ -1,10 +1,10 @@
 import { Pool, QueryResult } from 'pg';
 
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
   database: 'tracker',
-  password: process.env.DB_PASS,
+  password: process.env.POSTGRES_PASSWORD,
   port: 5432,
 });
 

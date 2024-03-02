@@ -27,16 +27,16 @@ services:
     container_name: warehouse
     image: postgres:13
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_USER}
       POSTGRES_DB: tracker
     volumes:
-      - .database/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./database/run_script.sh:/docker-entrypoint-initdb.d/run_script.sh
       - ./database/migrations:/sql/migrations
       - ./database/seeds/cashflow:/sql/seeds
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
       interval: 5s
       retries: 5
     restart: always
