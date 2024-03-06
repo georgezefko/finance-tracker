@@ -1,3 +1,4 @@
+-- Up Migration
 BEGIN;
 
 INSERT INTO expense_categories (category_name) VALUES 
@@ -103,3 +104,5 @@ VALUES
     (74, '2024-02-17', 38.00, 22, 3),
     (75, '2024-02-17', 75.00, 15, 3);
 COMMIT;
+
+-- Down Migration
