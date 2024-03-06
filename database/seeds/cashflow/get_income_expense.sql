@@ -1,4 +1,4 @@
-DROP FUNCTION IF EXISTS get_income_expense()
+DROP FUNCTION IF EXISTS get_income_expense();
 
 CREATE OR REPLACE FUNCTION get_income_expense()
 RETURNS TABLE(
