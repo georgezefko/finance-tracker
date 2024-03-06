@@ -25,7 +25,7 @@ export async function migrationRunner(direction: 'up' | 'down'): Promise<void> {
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     host: process.env.POSTGRES_HOST,
-    database: 'tracker',
+    database: process.env.POSTGRES_DB,
     port: 5432,
  
   });
@@ -50,7 +50,7 @@ export async function migrationRunner(direction: 'up' | 'down'): Promise<void> {
   };
 
   await client.connect();
-  console.log(`Connected to DB ${process.env.PGDATABASE}`);
+  console.log(`Connected to DB ${process.env.POSTGRES_DB}`);
   
   try {
     await runner(options);
