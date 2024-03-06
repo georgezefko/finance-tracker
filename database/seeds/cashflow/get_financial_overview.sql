@@ -6,9 +6,9 @@ RETURNS TABLE(
     total_income_value DECIMAL,
     expense_category VARCHAR,
     total_expense_value DECIMAL,
-    total_monthly_expenses DECIMAL,
+    total_yearly_expenses DECIMAL,
     net_income_value DECIMAL,
-      cumulative_net_income_value DECIMAL,
+    cumulative_net_income_value DECIMAL,
     savings_rate_value DECIMAL
 ) AS $$
 BEGIN
