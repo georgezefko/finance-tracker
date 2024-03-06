@@ -8,7 +8,7 @@ services:
     environment:
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PORT=${PORT}
     depends_on:
       - warehouse
@@ -28,12 +28,9 @@ services:
     image: postgres:13
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: tracker
     volumes:
-      - ./database/run_script.sh:/docker-entrypoint-initdb.d/run_script.sh
-      - ./database/migrations:/sql/migrations
-      - ./database/seeds/cashflow:/sql/seeds
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
@@ -42,5 +39,18 @@ services:
     restart: always
     ports:
       - "5432:5432"
+
+  db_migrations:
+    container_name: db_migrations
+    build: ./database
+    depends_on:
+      warehouse:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_DB: tracker
+    command: ["npm", "run", "migrate:up"]
 volumes:
   postgres-data:
