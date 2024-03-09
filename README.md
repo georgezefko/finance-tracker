@@ -1,4 +1,4 @@
-# Built an App for tracking personal finances using NodeJS, ExpressJS, PostgreSQL, ReactJS, Typescript
+# Building a Personal Finance Management App: Integrating REST API, Node.js, Express.js, TypeScript, PostgreSQL, and Docker
 
 ## Motivation
 Through this project, I had the opportunity to strengthen my skills and gain a comprehensive understanding of several key areas:
@@ -21,7 +21,7 @@ Hence there is plenty room for development and adjustments if you want to use it
 The application consists of the 3 components
 
 - Backend: NodeJS, ExpressJS, Typescript
-- Database: PostgreSQL
+- Database: PostgreSQL, node-pg-migrate
 - Frontend: ReactJS, Typescript
 
 Backend and Frontend communicate via a basic `RestAPI`
