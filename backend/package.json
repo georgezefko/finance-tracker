@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc -w & nodemon ./dist/tracker.js",
-    "start": "node ./dist/index.js",
+    "start": "node ./dist/tracker.js",
     "build": "rimraf ./dist && tsc",
     "start:prod": "node ./dist/tracker.js"
   },
