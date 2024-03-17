@@ -1,5 +1,12 @@
 # Building a Personal Finance Management App: Integrating REST API, Node.js, Express.js, TypeScript, PostgreSQL, and Docker
 
+This is the code for the blogs 
+
+[Building a Personal Finance Management App: Database Setup with PostgreSQL and Docker.](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-database-setup-with-postgresql-and-docker-5075e283303e)
+
+[Building a Personal Finance Management App: Integrating REST API, Node.js, Express.js, TypeScript and Docker](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-integrating-rest-api-node-js-7a0f0f27bd4e)
+
+
 ## Motivation
 Through this project, I had the opportunity to strengthen my skills and gain a comprehensive understanding of several key areas:
 
