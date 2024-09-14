@@ -50,7 +50,10 @@ const transformDataForChart = (financialDetails: FinancialDetails[] ): Transform
 
     });
 
-    return Object.values(transformedData);
+    const unsortedData = Object.values(transformedData);
+    // Sort data by month in ascending order using localeCompare for string comparison
+    const sortedData = unsortedData.sort((a, b) => a.month.localeCompare(b.month));
+    return sortedData;
 };
 
 // Function to transform the data
@@ -63,8 +66,13 @@ const transformData = (data: RawDataItem[]): ChartData[] => {
       }
       dataMap[item.time][item.type_name] = parseFloat(item.total);
     });
-  
-    return Object.values(dataMap);
+    const unsortedData = Object.values(dataMap);
+    
+    // Sort data by time in ascending order
+    const sortedData = unsortedData.sort((a, b) => a.time.localeCompare(b.time));
+    
+    return sortedData;
+    //return Object.values(dataMap);
   };
 
 
