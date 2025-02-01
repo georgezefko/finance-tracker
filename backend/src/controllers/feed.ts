@@ -38,7 +38,8 @@ export const getTimeSeries = async (_req: Request, res: Response, _next: NextFun
         et.type_name
       FROM transactions t
       JOIN expense_types et on et.id = t.type_id 
-      WHERE et.type_name not in ('Salary' ,'Bonus')
+      WHERE et.type_name not in ('Salary' ,'Bonus', 'Rent')
+      AND TO_CHAR(t.date, 'YYYY') > '2024'
       GROUP BY 2,3`
     );
     res.status(200).json(result.rows);
@@ -74,6 +75,7 @@ export const getCasflow = async (_req: Request, res: Response, _next: NextFuncti
       FROM transactions t
       JOIN expense_types et ON et.id = t.type_id
       JOIN expense_categories ec ON ec.id=t.category_id
+      WHERE TO_CHAR(t.date, 'YYYY') > '2024'
       GROUP BY 1, 2, 3
       ORDER BY ec.category_name, month`
       );
@@ -109,7 +111,7 @@ export const getFinancialDetails = async (_req: Request, res: Response, _next: N
       FROM transactions t 
       JOIN expense_categories ec ON ec.id = t.category_id 
       WHERE ec.category_name != 'Income'
-      AND TO_CHAR(t.date, 'YYYY') > '2023'
+      AND TO_CHAR(t.date, 'YYYY') > '2024'
       GROUP BY 1,2
       ORDER BY SUM(t.amount) DESC
       `
@@ -137,6 +139,7 @@ export const getOverallMonth = async (_req: Request, res: Response, _next: NextF
         transactions t
       JOIN
         expense_categories ec ON ec.id = t.category_id
+      WHERE TO_CHAR(t.date, 'YYYY') > '2024'
       GROUP BY
         TO_CHAR(t.date, 'YYYY-MM')
       ORDER BY
@@ -164,6 +167,7 @@ export const getExpenseTable = async (_req: Request, res: Response, _next: NextF
       INNER JOIN expense_categories ec ON ec.id = t.category_id 
       INNER JOIN expense_types et on et.id = t.type_id 
       WHERE ec.category_name != 'Income'
+      AND TO_CHAR(t.date, 'YYYY') > '2024'
       ORDER BY TO_CHAR(t.date, 'YYYY-MM-DD') desc
       `
       );
