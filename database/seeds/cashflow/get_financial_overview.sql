@@ -24,6 +24,7 @@ BEGIN
             END AS type
         FROM transactions t
         JOIN expense_categories ec ON t.category_id = ec.id
+        AND TO_CHAR(t.date, 'YYYY') > '2024' --TO REMOVE
         GROUP BY ec.category_name, TO_CHAR(t.date, 'YYYY')
     ),
     income_total AS (
