@@ -1,6 +1,8 @@
 import { Box, useMediaQuery } from "@mui/material";
 import Row1 from "./Row1";
 import Row2 from "./Row2";
+import ExpenseFormModal from "../../components/ExpenseFormModal";
+import { useState } from "react";
 
 const gridTemplateLargeScreens = `
     "a b c"
@@ -36,6 +38,12 @@ const gridTemplateSmallScreens = `
 
 const CashFlow = () => {
     const isAboveMediumScreens = useMediaQuery("(min-width: 1200px)");
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const handleExpenseAdded = () => {
+        // Trigger a refresh of the data by updating the key
+        setRefreshKey(prev => prev + 1);
+    };
 
     return (
         <Box
@@ -57,8 +65,9 @@ const CashFlow = () => {
                       }
             }
         >
-            <Row1 />
-            <Row2 />
+            <Row1 key={`row1-${refreshKey}`} />
+            <Row2 key={`row2-${refreshKey}`} />
+            <ExpenseFormModal onExpenseAdded={handleExpenseAdded} />
         </Box>
     );
 };
