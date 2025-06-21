@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CashFlow from "./pages/cashflow";
 import Navbar from "./pages/navbar";
 import Sidebar from "./pages/sidebar";
-import Transaction from "./pages/transactions";
 
 function App() {
     const theme = useMemo(() => createTheme(themeSettings), []);
@@ -26,7 +25,7 @@ function App() {
                         <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
                         <Box width="100%" height="100%" padding="1rem 2rem 4rem 2rem">
                             <Routes>
-                            <Route path="/" element={<Transaction />} /> 
+                                <Route path="/" element={<CashFlow />} />
                                 <Route path="/cashflow" element={<CashFlow />} />
                                 {/* Add other routes as needed */}
                              

@@ -50,7 +50,7 @@ const transformDataForChart = (financialDetails: FinancialDetails[] ): Transform
 
     });
 
-    return Object.values(transformedData);
+    return Object.values(transformedData).sort((a, b) => a.month.localeCompare(b.month));
 };
 
 // Function to transform the data
@@ -64,7 +64,7 @@ const transformData = (data: RawDataItem[]): ChartData[] => {
       dataMap[item.time][item.type_name] = parseFloat(item.total);
     });
   
-    return Object.values(dataMap);
+    return Object.values(dataMap).sort((a, b) => a.time.localeCompare(b.time));
   };
 
 
@@ -81,6 +81,7 @@ const Row2: React.FC = () => {
     const [listData, setListData] = useState<TransformedList[]>([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const [isolatedCategory, setIsolatedCategory] = useState<string | null>(null);
 
 
     const columns = [
@@ -92,6 +93,11 @@ const Row2: React.FC = () => {
       
         
     ];
+
+    const handleLegendClick = (o: any) => {
+        const { dataKey } = o;
+        setIsolatedCategory(prev => (prev === dataKey ? null : dataKey));
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -126,11 +132,20 @@ const Row2: React.FC = () => {
         };
         fetchData();
     }, []);
+
+    const categoryKeys = useMemo(() => {
+        if (chartData.length === 0) return [];
+        return Object.keys(chartData[0]).filter(key => key !== 'time');
+    }, [chartData]);
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading data.</div>;
     if (!chartData.length) return <div>No data available.</div>;
     if (!stuckData.length) return <div>No data available.</div>;
     if (!listData.length) return <div>No data available.</div>;
+
+    const latestStuckDataMonth = stuckData.length > 0 ? stuckData[stuckData.length - 1].month : '';
+    const latestChartDataTime = chartData.length > 0 ? chartData[chartData.length - 1].time : '';
 
     return (
         <>
@@ -141,7 +156,7 @@ const Row2: React.FC = () => {
                     padding: '1rem',
                     height: '400px', // Set a fixed height
                     width: '100%', }}>
-            <BoxHeader title="Expense Types" subtitle="Monthly values of expense types" sideText={`Updated: ${'2024' || ''}`} />
+            <BoxHeader title="Expense Types" subtitle="Monthly values of expense types" sideText={`Updated: ${latestStuckDataMonth}`} />
             <BarChart
                 width={500}
                 height={250}
@@ -179,24 +194,28 @@ const Row2: React.FC = () => {
             height: '400px', // Set a fixed height
             width: '100%',
         }}>
-            <BoxHeader title="Expense Categories" subtitle="Monthly values of expense categories" sideText={`Updated: ${'2024' || ''}`} />
+            <BoxHeader title="Expense Categories" subtitle="Monthly values of expense categories" sideText={`Updated: ${latestChartDataTime}`} />
             <ResponsiveContainer width="100%" height={300}>
             <LineChart
           className="timeSeriesChart" // Apply the class here
           data={chartData}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          onClick={(e) => e?.activePayload?.[0] && handleLegendClick(e.activePayload[0])}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="time" />
           <YAxis />
           <Tooltip />
-          <Legend />
-          {Object.keys(chartData[0] || {}).filter(key => key !== 'time').map((key, index) => (
+          <Legend onClick={handleLegendClick} wrapperStyle={{ cursor: 'pointer' }} />
+          {categoryKeys.map((key, index) => (
             <Line
               key={key}
               type="monotone"
               dataKey={key}
               stroke={generateColor(index)}
+              hide={isolatedCategory !== null && isolatedCategory !== key}
+              strokeWidth={isolatedCategory === key ? 2.5 : 1}
+              connectNulls
             />
           ))}
         </LineChart>
