@@ -23,12 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       }}
     >
       <List sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
-      <Box sx={{ "&:hover": { color: theme.palette.primary[100] }, color: selectedColor('/addExpenses') }}>
-          <ListItem button component={Link} to="/" onClick={onClose}>
-            <ListItemText primary="Add Expenses" />
-          </ListItem>
-        </Box>
-        <Box sx={{ "&:hover": { color: theme.palette.primary[100] }, color: selectedColor('/') }}>
+        <Box sx={{ "&:hover": { color: theme.palette.primary[100] }, color: selectedColor('/cashflow') }}>
           <ListItem button component={Link} to="/cashflow" onClick={onClose}>
             <ListItemText primary="Cashflow" />
           </ListItem>
