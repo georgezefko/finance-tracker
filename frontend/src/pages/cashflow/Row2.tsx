@@ -1,9 +1,10 @@
 import DashboardBox from '../../components/DashboardBox';
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useContext } from 'react';
 import { useTheme, Box } from '@mui/material';
 import BoxHeader from '../../components/BoxHeader';
 import { DataGrid } from "@mui/x-data-grid";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer, BarChart, Bar, Label } from 'recharts';
+import { AuthContext } from '../../context/AuthContext';
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
 
@@ -82,6 +83,7 @@ const Row2: React.FC = () => {
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
     const [isolatedCategory, setIsolatedCategory] = useState<string | null>(null);
+    const authContext = useContext(AuthContext);
 
 
     const columns = [
@@ -100,21 +102,28 @@ const Row2: React.FC = () => {
     };
 
     useEffect(() => {
+        if (!authContext?.token) return;
+
         const fetchData = async () => {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authContext.token}`
+            };
+
             try {
-                const response = await fetch(`${baseUrl}/feed/timeseries`);
+                const response = await fetch(`${baseUrl}/feed/timeseries`, { headers });
                 const data: RawDataItem[] = await response.json();
                 const transformedData = transformData(data);
                 setChartData(transformedData);
                 
 
-                const financialResponse = await fetch(`${baseUrl}/feed/financial-details`);
+                const financialResponse = await fetch(`${baseUrl}/feed/financial-details`, { headers });
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
                 const transformedChartData = transformDataForChart(financialDetails);
                 setStuckData(transformedChartData);
 
 
-                const tableResponse = await fetch(`${baseUrl}/feed/list-expenses`);
+                const tableResponse = await fetch(`${baseUrl}/feed/list-expenses`, { headers });
                 const listExpenses: TransformedList[] = await tableResponse.json();
                 const formattedData = listExpenses.map((item, index) => ({
                 ...item,
@@ -131,7 +140,7 @@ const Row2: React.FC = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [authContext?.token]);
 
     const categoryKeys = useMemo(() => {
         if (chartData.length === 0) return [];
