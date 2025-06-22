@@ -14,7 +14,11 @@ export default (req: AuthenticatedRequest, res: Response, next: NextFunction) =>
     const token = authHeader.split(' ')[1];
     let decodedToken;
     try {
-        decodedToken = jwt.verify(token, process.env.JWT_SECRET || 'your-default-secret');
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new Error('JWT_SECRET is not set in environment variables.');
+        }
+        decodedToken = jwt.verify(token, secret);
     } catch (err) {
         res.status(500).json({ message: 'Token verification failed.' });
         return;
@@ -23,7 +27,7 @@ export default (req: AuthenticatedRequest, res: Response, next: NextFunction) =>
         res.status(401).json({ message: 'Not authenticated.' });
         return;
     }
-    req.userId = decodedToken.userId;
+    req.userId = (decodedToken as { userId: string }).userId;
     next();
     return;
 }; 
