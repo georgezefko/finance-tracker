@@ -1,8 +1,8 @@
-DROP FUNCTION IF EXISTS get_financial_metrics();
+DROP FUNCTION IF EXISTS get_financial_metrics(INT);
 
-CREATE OR REPLACE FUNCTION get_financial_metrics()
+CREATE OR REPLACE FUNCTION get_financial_metrics(p_user_id INT)
 RETURNS TABLE(
-    report_yearly TEXT,
+    report_year TEXT,
     total_income_value DECIMAL,
     expense_category VARCHAR,
     total_expense_value DECIMAL,
@@ -24,6 +24,7 @@ BEGIN
             END AS type
         FROM transactions t
         JOIN expense_categories ec ON t.category_id = ec.id
+        WHERE t.user_id = p_user_id
         AND TO_CHAR(t.date, 'YYYY') > '2024' --TO REMOVE
         GROUP BY ec.category_name, TO_CHAR(t.date, 'YYYY')
     ),

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Box } from '@mui/material';
 import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
@@ -6,6 +6,7 @@ import FinancialMetricBox from '../../components/FinancialMetricsBox';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,Label,
 } from 'recharts';
+import { AuthContext } from '../../context/AuthContext';
 
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
@@ -57,26 +58,39 @@ const Row1: React.FC = () => {
     const [chartExpense, setChartExpense] = useState<TransformedDataItem[]>([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const authContext = useContext(AuthContext);
    
 
 
     useEffect(() => {
+        if (!authContext?.token) return;
         
         const fetchData = async () => {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authContext.token}`
+            };
+
             try {
-                const response = await fetch(`${baseUrl}/feed/financial-overview`);
+                const response = await fetch(`${baseUrl}/feed/financial-overview`, { headers });
                 const data: FinancialData[] = await response.json();
                 setFinancialData(data);
 
-                const financialResponse = await fetch(`${baseUrl}/feed/financial-details`);
+                const financialResponse = await fetch(`${baseUrl}/feed/financial-details`, { headers });
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
-                const transformedChartData = transformDataForChart(financialDetails);
-                setChartData(transformedChartData);
+                
+                if (Array.isArray(financialDetails)) {
+                    const transformedChartData = transformDataForChart(financialDetails);
+                    setChartData(transformedChartData);
+                }
 
-                const financialExpense = await fetch(`${baseUrl}/feed/income-expenses`);
+                const financialExpense = await fetch(`${baseUrl}/feed/income-expenses`, { headers });
                 const financialDetailsExpense: FinancialDetails[] = await financialExpense.json();
-                const transformedChartDataExpense = transformDataForChart(financialDetailsExpense);
-                setChartExpense(transformedChartDataExpense);
+                
+                if (Array.isArray(financialDetailsExpense)) {
+                    const transformedChartDataExpense = transformDataForChart(financialDetailsExpense);
+                    setChartExpense(transformedChartDataExpense);
+                }
 
                 setLoading(false);
             } catch (error) {
@@ -86,7 +100,7 @@ const Row1: React.FC = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [authContext?.token]);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading data.</div>;
