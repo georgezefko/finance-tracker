@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
   Box, 
   TextField, 
@@ -18,6 +18,7 @@ import { useTheme } from '@mui/material/styles';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
+import { AuthContext } from '../context/AuthContext';
 
 interface Category {
   type_name: string;
@@ -38,6 +39,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) =
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     fetch(`${baseUrl}/feed/expense-categories`)
@@ -87,6 +89,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) =
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authContext?.token}`
         },
         body: JSON.stringify(transactionData),
       });
