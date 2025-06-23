@@ -7,6 +7,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,Label,
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/apiFetch';
 
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
@@ -72,11 +73,11 @@ const Row1: React.FC = () => {
             };
 
             try {
-                const response = await fetch(`${baseUrl}/feed/financial-overview`, { headers });
+                const response = await apiFetch(`${baseUrl}/feed/financial-overview`, { headers }, authContext);
                 const data: FinancialData[] = await response.json();
                 setFinancialData(data);
 
-                const financialResponse = await fetch(`${baseUrl}/feed/financial-details`, { headers });
+                const financialResponse = await apiFetch(`${baseUrl}/feed/financial-details`, { headers }, authContext);
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
                 
                 if (Array.isArray(financialDetails)) {
@@ -84,7 +85,7 @@ const Row1: React.FC = () => {
                     setChartData(transformedChartData);
                 }
 
-                const financialExpense = await fetch(`${baseUrl}/feed/income-expenses`, { headers });
+                const financialExpense = await apiFetch(`${baseUrl}/feed/income-expenses`, { headers }, authContext);
                 const financialDetailsExpense: FinancialDetails[] = await financialExpense.json();
                 
                 if (Array.isArray(financialDetailsExpense)) {

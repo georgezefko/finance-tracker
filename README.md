@@ -98,3 +98,105 @@ The template, idea and resources for this dashboard were inspired by the followi
 Github: https://github.com/ed-roh/finance-app
 
 Youtube: https://www.youtube.com/watch?v=uoJ0Tv-BFcQ
+
+
+# System (WIP)
+
+```mermaid
+
+graph TD
+    subgraph "User's Browser"
+        A[React Frontend]
+    end
+
+    subgraph "Docker Environment"
+        B[Frontend Container <br/> Nginx]
+        C[Backend Container <br/> Node.js/Express]
+        D[Database Container <br/> PostgreSQL]
+        E[Migration Container]
+    end
+
+    subgraph "Backend Logic"
+        F[Auth Routes]
+        G["Feed Routes (Protected)"]
+        H[Auth Controller]
+        I[Feed Controller]
+        J[Auth Service]
+        K[Feed Service]
+        L[is-auth Middleware]
+    end
+    
+    subgraph "Database Schema"
+        M[users Table]
+        N[transactions Table]
+        O[SQL Functions]
+    end
+
+    A -- "HTTP Request" --> B
+    B -- "API Calls" --> C
+
+    C --> F & G
+
+    F --> H
+    G -- "Verifies JWT via" --> L
+    L --> I
+    
+    H --> J
+    I --> K
+    
+    J --> M
+    K --> N & O
+
+    E -- "Applies Schema to" --> D
+    D --> M & N & O
+
+    linkStyle 0 stroke:#00a8ff,stroke-width:2px
+    linkStyle 1 stroke:#00a8ff,stroke-width:2px
+    linkStyle 2 stroke:#4caf50,stroke-width:2px
+    linkStyle 3 stroke:#ff9800,stroke-width:2px
+    linkStyle 4 stroke:#f44336,stroke-width:2px;
+    linkStyle 5 stroke:#ff9800,stroke-width:2px;
+    linkStyle 6 stroke:#9c27b0,stroke-width:2px
+    linkStyle 7 stroke:#9c27b0,stroke-width:2px
+    linkStyle 8 stroke:#795548,stroke-width:2px
+    linkStyle 9 stroke:#795548,stroke-width:2px
+    linkStyle 10 stroke:#3f51b5,stroke-width:2px
+    linkStyle 11 stroke:#3f51b5,stroke-width:2px
+
+    style A fill:#e3f2fd,stroke:#333,stroke-width:2px
+    style B fill:#e8f5e9,stroke:#333,stroke-width:2px
+    style C fill:#fff3e0,stroke:#333,stroke-width:2px
+    style D fill:#f3e5f5,stroke:#333,stroke-width:2px
+    style E fill:#efebe9,stroke:#333,stroke-width:2px
+    
+    style F fill:#ffebee,stroke:#333,stroke-width:2px
+    style G fill:#ffebee,stroke:#333,stroke-width:2px
+    style H fill:#fffde7,stroke:#333,stroke-width:2px
+    style I fill:#fffde7,stroke:#333,stroke-width:2px
+    style J fill:#e0f7fa,stroke:#333,stroke-width:2px
+    style K fill:#e0f7fa,stroke:#333,stroke-width:2px
+    style L fill:#fce4ec,stroke:#333,stroke-width:2px
+    
+    style M fill:#f1f8e9,stroke:#333,stroke-width:2px
+    style N fill:#f1f8e9,stroke:#333,stroke-width:2px
+    style O fill:#f1f8e9,stroke:#333,stroke-width:2px
+    
+```
+
+### Breakdown of the Diagram:
+- User's Browser: This is where the React frontend lives and runs. It makes HTTP requests to the server.
+- Docker Environment:
+This is the core of our infrastructure, managed by docker-compose.
+- Frontend Container: Serves static React files using a lightweight Nginx web server.
+- Backend Container: Runs Node.js/Express application, which contains all the API logic.
+- Database Container: Runs the PostgreSQL database where the data is stored.
+- Migration Container: A short-lived container that runs to set up or update the database schema and then exits.
+
+### Backend Logic (Inside the Node.js Container):
+- Routes (/auth, /feed): The entry points for all incoming API requests.
+- is-auth Middleware: The "bouncer" that protects the /feed routes by checking the JWT.
+- Controllers: Handle the request/response cycle, calling services to do the actual work.
+- Services: Contain the core business logic and database queries, keeping the code organized.
+- Database Schema (Inside the PostgreSQL Container):
+- Tables: The users and transactions tables that store your core data.
+- SQL Functions: Custom functions to perform complex calculations directly in the database for better performance.
