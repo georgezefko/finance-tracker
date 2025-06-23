@@ -3,7 +3,7 @@ import React, { useMemo, useEffect, useState, useContext } from 'react';
 import { useTheme, Box } from '@mui/material';
 import BoxHeader from '../../components/BoxHeader';
 import { DataGrid } from "@mui/x-data-grid";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer, BarChart, Bar, Label } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Label } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 
@@ -163,36 +163,36 @@ const Row2: React.FC = () => {
                     display: 'grid',
                     gap: '1rem',
                     padding: '1rem',
-                    height: '400px', // Set a fixed height
+                    height: { xs: 250, md: 400 }, // Responsive height
                     width: '100%', }}>
             <BoxHeader title="Expense Types" subtitle="Monthly values of expense types" sideText={`Updated: ${latestStuckDataMonth}`} />
-            <BarChart
-                width={500}
-                height={250}
-                data={stuckData}
-                margin={{
-                    top: 20, right: 30, left: 20, bottom: 5,
-                }}
-                barGap={-10} // Adjust this to control the gap between bars of the same group
-                barCategoryGap={0} // Adjust this to control the gap between bars of different groups
-                >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month"/>
-                <YAxis>
-                    <Label value="DKK" angle={-90} position="insideLeft"  />
-                </YAxis>
-                <Tooltip />
-                <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
-                {Object.keys(stuckData[0] || {}).filter(key => key !== 'month').map((key, idx) => (
-                    <Bar 
-                        key={idx} 
-                        dataKey={key} 
-                        stackId="a" 
-                        fill={barColors[idx % barColors.length]} 
-                        barSize={30} // Adjust bar size as needed
-                    />
-                ))}
-            </BarChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                  data={stuckData}
+                  margin={{
+                      top: 20, right: 30, left: 20, bottom: 5,
+                  }}
+                  barGap={-10}
+                  barCategoryGap={0}
+                  >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month"/>
+                  <YAxis>
+                      <Label value="DKK" angle={-90} position="insideLeft"  />
+                  </YAxis>
+                  <Tooltip />
+                  <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
+                  {Object.keys(stuckData[0] || {}).filter(key => key !== 'month').map((key, idx) => (
+                      <Bar 
+                          key={idx} 
+                          dataKey={key} 
+                          stackId="a" 
+                          fill={barColors[idx % barColors.length]} 
+                          barSize={30}
+                      />
+                  ))}
+              </BarChart>
+            </ResponsiveContainer>
             </DashboardBox>
 
         <DashboardBox sx={{
@@ -200,13 +200,13 @@ const Row2: React.FC = () => {
             display: 'grid',
             gap: '1rem',
             padding: '1rem',
-            height: '400px', // Set a fixed height
+            height: { xs: 250, md: 400 }, // Responsive height
             width: '100%',
         }}>
             <BoxHeader title="Expense Categories" subtitle="Monthly values of expense categories" sideText={`Updated: ${latestChartDataTime}`} />
             <ResponsiveContainer width="100%" height={300}>
             <LineChart
-          className="timeSeriesChart" // Apply the class here
+          className="timeSeriesChart"
           data={chartData}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           onClick={(e) => e?.activePayload?.[0] && handleLegendClick(e.activePayload[0])}

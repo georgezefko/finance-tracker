@@ -4,7 +4,7 @@ import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
 import FinancialMetricBox from '../../components/FinancialMetricsBox';
 import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,Label,
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
@@ -119,7 +119,7 @@ const Row1: React.FC = () => {
                 display: 'grid',
                 gap: '1rem',
                 padding: '1rem',
-                height: '400px', // Set a fixed height
+                height: { xs: 300, md: 400 }, // Responsive height
                 width: '100%',
             }}>
                 <BoxHeader title="Financial Overview" subtitle="Avg annual values of main financial metrics" sideText={`Updated: ${latestMonth || ''}`} />
@@ -143,35 +143,35 @@ const Row1: React.FC = () => {
                     display: 'grid',
                     gap: '0rem',
                     padding: '1rem', 
-                    height: '400px', // Set a fixed height
+                    height: { xs: 250, md: 400 }, // Responsive height
                     width: '100%', }}>
                 <BoxHeader title="Expense/Income" subtitle="Monthly cashflow" sideText={`Updated: ${latestMonth || ''}`} />
-                <BarChart
-                    width={500}
-                    height={250}
-                    data={chartExpense}
-                    margin={{
-                        top: 20, right: 30, left: 20, bottom: 5,
-                    }}
-                    barGap={10} // Adjust this to control the gap between bars of the same group
-                    barCategoryGap={20} // Adjust this to control the gap between bars of different groups
-                    >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month"/>
-                    <YAxis>
-                        <Label value="DKK" angle={-90} position="insideLeft"  />
-                    </YAxis>
-                    <Tooltip />
-                    <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
-                    {Object.keys(chartExpense[0] || {}).filter(key => key !== 'month' && key !== 'Savings').map((key, idx) => (
-                        <Bar 
-                            key={idx} 
-                            dataKey={key} 
-                            fill={expenseColors[idx % expenseColors.length]} 
-                            barSize={20} // Adjust bar size as needed
-                        />
-                    ))}
-                </BarChart>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                      data={chartExpense}
+                      margin={{
+                          top: 20, right: 30, left: 20, bottom: 5,
+                      }}
+                      barGap={10}
+                      barCategoryGap={20}
+                  >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month"/>
+                      <YAxis>
+                          <Label value="DKK" angle={-90} position="insideLeft"  />
+                      </YAxis>
+                      <Tooltip />
+                      <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
+                      {Object.keys(chartExpense[0] || {}).filter(key => key !== 'month' && key !== 'Savings').map((key, idx) => (
+                          <Bar 
+                              key={idx} 
+                              dataKey={key} 
+                              fill={expenseColors[idx % expenseColors.length]} 
+                              barSize={20}
+                          />
+                      ))}
+                  </BarChart>
+                </ResponsiveContainer>
             </DashboardBox>
 
             <DashboardBox sx={{ 
@@ -179,34 +179,34 @@ const Row1: React.FC = () => {
                     display: 'grid',
                     gap: '1rem',
                     padding: '1rem', 
-                    height: '400px', // Set a fixed height
+                    height: { xs: 250, md: 400 }, // Responsive height
                     width: '100%', }}>
                 <BoxHeader title="Savings Rate" subtitle="Monthly savings rate" sideText={`Updated: ${latestMonth || ''}`} />
-                <BarChart
-                    width={500}
-                    height={250}
-                    data={chartExpense}
-                    margin={{
-                        top: 20, right: 30, left: 20, bottom: 5,
-                    }}
-                    barGap={10} // Adjust this to control the gap between bars of the same group
-                    barCategoryGap={20} // Adjust this to control the gap between bars of different groups
-                    >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month"/>
-                    <YAxis>
-                        <Label value="Percentage (%)" angle={-90} position="insideLeft"  />
-                    </YAxis>
-                    <Tooltip />
-                    <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
-                    {chartExpense.some(data => data.Savings) && (
-                        <Bar 
-                            dataKey="Savings" 
-                            fill={expenseColors[0]} // Adjust as needed for Savings color
-                            barSize={20} // Adjust bar size as needed
-                        />
-                    )}
-                </BarChart>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                      data={chartExpense}
+                      margin={{
+                          top: 20, right: 30, left: 20, bottom: 5,
+                      }}
+                      barGap={10}
+                      barCategoryGap={20}
+                  >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month"/>
+                      <YAxis>
+                          <Label value="Percentage (%)" angle={-90} position="insideLeft"  />
+                      </YAxis>
+                      <Tooltip />
+                      <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
+                      {chartExpense.some(data => data.Savings) && (
+                          <Bar 
+                              dataKey="Savings" 
+                              fill={expenseColors[0]} 
+                              barSize={20}
+                          />
+                      )}
+                  </BarChart>
+                </ResponsiveContainer>
             </DashboardBox>
         </>
     );
