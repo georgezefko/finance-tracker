@@ -5,6 +5,7 @@ import BoxHeader from '../../components/BoxHeader';
 import { DataGrid } from "@mui/x-data-grid";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer, BarChart, Bar, Label } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
+import { apiFetch } from '../../utils/apiFetch';
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
 
@@ -111,25 +112,24 @@ const Row2: React.FC = () => {
             };
 
             try {
-                const response = await fetch(`${baseUrl}/feed/timeseries`, { headers });
+                const response = await apiFetch(`${baseUrl}/feed/timeseries`, { headers }, authContext);
                 const data: RawDataItem[] = await response.json();
                 const transformedData = transformData(data);
                 setChartData(transformedData);
                 
 
-                const financialResponse = await fetch(`${baseUrl}/feed/financial-details`, { headers });
+                const financialResponse = await apiFetch(`${baseUrl}/feed/financial-details`, { headers }, authContext);
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
                 const transformedChartData = transformDataForChart(financialDetails);
                 setStuckData(transformedChartData);
 
 
-                const tableResponse = await fetch(`${baseUrl}/feed/list-expenses`, { headers });
+                const tableResponse = await apiFetch(`${baseUrl}/feed/list-expenses`, { headers }, authContext);
                 const listExpenses: TransformedList[] = await tableResponse.json();
                 const formattedData = listExpenses.map((item, index) => ({
                 ...item,
                 id: index, // Adding an ID for each item
                 }));
-                console.log('forl',formattedData)
                 setListData(formattedData);
 
                 setLoading(false);
