@@ -19,6 +19,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { AuthContext } from '../context/AuthContext';
+import { apiFetch } from '../utils/apiFetch';
 
 interface Category {
   type_name: string;
@@ -85,14 +86,14 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) =
     };
 
     try {
-      const response = await fetch('http://localhost:8000/feed/transaction', {
+      const response = await apiFetch('http://localhost:8000/feed/transaction', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${authContext?.token}`
         },
         body: JSON.stringify(transactionData),
-      });
+      }, authContext);
       
       const data = await response.json();
       console.log(data);
