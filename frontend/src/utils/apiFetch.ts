@@ -7,7 +7,7 @@ export async function apiFetch(
 ) {
   const response = await fetch(url, options);
 
-  if (response.status === 401 || response.status === 403) {
+  if (response.status === 401 || response.status === 403 || response.status === 500) {
     if (authContext && authContext.logout) {
       authContext.logout();
     }
