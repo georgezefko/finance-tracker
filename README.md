@@ -22,6 +22,11 @@ This project is a robust, user-friendly platform for tracking personal finances.
 - Consolidate financial tracking into a single, efficient platform.
 - Learn and apply best practices in full-stack development, security, and DevOps.
 
+A detailed explanation of project's structure and core components are described in the following blogs:
+NOTE: The code has been updated and the content might not contain some new tables and features but the core parts are still there
+- [Blog: Database Setup](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-database-setup-with-postgresql-and-docker-5075e283303e)
+- [Blog: REST API & Integration](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-integrating-rest-api-node-js-7a0f0f27bd4e)
+
 ---
 
 ## Features
@@ -188,9 +193,6 @@ erDiagram
 
 ## Credits & Resources
 - Inspired by [ed-roh/finance-app](https://github.com/ed-roh/finance-app) and [this YouTube tutorial](https://www.youtube.com/watch?v=uoJ0Tv-BFcQ)
-- [Blog: Database Setup](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-database-setup-with-postgresql-and-docker-5075e283303e)
-- [Blog: REST API & Integration](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-integrating-rest-api-node-js-7a0f0f27bd4e)
-
 ---
 
 **Currency is hardcoded as Danish Crowns (DKK) in the frontend.**
