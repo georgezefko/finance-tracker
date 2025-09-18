@@ -26,6 +26,7 @@ A detailed explanation of project's structure and core components are described 
 NOTE: The code has been updated and the content might not contain some new tables and features but the core parts are still there
 - [Blog: Database Setup](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-database-setup-with-postgresql-and-docker-5075e283303e)
 - [Blog: REST API & Integration](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-integrating-rest-api-node-js-7a0f0f27bd4e)
+- [Blog: JWT Implementation](https://medium.com/gitconnected/building-a-personal-finance-management-app-secure-api-authentication-a-practical-guide-e9d936b6982b)
 
 ---
 
