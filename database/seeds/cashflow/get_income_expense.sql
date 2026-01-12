@@ -23,7 +23,7 @@ BEGIN
                 ec.names 
             FROM transactions t 
             JOIN cat ec ON ec.id = t.category_id 
-            WHERE TO_CHAR(t.date, 'YYYY') > '2024'
+            WHERE TO_CHAR(t.date, 'YYYY') > '2025'
             AND t.user_id = p_user_id
             GROUP BY 2, 3
         ), monthly_income_expense AS (
