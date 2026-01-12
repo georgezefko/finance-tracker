@@ -25,7 +25,7 @@ BEGIN
         FROM transactions t
         JOIN expense_categories ec ON t.category_id = ec.id
         WHERE t.user_id = p_user_id
-        AND TO_CHAR(t.date, 'YYYY') > '2024' --TO REMOVE
+        AND TO_CHAR(t.date, 'YYYY') > '2025' --TO REMOVE
         GROUP BY ec.category_name, TO_CHAR(t.date, 'YYYY')
     ),
     income_total AS (
