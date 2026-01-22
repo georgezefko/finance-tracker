@@ -1,4 +1,4 @@
-import { query } from '../db_conn/db';
+import { query } from '../../db_conn/db';
 import bcrypt from 'bcryptjs';
 
 export const createUser = async (email: string, password: string) => {

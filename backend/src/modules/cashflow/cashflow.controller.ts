@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
-import * as feedService from '../services/feed.service';
+import * as feedService from './cashflow.service';
 
 interface AuthenticatedRequest extends Request {
     userId?: string;
