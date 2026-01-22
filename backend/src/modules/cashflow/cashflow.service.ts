@@ -1,4 +1,4 @@
-import { query } from '../db_conn/db';
+import { query } from '../../db_conn/db';
 
 export const getExpenseCategories = () => {
     return query('SELECT id, category_id, type_name FROM expense_types');
