@@ -38,6 +38,6 @@ export const createNetworthTransaction = async (req: AuthenticatedRequest, res: 
             errors: err.errors,
           });
         }
-        next(err);
+        return next(err);
       }
 };
