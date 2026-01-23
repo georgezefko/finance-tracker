@@ -9,6 +9,7 @@ import Navbar from "./pages/navbar";
 import Sidebar from "./pages/sidebar";
 import LoginPage from "./pages/login";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
+import { YearProvider } from "./context/YearContext"; 
 
 const AppRoutes: React.FC = () => {
     const authContext = useContext(AuthContext);
@@ -61,7 +62,9 @@ function App() {
 const AppWrapper: React.FC = () => (
     <BrowserRouter>
         <AuthProvider>
+          <YearProvider>
             <App />
+            </YearProvider>
         </AuthProvider>
     </BrowserRouter>
 );

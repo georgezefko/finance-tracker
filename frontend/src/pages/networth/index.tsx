@@ -1,6 +1,7 @@
 import { Box, useMediaQuery } from "@mui/material";
 import Row1 from "./Row1";
 import Row2 from "./Row2";
+import YearSelector from "../../components/YearSelector";
 import ExpenseFormModal from "../../components/ExpenseFormModal";
 import { useState } from "react";
 
@@ -24,8 +25,20 @@ const NetWorth = () => {
         // Trigger a refresh of the data by updating the key
         setRefreshKey(prev => prev + 1);
     };
-
+    const handleNetworthChanged = () => {
+        setRefreshKey((prev) => prev + 1);
+    }
     return (
+    <Box width="100%" height="100%" display="flex" flexDirection="column" gap="1rem">
+      {/* Top bar with Year selector */}
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        alignItems="center"
+        mb={1}
+      >
+        <YearSelector />
+      </Box>
         <Box
             width="100%"
             height="100%"
@@ -54,6 +67,7 @@ const NetWorth = () => {
             <Row2 key={`row2-${refreshKey}`} />
             <ExpenseFormModal mode="networth" onExpenseAdded={handleExpenseAdded} />
         </Box>
+    </Box>
     );
 };
 

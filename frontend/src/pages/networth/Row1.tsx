@@ -5,6 +5,7 @@ import BoxHeader from '../../components/BoxHeader';
 import FinancialMetricBox from '../../components/FinancialMetricsBox';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
+import { useYear } from '../../context/YearContext'; 
 import {
   BarChart,
   Bar,
@@ -18,7 +19,7 @@ import {
 } from 'recharts';
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
-const selectedYear = 2025;
+
 
 interface NetworthSummary {
   currentNetworth: number;
@@ -63,6 +64,7 @@ const transformAllocationForAbsolute = (
 
 const Row1: React.FC = () => {
   const authContext = useContext(AuthContext);
+  const { year } = useYear(); 
   const [summary, setSummary] = useState<NetworthSummary | null>(null);
   const [allocationAbsolute, setAllocationAbsolute] = useState<AllocationChartItem[]>([]);
   const [isLoading, setLoading] = useState(true);
@@ -93,7 +95,7 @@ const Row1: React.FC = () => {
 
         // 2) Allocation for selected year
         const allocationResp = await apiFetch(
-          `${baseUrl}/api/networth/allocation?year=${selectedYear}`,
+          `${baseUrl}/api/networth/allocation?year=${year}`,
           { headers },
           authContext
         );
@@ -121,7 +123,7 @@ const Row1: React.FC = () => {
     };
 
     fetchSummaryAndAllocation();
-  }, [authContext?.token]);
+  }, [authContext?.token, year]);
 
   if (isLoading) return <div>Loading net worth...</div>;
   if (error) return <div>Error loading net worth.</div>;
@@ -226,7 +228,7 @@ const Row1: React.FC = () => {
         <BoxHeader
           title="Net Worth Over Time"
           subtitle="Total net worth per month (DKK)"
-          sideText={String(selectedYear)}
+          sideText={String(year)}
         />
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
