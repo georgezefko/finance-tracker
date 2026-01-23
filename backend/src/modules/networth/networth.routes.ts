@@ -16,4 +16,7 @@ router.get('/summary', isAuth, networthController.getNetworthSummary);
 // GET /api/networth/summary
 router.get('/type-institutions', isAuth, networthController.getNetworthCategories);
 
+// GET /api/networth/allocation
+router.get('/allocation', isAuth, networthController.getNetworthAllocation);
+
 export default router;
