@@ -21,51 +21,119 @@ import CloseIcon from '@mui/icons-material/Close';
 import { AuthContext } from '../context/AuthContext';
 import { apiFetch } from '../utils/apiFetch';
 
-interface Category {
+interface CashflowCategory {
   type_name: string;
   category_id: number;
   id: number;
 }
 
+interface NetworthTypeInstitutionOption {
+  type_id: number;
+  category_id: number;
+  type_name: string;
+  institution_id: number;
+  institution_name: string;
+}
+
 interface ExpenseFormModalProps {
+  mode?: 'cashflow' | 'networth';
   onExpenseAdded?: () => void; // Callback to refresh data after adding expense
 }
 
-const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) => {
+const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
+  mode = 'cashflow',
+  onExpenseAdded,
+}) => {
   const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<
+    CashflowCategory[] | NetworthTypeInstitutionOption[]
+  >([]);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null
+  );
+  const [selectedInstitutionId, setSelectedInstitutionId] = useState<
+    number | null
+  >(null); // used only for networth
   const [isSubmitting, setIsSubmitting] = useState(false);
   const authContext = useContext(AuthContext);
 
+  // Decide endpoints based on mode
+  const categoriesEndpoint =
+    mode === 'cashflow'
+      ? `${baseUrl}/api/cashflow/expense-categories`
+      : `${baseUrl}/api/networth/type-institutions`;
+
+  const transactionEndpoint =
+    mode === 'cashflow'
+      ? `${baseUrl}/api/cashflow/transaction`
+      : `${baseUrl}/api/networth/transactions`;
+
+  const title = mode === 'cashflow' ? 'Add Expense' : 'Add Net Worth Value';
+  const submitLabel = mode === 'cashflow' ? 'Add Expense' : 'Add Net Worth';
+
+  // Fetch categories (for cashflow) or type+institution options (for networth)
   useEffect(() => {
-    fetch(`${baseUrl}/feed/expense-categories`)
-      .then(response => response.json())
-      .then(data => {
-        console.log('this is my data', data);
+    if (!authContext?.token) return;
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${authContext.token}`,
+    };
+
+    const fetchCategories = async () => {
+      try {
+        const response = await apiFetch(
+          categoriesEndpoint,
+          { headers },
+          authContext
+        );
+        const data = await response.json();
         setCategories(data);
-      })
-      .catch(error => console.error('Error fetching categories:', error));
-  }, [baseUrl]);
+      } catch (error) {
+        console.error('Error fetching categories/options:', error);
+      }
+    };
+
+    fetchCategories();
+  }, [categoriesEndpoint, authContext]);
 
   const handleOpen = () => setOpen(true);
+
   const handleClose = () => {
     setOpen(false);
-    // Reset form
     setAmount('');
     setSelectedTypeId(null);
     setSelectedCategoryId(null);
+    setSelectedInstitutionId(null);
   };
 
-  const handleTypeChange = (event: SelectChangeEvent<number>) => {
-    const id = parseInt(event.target.value as string);
+  // When user picks an option:
+  // - cashflow: id -> category_id
+  // - networth: type_id -> category_id & institution_id
+  const handleTypeChange = (event: SelectChangeEvent<string>) => {
+    const id = parseInt(event.target.value as string, 10);
     setSelectedTypeId(id);
-    const category = categories.find(category => category.id === id);
-    setSelectedCategoryId(category ? category.category_id : null);
+
+    if (mode === 'cashflow') {
+      const cashflowCategories = categories as CashflowCategory[];
+      const category = cashflowCategories.find((c) => c.id === id);
+      setSelectedCategoryId(category ? category.category_id : null);
+      setSelectedInstitutionId(null);
+    } else {
+      const options = categories as NetworthTypeInstitutionOption[];
+      const opt = options.find((o) => o.type_id === id);
+      if (opt) {
+        setSelectedCategoryId(opt.category_id);
+        setSelectedInstitutionId(opt.institution_id);
+      } else {
+        setSelectedCategoryId(null);
+        setSelectedInstitutionId(null);
+      }
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -76,33 +144,45 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) =
       return;
     }
 
+    if (mode === 'networth' && selectedInstitutionId === null) {
+      console.error('Institution not selected for networth');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    const transactionData = {
+    const transactionData: any = {
       date: new Date().toISOString().slice(0, 10),
       amount: parseFloat(amount),
       typeId: selectedTypeId,
-      categoryId: selectedCategoryId
+      categoryId: selectedCategoryId,
     };
 
+    if (mode === 'networth') {
+      transactionData.institutionId = selectedInstitutionId;
+    }
+
     try {
-      const response = await apiFetch('http://localhost:8000/feed/transaction', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authContext?.token}`
+      const response = await apiFetch(
+        transactionEndpoint,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authContext?.token}`,
+          },
+          body: JSON.stringify(transactionData),
         },
-        body: JSON.stringify(transactionData),
-      }, authContext);
-      
+        authContext
+      );
+
       const data = await response.json();
-      console.log(data);
-      
-      // Call callback to refresh data
+      console.log('Transaction response:', data);
+
       if (onExpenseAdded) {
         onExpenseAdded();
       }
-      
+
       handleClose();
     } catch (error) {
       console.error('Error submitting transaction:', error);
@@ -116,7 +196,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) =
       {/* Floating Action Button */}
       <Fab
         color="primary"
-        aria-label="add expense"
+        aria-label={mode === 'cashflow' ? 'add expense' : 'add networth'}
         onClick={handleOpen}
         sx={{
           position: 'fixed',
@@ -129,23 +209,19 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) =
       </Fab>
 
       {/* Modal Dialog */}
-      <Dialog 
-        open={open} 
-        onClose={handleClose}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>
           <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h5">Add Expense</Typography>
+            <Typography variant="h5">{title}</Typography>
             <IconButton onClick={handleClose}>
               <CloseIcon />
             </IconButton>
           </Box>
         </DialogTitle>
-        
+
         <DialogContent>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+            {/* Amount */}
             <FormControl fullWidth sx={{ marginBottom: theme.spacing(2) }}>
               <TextField
                 type="number"
@@ -155,11 +231,11 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) =
                 label="Amount"
                 required
                 InputLabelProps={{
-                  shrink: true, 
-                  style: { color: theme.palette.grey[500] }
+                  shrink: true,
+                  style: { color: theme.palette.grey[500] },
                 }}
                 inputProps={{
-                  style: { color: theme.palette.grey[600] }
+                  style: { color: theme.palette.grey[600] },
                 }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
@@ -177,40 +253,67 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) =
               />
             </FormControl>
 
+            {/* Type (or Type + Institution combined for networth) */}
             <FormControl fullWidth sx={{ marginBottom: theme.spacing(2) }}>
-              <InputLabel sx={{ color: theme.palette.grey[500] }}>Type</InputLabel>
+              <InputLabel sx={{ color: theme.palette.grey[500] }}>
+                {mode === 'cashflow' ? 'Type' : 'Type / Institution'}
+              </InputLabel>
               <Select
-                value={selectedTypeId !== null ? selectedTypeId : ''}
+                value={selectedTypeId !== null ? String(selectedTypeId) : ''}
                 onChange={handleTypeChange}
-                label="Type"
+                label={mode === 'cashflow' ? 'Type' : 'Type / Institution'}
                 required
                 sx={{
                   '.MuiSelect-select': { color: theme.palette.grey[600] },
-                  'svg': { color: theme.palette.grey[500] },
+                  svg: { color: theme.palette.grey[500] },
                 }}
               >
-                <MenuItem value=""><em>Select a type</em></MenuItem>
-                {categories.map((category) => (
-                  <MenuItem key={category.id} value={category.id}>
-                    {category.type_name}
-                  </MenuItem>
-                ))}
+                <MenuItem value="">
+                  <em>
+                    {mode === 'cashflow'
+                      ? 'Select a type'
+                      : 'Select type / institution'}
+                  </em>
+                </MenuItem>
+
+                {mode === 'cashflow'
+                  ? (categories as CashflowCategory[]).map((category) => (
+                      <MenuItem key={category.id} value={category.id}>
+                        {category.type_name}
+                      </MenuItem>
+                    ))
+                  : (categories as NetworthTypeInstitutionOption[]).map(
+                      (opt) => (
+                        <MenuItem
+                          key={`${opt.type_id}-${opt.institution_id}`}
+                          value={opt.type_id}
+                        >
+                          {opt.type_name} — {opt.institution_name}
+                        </MenuItem>
+                      )
+                    )}
               </Select>
             </FormControl>
           </Box>
         </DialogContent>
-        
+
         <DialogActions>
           <Button onClick={handleClose} color="inherit">
             Cancel
           </Button>
-          <Button 
-            onClick={handleSubmit} 
-            variant="contained" 
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
             color="primary"
-            disabled={isSubmitting || !amount || selectedTypeId === null}
+            disabled={
+              isSubmitting ||
+              !amount ||
+              selectedTypeId === null ||
+              selectedCategoryId === null ||
+              (mode === 'networth' && selectedInstitutionId === null)
+            }
           >
-            {isSubmitting ? 'Adding...' : 'Add Expense'}
+            {isSubmitting ? 'Adding...' : submitLabel}
           </Button>
         </DialogActions>
       </Dialog>
@@ -218,4 +321,4 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ onExpenseAdded }) =
   );
 };
 
-export default ExpenseFormModal; 
+export default ExpenseFormModal;

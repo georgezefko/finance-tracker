@@ -73,11 +73,11 @@ const Row1: React.FC = () => {
             };
 
             try {
-                const response = await apiFetch(`${baseUrl}/feed/financial-overview`, { headers }, authContext);
+                const response = await apiFetch(`${baseUrl}/api/cashflow/financial-overview`, { headers }, authContext);
                 const data: FinancialData[] = await response.json();
                 setFinancialData(data);
 
-                const financialResponse = await apiFetch(`${baseUrl}/feed/financial-details`, { headers }, authContext);
+                const financialResponse = await apiFetch(`${baseUrl}/api/cashflow/financial-details`, { headers }, authContext);
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
                 
                 if (Array.isArray(financialDetails)) {
@@ -85,7 +85,7 @@ const Row1: React.FC = () => {
                     setChartData(transformedChartData);
                 }
 
-                const financialExpense = await apiFetch(`${baseUrl}/feed/income-expenses`, { headers }, authContext);
+                const financialExpense = await apiFetch(`${baseUrl}/api/cashflow/income-expenses`, { headers }, authContext);
                 const financialDetailsExpense: FinancialDetails[] = await financialExpense.json();
                 
                 if (Array.isArray(financialDetailsExpense)) {

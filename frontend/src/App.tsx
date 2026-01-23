@@ -4,6 +4,7 @@ import { themeSettings } from "./theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import CashFlow from "./pages/cashflow";
+import NetWorth from "./pages/networth";
 import Navbar from "./pages/navbar";
 import Sidebar from "./pages/sidebar";
 import LoginPage from "./pages/login";
@@ -23,6 +24,7 @@ const AppRoutes: React.FC = () => {
                 <>
                     <Route path="/" element={<CashFlow />} />
                     <Route path="/cashflow" element={<CashFlow />} />
+                    <Route path="/networth" element={<NetWorth />} />
                     <Route path="/logout" element={
                         <button onClick={authContext.logout}>Logout</button> // A simple logout button
                     } />
