@@ -30,15 +30,6 @@ const NetWorth = () => {
     }
     return (
     <Box width="100%" height="100%" display="flex" flexDirection="column" gap="1rem">
-      {/* Top bar with Year selector */}
-      <Box
-        display="flex"
-        justifyContent="flex-end"
-        alignItems="center"
-        mb={1}
-      >
-        <YearSelector />
-      </Box>
         <Box
             width="100%"
             height="100%"
