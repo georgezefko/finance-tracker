@@ -4,6 +4,7 @@ import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
+import { useYear } from '../../context/YearContext'; 
 import {
   LineChart,
   Line,
@@ -20,7 +21,7 @@ import {
 } from 'recharts';
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
-const selectedYear = 2025;
+
 
 interface AllocationRecord {
   month: string;    // '2025-01'
@@ -100,6 +101,7 @@ const allocationColors = [
 
 const Row2: React.FC = () => {
   const authContext = useContext(AuthContext);
+  const { year } = useYear();
   const [metrics, setMetrics] = useState<MonthlyMetric[]>([]);
   const [allocationPercent, setAllocationPercent] = useState<AllocationChartItem[]>([]);
   const [isLoading, setLoading] = useState(true);
@@ -116,7 +118,7 @@ const Row2: React.FC = () => {
 
       try {
         const allocationResp = await apiFetch(
-          `${baseUrl}/api/networth/allocation?year=${selectedYear}`,
+          `${baseUrl}/api/networth/allocation?year=${year}`,
           { headers },
           authContext
         );
@@ -197,7 +199,7 @@ const Row2: React.FC = () => {
     };
 
     fetchMetrics();
-  }, [authContext?.token]);
+  }, [authContext?.token, year]);
 
   if (isLoading) return <div>Loading performance...</div>;
   if (error) return <div>Error loading performance data.</div>;
@@ -224,7 +226,7 @@ const Row2: React.FC = () => {
         <BoxHeader
           title="Net Worth Performance"
           subtitle="MoM and YTD percentage change"
-          sideText={String(selectedYear)}
+          sideText={String(year)}
         />
 
         <ResponsiveContainer width="100%" height="100%">
@@ -305,7 +307,7 @@ const Row2: React.FC = () => {
         <BoxHeader
           title="Asset Allocation (%)"
           subtitle="Monthly allocation by asset type"
-          sideText={String(selectedYear)}
+          sideText={String(year)}
         />
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
