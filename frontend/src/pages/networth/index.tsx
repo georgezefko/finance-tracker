@@ -5,38 +5,18 @@ import ExpenseFormModal from "../../components/ExpenseFormModal";
 import { useState } from "react";
 
 const gridTemplateLargeScreens = `
-    "a b c"
-    "d e f"
+  "a b"
+  "c d"
 `;
 
 const gridTemplateSmallScreens = `
-    "a"
-    "a"
-    "a"
-    "a"
-    "b"
-    "b"
-    "b"
-    "b"
-    "c"
-    "c"
-    "c"
-    "c"
-    "d"
-    "d"
-    "d"
-    "d"
-    "e"
-    "e"
-    "e"
-    "e"
-    "f"
-    "f"
-    "f"
-    "f"
+  "a"
+  "b"
+  "c"
+  "d"
 `;
 
-const CashFlow = () => {
+const NetWorth = () => {
     const isAboveMediumScreens = useMediaQuery("(min-width: 1200px)");
     const [refreshKey, setRefreshKey] = useState(0);
 
@@ -53,23 +33,28 @@ const CashFlow = () => {
             gap="1.5rem"
             sx={
                 isAboveMediumScreens
-                    ? {
-                          gridTemplateColumns: "repeat(3, minmax(370px, 1fr))",
-                          gridTemplateRows: " repeat(2, minmax(60px, 1fr))",
-                          gridTemplateAreas: gridTemplateLargeScreens,
-                      }
-                    : {
-                          gridAutoColumns: "1fr",
-                          gridAutoRows: "80px",
-                          gridTemplateAreas: gridTemplateSmallScreens,
-                      }
+                ? {
+                    gridTemplateColumns: "repeat(2, minmax(370px, 1fr))",
+                    gridTemplateRows: "repeat(2, minmax(300px, 1fr))",
+                    gridTemplateAreas: gridTemplateLargeScreens,
+                    }
+                : {
+                    gridAutoColumns: "1fr",
+                    gridAutoRows: "320px",
+                    gridTemplateAreas: `
+                        "a"
+                        "b"
+                        "c"
+                        "d"
+                    `,
+                    }
             }
-        >
+            >
             <Row1 key={`row1-${refreshKey}`} />
             <Row2 key={`row2-${refreshKey}`} />
-            <ExpenseFormModal mode="cashflow" onExpenseAdded={handleExpenseAdded} />
+            <ExpenseFormModal mode="networth" onExpenseAdded={handleExpenseAdded} />
         </Box>
     );
 };
 
-export default CashFlow;
+export default NetWorth;
