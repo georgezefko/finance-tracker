@@ -6,6 +6,11 @@ export interface NetworthPoint {
     networth: number;  // aggregated sum for that date
   }
 
+export interface NetworthAllocationRow {
+    month: string;   // e.g. '2025-01'
+    category: string; // type_name / asset class
+    amount: string;  // from SQL, we'll cast to number in frontend if needed
+  }
 
 export const createNetworthTransaction = (date: string, amount: number, typeId: number, categoryId: number, institutionId: number, userId: string) => {
     return query(
@@ -50,5 +55,24 @@ export const getNetworthSummary = async (userId:string): Promise<NetworthPoint[]
         date: row.date,
         networth: Number(row.networth),
     }));
-
 };
+
+export const getNetworthAllocationForYear = async (userId: string,year: number): Promise<NetworthAllocationRow[]> => {
+        const result = await query(
+          `
+          SELECT
+            to_char(t.date, 'YYYY-MM') AS month,
+            nt.type_name AS category,
+            SUM(t.amount) AS amount
+          FROM networth_transactions t
+          JOIN networth_types nt ON t.type_id = nt.id
+          WHERE t.user_id = $1
+            AND t.date >= make_date($2, 1, 1)
+            AND t.date <  make_date($2 + 1, 1, 1)
+          GROUP BY month, nt.type_name
+          ORDER BY month, nt.type_name;
+          `,
+          [userId, year]
+        );
+        return result.rows;
+      };

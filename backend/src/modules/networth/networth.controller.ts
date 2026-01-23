@@ -129,3 +129,26 @@ export const getNetworthSummary = async (
       return next(err);
     }
   };
+
+export const getNetworthAllocation = async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        return res.status(401).json({ message: 'Not authenticated.' });
+      }
+  
+      const now = new Date();
+      const yearParam = req.query.year as string | undefined;
+      const year = yearParam ? parseInt(yearParam, 10) : now.getFullYear();
+  
+      const rows = await networthService.getNetworthAllocationForYear(userId,year);
+  
+      return res.status(200).json(rows);
+    } catch (err) {
+      return next(err);
+    }
+  };
