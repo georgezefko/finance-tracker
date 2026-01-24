@@ -38,7 +38,7 @@ export const getNetworthCategories = async() => {
   return result.rows;
 };
 
-export const getNetworthSummary = async (userId:string): Promise<NetworthPoint[]> =>{
+export const getNetworthSummary = async (userId:string, year:number): Promise<NetworthPoint[]> =>{
     const result = await query(
         `
             SELECT
@@ -46,10 +46,12 @@ export const getNetworthSummary = async (userId:string): Promise<NetworthPoint[]
             SUM(amount) AS networth
             FROM networth_transactions
             WHERE user_id = $1
+            AND date >= make_date($2, 1, 1)
+            AND date <  make_date($2 + 1, 1, 1)
             GROUP BY date
             ORDER BY date ASC;
             `,
-            [userId]
+            [userId, year]
     );
     return result.rows.map((row) => ({
         date: row.date,
@@ -76,3 +78,4 @@ export const getNetworthAllocationForYear = async (userId: string,year: number):
         );
         return result.rows;
       };
+

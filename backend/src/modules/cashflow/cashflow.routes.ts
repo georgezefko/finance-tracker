@@ -28,6 +28,10 @@ router.get('/financial-details', isAuth, feedController.getFinancialDetails);
 // Get /api/cashflow/list-expenses
 router.get('/list-expenses', isAuth, feedController.getExpenseTable);
 
+
+// GET /api/cashflow/years
+router.get('/years', isAuth, feedController.getAvailableYears);
+
 // Get /api/cashflow/financial-month
 //router.get('/financial-month', feedController.getFinancialDetails);
 export default router;

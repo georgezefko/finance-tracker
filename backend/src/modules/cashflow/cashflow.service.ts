@@ -11,7 +11,7 @@ export const createTransaction = (date: string, amount: number, typeId: number, 
     );
 };
 
-export const getTimeSeries = (userId: string) => {
+export const getTimeSeries = (userId: string, year:number) => {
     return query(
       `SELECT 
         SUM(t.amount) AS total, 
@@ -20,20 +20,21 @@ export const getTimeSeries = (userId: string) => {
       FROM transactions t
       JOIN expense_types et on et.id = t.type_id 
       WHERE et.type_name not in ('Salary' ,'Bonus', 'Rent')
-      AND TO_CHAR(t.date, 'YYYY') > '2025'
+      AND EXTRACT(YEAR FROM t.date)::int = $2
       AND t.user_id = $1
       GROUP BY 2,3`,
-      [userId]
+      [userId, year]
+
     );
 };
 
-export const getIncomeExpenses = (userId: string) => {
+export const getIncomeExpenses = (userId: string, year:number) => {
     // This seems to call a SQL function. We'll assume it's adapted to use user_id.
     // In a real scenario, you'd update the get_income_expense() function in Postgres.
-    return query('SELECT * FROM get_income_expense($1)', [userId]);
+    return query('SELECT * FROM get_income_expense($1, $2)', [userId, year]);
 };
 
-export const getCasflow = (userId: string) => {
+export const getCasflow = (userId: string, year:number) => {
     return query(
       `SELECT 
         ec.category_name,
@@ -43,20 +44,20 @@ export const getCasflow = (userId: string) => {
       FROM transactions t
       JOIN expense_types et ON et.id = t.type_id
       JOIN expense_categories ec ON ec.id=t.category_id
-      WHERE TO_CHAR(t.date, 'YYYY') > '2025'
+      WHERE EXTRACT(YEAR FROM t.date)::int = $2
       AND t.user_id = $1
       GROUP BY 1, 2, 3
       ORDER BY ec.category_name, month`,
-      [userId]
+      [userId, year]
     );
 };
 
-export const getFinancialOverview = (userId: string) => {
+export const getFinancialOverview = (userId: string, year:number) => {
     // This seems to call a SQL function. We'll assume it's adapted to use user_id.
-    return query('SELECT * from get_financial_metrics($1)', [userId]);
+    return query('SELECT * from get_financial_metrics($1, $2)', [userId, year]);
 };
 
-export const getFinancialDetails = (userId: string) => {
+export const getFinancialDetails = (userId: string, year:number) => {
     return query(
       `SELECT
         TO_CHAR(t.date, 'YYYY-MM') as dates, 
@@ -65,18 +66,18 @@ export const getFinancialDetails = (userId: string) => {
       FROM transactions t 
       JOIN expense_categories ec ON ec.id = t.category_id 
       WHERE ec.category_name != 'Income'
-      AND TO_CHAR(t.date, 'YYYY') > '2025'
+      AND EXTRACT(YEAR FROM t.date)::int = $2
       AND t.user_id = $1
       GROUP BY 1,2
       ORDER BY SUM(t.amount) DESC`,
-      [userId]
+      [userId, year]
     );
 };
 
-export const getExpenseTable = (userId: string) => {
+export const getExpenseTable = (userId: string, year: number) => {
     return query(
       `SELECT  
-        TO_CHAR(t.date, 'YYYY-MM-DD') as date,
+        EXTRACT(YEAR FROM t.date)::int as date,
         t.amount,
         et.type_name as type,
         ec.category_name as category
@@ -84,9 +85,23 @@ export const getExpenseTable = (userId: string) => {
       INNER JOIN expense_categories ec ON ec.id = t.category_id 
       INNER JOIN expense_types et on et.id = t.type_id 
       WHERE ec.category_name != 'Income'
-      AND TO_CHAR(t.date, 'YYYY') > '2025'
+      AND EXTRACT(YEAR FROM t.date)::int = $2
       AND t.user_id = $1
-      ORDER BY TO_CHAR(t.date, 'YYYY-MM-DD') desc`,
-      [userId]
+      ORDER BY EXTRACT(YEAR FROM t.date)::int desc`,
+      [userId, year]
     );
 }; 
+
+
+export const getAvailableYears = (userId: string) => {
+  return query(
+    `
+    SELECT DISTINCT
+      EXTRACT(YEAR FROM date)::int AS year
+    FROM transactions
+    WHERE user_id = $1
+    ORDER BY year DESC
+    `,
+    [userId]
+  );
+};

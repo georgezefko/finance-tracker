@@ -1,8 +1,8 @@
-DROP FUNCTION IF EXISTS get_financial_metrics(INT);
+DROP FUNCTION IF EXISTS get_financial_metrics(INT, INT);
 
-CREATE OR REPLACE FUNCTION get_financial_metrics(p_user_id INT)
+CREATE OR REPLACE FUNCTION get_financial_metrics(p_user_id INT, p_year INT)
 RETURNS TABLE(
-    report_year TEXT,
+    report_year INTEGER,
     total_income_value DECIMAL,
     expense_category VARCHAR,
     total_expense_value DECIMAL,
@@ -16,7 +16,7 @@ BEGIN
     WITH category_totals AS (
         SELECT 
             ec.category_name,
-            TO_CHAR(t.date, 'YYYY') AS year,
+            EXTRACT(YEAR FROM t.date)::int AS year,
             SUM(t.amount) AS total_amount,
             CASE 
                 WHEN ec.category_name = 'Income' THEN 'Income'
@@ -25,8 +25,8 @@ BEGIN
         FROM transactions t
         JOIN expense_categories ec ON t.category_id = ec.id
         WHERE t.user_id = p_user_id
-        AND TO_CHAR(t.date, 'YYYY') > '2025' --TO REMOVE
-        GROUP BY ec.category_name, TO_CHAR(t.date, 'YYYY')
+        AND EXTRACT(YEAR FROM t.date)::int = p_year
+        GROUP BY ec.category_name, EXTRACT(YEAR FROM t.date)::int
     ),
     income_total AS (
         SELECT 

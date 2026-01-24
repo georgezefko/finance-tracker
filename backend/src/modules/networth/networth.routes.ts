@@ -13,7 +13,7 @@ router.post('/transactions', isAuth, networthController.createNetworthTransactio
 router.get('/summary', isAuth, networthController.getNetworthSummary);
 
 
-// GET /api/networth/summary
+// GET /api/networth/type-institutions
 router.get('/type-institutions', isAuth, networthController.getNetworthCategories);
 
 // GET /api/networth/allocation

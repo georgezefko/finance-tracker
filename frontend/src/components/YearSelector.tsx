@@ -9,13 +9,14 @@ import {
 import { useYear } from '../context/YearContext';
 
 const YearSelector: React.FC = () => {
-  const { year, setYear } = useYear();
+  const { year, setYear, years } = useYear();
 
   const handleChange = (event: SelectChangeEvent<string>) => {
-    setYear(parseInt(event.target.value, 10));
+    const newYear = parseInt(event.target.value as string, 10);
+    setYear(newYear);
   };
 
-  const years = [2024, 2025, 2026];
+  if (!years.length) return null; // nothing if no data yet
 
   return (
     <FormControl

@@ -52,6 +52,7 @@ export const getNetworthCategories = async (_req: Request, res: Response, next: 
     }
 };
 
+
 // function to get the MoM, YTD and Total networth
 export const getNetworthSummary = async (
     req: AuthenticatedRequest,
@@ -64,8 +65,12 @@ export const getNetworthSummary = async (
       if (!userId) {
         return res.status(401).json({ message: 'Not authenticated.' });
       }
+      const year =
+        typeof req.query.year === 'string'
+            ? parseInt(req.query.year, 10)
+            : new Date().getFullYear();
   
-      const points = await networthService.getNetworthSummary(userId);
+      const points = await networthService.getNetworthSummary(userId, year);
   
       if (points.length === 0) {
         return res.status(200).json({
@@ -152,3 +157,4 @@ export const getNetworthAllocation = async (
       return next(err);
     }
   };
+
