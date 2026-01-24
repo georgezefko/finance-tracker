@@ -82,7 +82,7 @@ const Row1: React.FC = () => {
       try {
         // 1) Summary
         const response = await apiFetch(
-          `${baseUrl}/api/networth/summary`,
+          `${baseUrl}/api/networth/summary?year=${year}`,
           { headers },
           authContext
         );

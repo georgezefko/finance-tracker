@@ -13,6 +13,8 @@ const transactionSchema = z.object({
     categoryId: z.number(),
 });
 
+
+
 // function to get the expenses
 export const getExpenseCategories = async (_req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,7 +54,11 @@ export const getTimeSeries = async (req: AuthenticatedRequest, res: Response, ne
         if (!userId) {
             return res.status(401).json({ message: 'Not authenticated.' });
         }
-        const result = await feedService.getTimeSeries(userId);
+        const year =
+        typeof req.query.year === 'string'
+            ? parseInt(req.query.year, 10)
+            : new Date().getFullYear();
+        const result = await feedService.getTimeSeries(userId, year);
         return res.status(200).json(result.rows);
     } catch (err) {
         next(err);
@@ -67,7 +73,11 @@ export const getIncomeExpenses = async (req: AuthenticatedRequest, res: Response
         if (!userId) {
             return res.status(401).json({ message: 'Not authenticated.' });
         }
-        const result = await feedService.getIncomeExpenses(userId);
+        const year =
+        typeof req.query.year === 'string'
+            ? parseInt(req.query.year, 10)
+            : new Date().getFullYear();
+        const result = await feedService.getIncomeExpenses(userId, year);
         return res.status(200).json(result.rows);
     } catch (err) {
         next(err);
@@ -79,10 +89,15 @@ export const getIncomeExpenses = async (req: AuthenticatedRequest, res: Response
 export const getCasflow = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
         const userId = req.userId;
+        
         if (!userId) {
             return res.status(401).json({ message: 'Not authenticated.' });
         }
-        const result = await feedService.getCasflow(userId);
+        const year =
+        typeof req.query.year === 'string'
+            ? parseInt(req.query.year, 10)
+            : new Date().getFullYear();
+        const result = await feedService.getCasflow(userId, year);
         return res.status(200).json(result.rows);
     } catch (err) {
         next(err);
@@ -94,10 +109,15 @@ export const getCasflow = async (req: AuthenticatedRequest, res: Response, next:
 export const getFinancialOverview = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
         const userId = req.userId;
+        
         if (!userId) {
             return res.status(401).json({ message: 'Not authenticated.' });
         }
-        const result = await feedService.getFinancialOverview(userId);
+        const year =
+        typeof req.query.year === 'string'
+            ? parseInt(req.query.year, 10)
+            : new Date().getFullYear();
+        const result = await feedService.getFinancialOverview(userId, year);
         return res.status(200).json(result.rows);
     } catch (err) {
         next(err);
@@ -109,10 +129,15 @@ export const getFinancialOverview = async (req: AuthenticatedRequest, res: Respo
 export const getFinancialDetails = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
         const userId = req.userId;
+        
         if (!userId) {
             return res.status(401).json({ message: 'Not authenticated.' });
         }
-        const result = await feedService.getFinancialDetails(userId);
+        const year =
+        typeof req.query.year === 'string'
+            ? parseInt(req.query.year, 10)
+            : new Date().getFullYear();
+        const result = await feedService.getFinancialDetails(userId, year);
         return res.status(200).json(result.rows);
     } catch (err) {
         next(err);
@@ -124,13 +149,40 @@ export const getFinancialDetails = async (req: AuthenticatedRequest, res: Respon
 export const getExpenseTable = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
         const userId = req.userId;
+        
         if (!userId) {
             return res.status(401).json({ message: 'Not authenticated.' });
         }
-        const result = await feedService.getExpenseTable(userId);
+        const year =
+        typeof req.query.year === 'string'
+            ? parseInt(req.query.year, 10)
+            : new Date().getFullYear();
+        const result = await feedService.getExpenseTable(userId, year);
         return res.status(200).json(result.rows);
     } catch (err) {
         next(err);
         return;
     }
 };
+
+
+// function to get available years
+export const getAvailableYears = async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        return res.status(401).json({ message: 'Not authenticated.' });
+      }
+  
+      const result = await feedService.getAvailableYears(userId);
+      // result.rows: [{ year: 2025 }, { year: 2024 }, ...]
+      return res.status(200).json(result.rows.map(r => r.year));
+    } catch (err) {
+      next(err);
+      return;
+    }
+  };

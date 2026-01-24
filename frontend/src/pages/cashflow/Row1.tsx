@@ -8,6 +8,7 @@ import {
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
+import { useYear } from '../../context/YearContext'; 
 
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
@@ -34,27 +35,51 @@ interface TransformedDataItem {
 }
 
 
-const transformDataForChart = (financialDetails: FinancialDetails[] ): TransformedDataItem[] => {
+// const transformDataForChart = (financialDetails: FinancialDetails[] ): TransformedDataItem[] => {
+//     const transformedData: Record<string, TransformedDataItem> = {};
+
+//     financialDetails.forEach(({ dates, category, amount }) => {
+//         const month = dates; 
+//         if (!transformedData[month]) {
+//             transformedData[month] = { month };
+//         }
+//         transformedData[month][category] = (parseFloat(amount) || 0) + (parseFloat(transformedData[month][category] as string) || 0);
+
+//     });
+
+//     return Object.values(transformedData);
+// };
+
+
+const transformDataForChart = (
+    financialDetails: FinancialDetails[]
+  ): TransformedDataItem[] => {
     const transformedData: Record<string, TransformedDataItem> = {};
-
+  
     financialDetails.forEach(({ dates, category, amount }) => {
-        const month = dates; 
-        if (!transformedData[month]) {
-            transformedData[month] = { month };
-        }
-        transformedData[month][category] = (parseFloat(amount) || 0) + (parseFloat(transformedData[month][category] as string) || 0);
-
+      // dates is 'YYYY-MM'
+      const key = dates; // group per month string
+      if (!transformedData[key]) {
+        transformedData[key] = { month: key }; // store as 'YYYY-MM'
+      }
+  
+      const prev = transformedData[key][category] || 0;
+      const prevNumber =
+        typeof prev === 'number' ? prev : parseFloat(String(prev) || '0');
+  
+      transformedData[key][category] =
+        prevNumber + (parseFloat(amount) || 0);
     });
-
+  
     return Object.values(transformedData);
-};
-
+  };
 
 
 const expenseColors = ["#82ca9d", "#8884d8", "#ffc658"]; // Add more colors as needed
 
 const Row1: React.FC = () => {
     const [financialData, setFinancialData] = useState<FinancialData[]>([]);
+    const { year } = useYear(); 
     const [chartData, setChartData] = useState<TransformedDataItem[]>([]);
     const [chartExpense, setChartExpense] = useState<TransformedDataItem[]>([]);
     const [isLoading, setLoading] = useState(true);
@@ -67,17 +92,18 @@ const Row1: React.FC = () => {
         if (!authContext?.token) return;
         
         const fetchData = async () => {
+            setLoading(true);
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authContext.token}`
             };
 
             try {
-                const response = await apiFetch(`${baseUrl}/api/cashflow/financial-overview`, { headers }, authContext);
+                const response = await apiFetch(`${baseUrl}/api/cashflow/financial-overview?year=${year}`, { headers }, authContext);
                 const data: FinancialData[] = await response.json();
                 setFinancialData(data);
 
-                const financialResponse = await apiFetch(`${baseUrl}/api/cashflow/financial-details`, { headers }, authContext);
+                const financialResponse = await apiFetch(`${baseUrl}/api/cashflow/financial-details?year=${year}`, { headers }, authContext);
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
                 
                 if (Array.isArray(financialDetails)) {
@@ -85,7 +111,7 @@ const Row1: React.FC = () => {
                     setChartData(transformedChartData);
                 }
 
-                const financialExpense = await apiFetch(`${baseUrl}/api/cashflow/income-expenses`, { headers }, authContext);
+                const financialExpense = await apiFetch(`${baseUrl}/api/cashflow/income-expenses?year=${year}`, { headers }, authContext);
                 const financialDetailsExpense: FinancialDetails[] = await financialExpense.json();
                 
                 if (Array.isArray(financialDetailsExpense)) {
@@ -101,7 +127,7 @@ const Row1: React.FC = () => {
             }
         };
         fetchData();
-    }, [authContext?.token]);
+    }, [authContext?.token, year]);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading data.</div>;
