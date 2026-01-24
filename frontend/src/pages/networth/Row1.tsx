@@ -189,26 +189,31 @@ const Row1: React.FC = () => {
             title="Net Worth"
             value={currentNetworth || 0}
             unit="DKK"
+            useSignColor
           />
           <FinancialMetricBox
             title="MoM Change"
             value={momChange ?? 0}
             unit="DKK"
+            useSignColor
           />
           <FinancialMetricBox
             title="MoM %"
             value={formatPct(momChangePct)}
             unit="%"
+            useSignColor
           />
           <FinancialMetricBox
             title="YTD Change"
             value={ytdChange ?? 0}
             unit="DKK"
+            useSignColor
           />
           <FinancialMetricBox
             title="YTD %"
             value={formatPct(ytdChangePct)}
             unit="%"
+            useSignColor
           />
         </Box>
       </DashboardBox>
