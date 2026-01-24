@@ -5,6 +5,7 @@ type FinancialMetricBoxProps = {
     title: string;
     value: number;
     unit: string;
+    useSignColor?: boolean;
 };
 
 const getColorByCategory = (category: string, value:number) => {
@@ -34,8 +35,16 @@ const getColorByCategory = (category: string, value:number) => {
     }
     return '#ff6666' //light red;
 };
-const FinancialMetricBox: React.FC<FinancialMetricBoxProps> = ({ title, value, unit }) => {
-    const color = getColorByCategory(title, value);
+
+const getSignColor = (value: number) => {
+    if (value > 0) return '#2E7D32';   // green
+    if (value < 0) return '#C62828';   // red
+    return '#90A4AE';                  // neutral grey
+    };
+
+
+const FinancialMetricBox: React.FC<FinancialMetricBoxProps> = ({ title, value, unit, useSignColor, }) => {
+    const color = useSignColor ? getSignColor(value) : getColorByCategory(title, value);
     return (
         <Box sx={{
             padding: 1,
