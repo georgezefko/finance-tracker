@@ -64,6 +64,7 @@ const transformAllocationForAbsolute = (
 
 const Row1: React.FC = () => {
   const authContext = useContext(AuthContext);
+  const token = authContext?.token;
   const { year } = useYear(); 
   const [summary, setSummary] = useState<NetworthSummary | null>(null);
   const [allocationAbsolute, setAllocationAbsolute] = useState<AllocationChartItem[]>([]);
@@ -71,7 +72,7 @@ const Row1: React.FC = () => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!authContext?.token) return;
+    if (!token || !authContext) return;
 
     const fetchSummaryAndAllocation = async () => {
       const headers = {
@@ -121,9 +122,9 @@ const Row1: React.FC = () => {
         setLoading(false);
       }
     };
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
     fetchSummaryAndAllocation();
-  }, [authContext?.token, year]);
+  }, [authContext, token, year]);
 
   if (isLoading) return <div>Loading net worth...</div>;
   if (error) return <div>Error loading net worth.</div>;
