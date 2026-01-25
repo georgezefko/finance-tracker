@@ -1,33 +1,37 @@
 import express from 'express';
-import * as feedController from '../controllers/feed';
-import isAuth from '../middleware/is-auth';
+import * as feedController from './cashflow.controller';
+import isAuth from '../../middleware/is-auth';
 
 const router = express.Router();
 
-// Get /feed/expense-categories
+// Get /api/cashflow/expense-categories
 router.get('/expense-categories', feedController.getExpenseCategories);
 
-// POST /feed/transaction
+// POST /api/cashflow/transaction
 router.post('/transaction', isAuth, feedController.createTransaction);
 
-// Get /feed/timeseries
+// Get /api/cashflow/timeseries
 router.get('/timeseries', isAuth, feedController.getTimeSeries);
 
-// Get /feed/income-expenses
+// Get /api/cashflow/income-expenses
 router.get('/income-expenses', isAuth, feedController.getIncomeExpenses);
 
-// Get /feed/casflow
+// Get /api/cashflow/casflow
 router.get('/casflow', isAuth, feedController.getCasflow);
 
-// Get /feed/financial-overview
+// Get /api/cashflow/financial-overview
 router.get('/financial-overview', isAuth, feedController.getFinancialOverview);
 
-// Get /feed/financial-details
+// Get /api/cashflow/financial-details
 router.get('/financial-details', isAuth, feedController.getFinancialDetails);
 
-// Get /feed/list-expenses
+// Get /api/cashflow/list-expenses
 router.get('/list-expenses', isAuth, feedController.getExpenseTable);
 
-// Get /feed/financial-month
+
+// GET /api/cashflow/years
+router.get('/years', isAuth, feedController.getAvailableYears);
+
+// Get /api/cashflow/financial-month
 //router.get('/financial-month', feedController.getFinancialDetails);
 export default router;

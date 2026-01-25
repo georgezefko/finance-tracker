@@ -1,6 +1,6 @@
-DROP FUNCTION IF EXISTS get_income_expense(INT);
+DROP FUNCTION IF EXISTS get_income_expense(INT, INT);
 
-CREATE OR REPLACE FUNCTION get_income_expense(p_user_id INT)
+CREATE OR REPLACE FUNCTION get_income_expense(p_user_id INT, p_year INT)
 RETURNS TABLE(
     dates TEXT,
     category TEXT,
@@ -23,7 +23,7 @@ BEGIN
                 ec.names 
             FROM transactions t 
             JOIN cat ec ON ec.id = t.category_id 
-            WHERE TO_CHAR(t.date, 'YYYY') > '2025'
+            WHERE TO_CHAR(t.date, 'YYYY') = p_year :: TEXT
             AND t.user_id = p_user_id
             GROUP BY 2, 3
         ), monthly_income_expense AS (

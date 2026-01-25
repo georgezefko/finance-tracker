@@ -3,8 +3,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { z } from 'zod';
 
-import feedRoutes from './routes/feed';
-import authRoutes from './routes/auth';
+import cashflowRoutes from './modules/cashflow/cashflow.routes';
+import authRoutes from './modules/auth/auth.routes';
+import networthRoutes from './modules/networth/networth.routes'
 
 const port = process.env.PORT || 8000
 
@@ -19,8 +20,9 @@ app.use(cors({
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
 
-app.use('/auth', authRoutes);
-app.use('/feed', feedRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/cashflow', cashflowRoutes);
+app.use('/api/networth', networthRoutes);
 
 app.use((error: any, _req: Request, res: Response, _next: NextFunction) => {
     console.error(error);

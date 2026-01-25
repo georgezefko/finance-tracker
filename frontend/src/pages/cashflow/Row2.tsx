@@ -6,6 +6,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Label } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
+import { useYear } from '../../context/YearContext'; 
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
 
@@ -79,6 +80,7 @@ const generateColor = (index: number) => {
 const Row2: React.FC = () => {
     const { palette } = useTheme();
     const [chartData, setChartData] = useState<ChartData[]>([]);
+    const { year } = useYear(); 
     const [stuckData, setStuckData] = useState<TransformedDataItem[]>([]);
     const [listData, setListData] = useState<TransformedList[]>([]);
     const [isLoading, setLoading] = useState(true);
@@ -112,19 +114,19 @@ const Row2: React.FC = () => {
             };
 
             try {
-                const response = await apiFetch(`${baseUrl}/feed/timeseries`, { headers }, authContext);
+                const response = await apiFetch(`${baseUrl}/api/cashflow/timeseries?year=${year}`, { headers }, authContext);
                 const data: RawDataItem[] = await response.json();
                 const transformedData = transformData(data);
                 setChartData(transformedData);
                 
 
-                const financialResponse = await apiFetch(`${baseUrl}/feed/financial-details`, { headers }, authContext);
+                const financialResponse = await apiFetch(`${baseUrl}/api/cashflow/financial-details?year=${year}`, { headers }, authContext);
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
                 const transformedChartData = transformDataForChart(financialDetails);
                 setStuckData(transformedChartData);
 
 
-                const tableResponse = await apiFetch(`${baseUrl}/feed/list-expenses`, { headers }, authContext);
+                const tableResponse = await apiFetch(`${baseUrl}/api/cashflow/list-expenses?year=${year}`, { headers }, authContext);
                 const listExpenses: TransformedList[] = await tableResponse.json();
                 const formattedData = listExpenses.map((item, index) => ({
                 ...item,
@@ -140,7 +142,7 @@ const Row2: React.FC = () => {
             }
         };
         fetchData();
-    }, [authContext?.token]);
+    }, [authContext?.token, year]);
 
     const categoryKeys = useMemo(() => {
         if (chartData.length === 0) return [];
