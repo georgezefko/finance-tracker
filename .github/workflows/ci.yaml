@@ -78,4 +78,5 @@ jobs:
           cache-dependency-path: database/package-lock.json
 
       - run: npm ci
+      - run: npm run build  
       - run: npm run migrate:up
