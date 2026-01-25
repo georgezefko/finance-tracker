@@ -1,0 +1,14 @@
+{
+    "name": "finance-tracker-monorepo",
+    "private": true,
+    "devDependencies": {
+      "@semantic-release/changelog": "^6.0.0",
+      "@semantic-release/commit-analyzer": "^11.0.0",
+      "@semantic-release/git": "^10.0.0",
+      "@semantic-release/release-notes-generator": "^12.0.0",
+      "semantic-release": "^24.0.0"
+    },
+    "scripts": {
+      "release": "semantic-release"
+    }
+  }
