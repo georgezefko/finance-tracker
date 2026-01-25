@@ -1,0 +1,53 @@
+name: Docker Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD}}
+
+      - name: Derive tag name
+        id: vars
+        run: |
+          # GITHUB_REF looks like refs/tags/v1.2.3
+          TAG="${GITHUB_REF##*/}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-backend:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-backend:${{ steps.vars.outputs.tag }}
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-frontend:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-frontend:${{ steps.vars.outputs.tag }}
+
+      - name: Build and push migrations
+        uses: docker/build-push-action@v6
+        with:
+          context: ./database
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-migrations:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-migrations:${{ steps.vars.outputs.tag }}

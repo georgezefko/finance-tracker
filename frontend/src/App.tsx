@@ -39,7 +39,7 @@ const AppRoutes: React.FC = () => {
 function App() {
     const theme = useMemo(() => createTheme(themeSettings), []);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const authContext = useContext(AuthContext);
+    //const authContext = useContext(AuthContext);
 
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
