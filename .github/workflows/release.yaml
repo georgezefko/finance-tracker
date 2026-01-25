@@ -2,17 +2,22 @@ name: Release
 
 on:
   push:
-    branches: [ master ]
-    
+    branches: [ master ]   # or [ main ] if that's your default
+
 permissions:
-  contents: write 
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
+
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # important for semantic-release
+          fetch-depth: 0  # important for semantic-release + git describe
 
       - uses: actions/setup-node@v4
         with:
@@ -24,3 +29,45 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+      # ⬇️ Docker build & push
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Get latest release tag
+        id: vars
+        run: |
+          TAG=$(git describe --tags --abbrev=0)
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Using tag: $TAG"
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_USERNAME }}/finance-backend:latest
+            ${{ env.DOCKERHUB_USERNAME }}/finance-backend:${{ steps.vars.outputs.tag }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_USERNAME }}/finance-frontend:latest
+            ${{ env.DOCKERHUB_USERNAME }}/finance-frontend:${{ steps.vars.outputs.tag }}
+
+      - name: Build and push migrations image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./database
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_USERNAME }}/finance-migrations:latest
+            ${{ env.DOCKERHUB_USERNAME }}/finance-migrations:${{ steps.vars.outputs.tag }}
