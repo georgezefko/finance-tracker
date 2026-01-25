@@ -87,6 +87,7 @@ const Row2: React.FC = () => {
     const [error, setError] = useState<Error | null>(null);
     const [isolatedCategory, setIsolatedCategory] = useState<string | null>(null);
     const authContext = useContext(AuthContext);
+    const token = authContext?.token;
 
 
     const columns = [
@@ -105,7 +106,7 @@ const Row2: React.FC = () => {
     };
 
     useEffect(() => {
-        if (!authContext?.token) return;
+        if (!token || !authContext) return;
 
         const fetchData = async () => {
             const headers = {
@@ -141,8 +142,9 @@ const Row2: React.FC = () => {
                 setLoading(false);
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         fetchData();
-    }, [authContext?.token, year]);
+    }, [authContext, token, year]);
 
     const categoryKeys = useMemo(() => {
         if (chartData.length === 0) return [];

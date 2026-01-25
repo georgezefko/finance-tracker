@@ -85,11 +85,12 @@ const Row1: React.FC = () => {
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
     const authContext = useContext(AuthContext);
+    const token = authContext?.token;
    
 
 
     useEffect(() => {
-        if (!authContext?.token) return;
+        if (!token || !authContext) return;
         
         const fetchData = async () => {
             setLoading(true);
@@ -126,8 +127,9 @@ const Row1: React.FC = () => {
                 setLoading(false);
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         fetchData();
-    }, [authContext?.token, year]);
+    }, [authContext, token, year]);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading data.</div>;
