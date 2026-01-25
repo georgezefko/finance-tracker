@@ -15,8 +15,8 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD}}
 
       - name: Derive tag name
         id: vars
@@ -31,8 +31,8 @@ jobs:
           context: ./backend
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/finance-backend:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/finance-backend:${{ steps.vars.outputs.tag }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-backend:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-backend:${{ steps.vars.outputs.tag }}
 
       - name: Build and push frontend
         uses: docker/build-push-action@v6
@@ -40,8 +40,8 @@ jobs:
           context: ./frontend
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/finance-frontend:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/finance-frontend:${{ steps.vars.outputs.tag }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-frontend:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-frontend:${{ steps.vars.outputs.tag }}
 
       - name: Build and push migrations
         uses: docker/build-push-action@v6
@@ -49,5 +49,5 @@ jobs:
           context: ./database
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/finance-migrations:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/finance-migrations:${{ steps.vars.outputs.tag }}
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-migrations:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/finance-migrations:${{ steps.vars.outputs.tag }}
