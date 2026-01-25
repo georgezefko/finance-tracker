@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiFetch } from '../utils/apiFetch';
 import { AuthContext } from './AuthContext';
 
@@ -15,11 +15,12 @@ const YearContext = createContext<YearContextValue | undefined>(undefined);
 
 export const YearProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const authContext = useContext(AuthContext);
+  const token = authContext?.token;
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [years, setYears] = useState<number[]>([]);
 
   useEffect(() => {
-    if (!authContext?.token) return;
+    if (!token || !authContext) return;
 
     const fetchYears = async () => {
       try {
@@ -43,9 +44,9 @@ export const YearProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('Error fetching years:', err);
       }
     };
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchYears();
-  }, [authContext?.token]);
+  }, [token, authContext]);
 
   return (
     <YearContext.Provider value={{ year, setYear, years }}>

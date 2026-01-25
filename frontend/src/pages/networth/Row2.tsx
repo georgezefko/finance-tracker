@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Box } from '@mui/material';
 import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
 import { AuthContext } from '../../context/AuthContext';
@@ -101,6 +100,7 @@ const allocationColors = [
 
 const Row2: React.FC = () => {
   const authContext = useContext(AuthContext);
+  const token = authContext?.token;
   const { year } = useYear();
   const [metrics, setMetrics] = useState<MonthlyMetric[]>([]);
   const [allocationPercent, setAllocationPercent] = useState<AllocationChartItem[]>([]);
@@ -108,7 +108,7 @@ const Row2: React.FC = () => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!authContext?.token) return;
+    if (!token || !authContext) return;
 
     const fetchMetrics = async () => {
       const headers = {
@@ -197,9 +197,9 @@ const Row2: React.FC = () => {
         setLoading(false);
       }
     };
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
     fetchMetrics();
-  }, [authContext?.token, year]);
+  }, [authContext, token, year]);
 
   if (isLoading) return <div>Loading performance...</div>;
   if (error) return <div>Error loading performance data.</div>;
