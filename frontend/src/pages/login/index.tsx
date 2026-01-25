@@ -32,7 +32,7 @@ const LoginPage: React.FC = () => {
         }
 
         const endpoint = isLogin ? 'login' : 'signup';
-        const url = `http://localhost:8000/auth/${endpoint}`;
+        const url = `http://localhost:8000/api/auth/${endpoint}`;
 
         try {
             const response = await fetch(url, {

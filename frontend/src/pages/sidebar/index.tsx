@@ -29,7 +29,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </ListItem>
         </Box>
         
-        {/* Add more navigation items here if needed */}
+        {/* Net Worth */}
+        <Box
+          sx={{
+            '&:hover': { color: theme.palette.primary[100] },
+            color: selectedColor('/networth'),
+          }}
+        >
+          <ListItem button component={Link} to="/networth">
+            <ListItemText primary="Net Worth" />
+          </ListItem>
+        </Box>
+         {/* Add more navigation items here if needed */}
       </List>
     </Drawer>
   );

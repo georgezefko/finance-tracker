@@ -67,7 +67,7 @@ const CashFlow = () => {
         >
             <Row1 key={`row1-${refreshKey}`} />
             <Row2 key={`row2-${refreshKey}`} />
-            <ExpenseFormModal onExpenseAdded={handleExpenseAdded} />
+            <ExpenseFormModal mode="cashflow" onExpenseAdded={handleExpenseAdded} />
         </Box>
     );
 };
