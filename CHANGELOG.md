@@ -1,3 +1,14 @@
+## [1.0.1](https://github.com/georgezefko/finance-tracker/compare/v1.0.0...v1.0.1) (2026-01-26)
+
+### Bug Fixes
+
+* **backend:** added prod variable ([60ceaac](https://github.com/georgezefko/finance-tracker/commit/60ceaacc70da65f78f37dffad811d821a157397a))
+
+### Continuous Integration
+
+* **release:** added merged with docker deployment ([16e2094](https://github.com/georgezefko/finance-tracker/commit/16e2094c6e4602650df9152c4e680eb94a572857))
+* **release:** fixed secrets ([2e7a537](https://github.com/georgezefko/finance-tracker/commit/2e7a537df4f3941cff097fe98ff2e314a15bcd09))
+
 ## 1.0.0 (2026-01-25)
 
 ### Features
