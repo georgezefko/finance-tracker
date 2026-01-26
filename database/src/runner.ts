@@ -18,7 +18,7 @@ function findSqlFiles(dir: string, fileList: string[] = []): string[] {
 
   return fileList;
 }
-
+const isProd = process.env.NODE_ENV === 'production';
 export async function migrationRunner(direction: 'up' | 'down'): Promise<void> {
   process.chdir(__dirname);
   const client = new pg.Client({
@@ -27,6 +27,9 @@ export async function migrationRunner(direction: 'up' | 'down'): Promise<void> {
     host: process.env.POSTGRES_HOST,
     database: process.env.POSTGRES_DB,
     port: 5432,
+    ssl: isProd
+    ? { rejectUnauthorized: false } // Neon, managed DBs
+    : false, 
  
   });
 
