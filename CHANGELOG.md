@@ -1,3 +1,9 @@
+## [1.0.3](https://github.com/georgezefko/finance-tracker/compare/v1.0.2...v1.0.3) (2026-01-26)
+
+### Bug Fixes
+
+* **migrations:** added users in the first migration ([d26be01](https://github.com/georgezefko/finance-tracker/commit/d26be012521c358581d9dbc116b4c419710ef259))
+
 ## [1.0.2](https://github.com/georgezefko/finance-tracker/compare/v1.0.1...v1.0.2) (2026-01-26)
 
 ### Bug Fixes
