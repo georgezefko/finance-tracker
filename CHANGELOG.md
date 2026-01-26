@@ -1,3 +1,9 @@
+## [1.0.2](https://github.com/georgezefko/finance-tracker/compare/v1.0.1...v1.0.2) (2026-01-26)
+
+### Bug Fixes
+
+* **migrations:** added ssl ([ffd9657](https://github.com/georgezefko/finance-tracker/commit/ffd9657ebbd443c98bbe97a74707840cefac04d5))
+
 ## [1.0.1](https://github.com/georgezefko/finance-tracker/compare/v1.0.0...v1.0.1) (2026-01-26)
 
 ### Bug Fixes
