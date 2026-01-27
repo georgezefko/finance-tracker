@@ -1,3 +1,13 @@
+## [1.0.4](https://github.com/georgezefko/finance-tracker/compare/v1.0.3...v1.0.4) (2026-01-27)
+
+### Bug Fixes
+
+* **frontend:** react url in apiFetch ([8770946](https://github.com/georgezefko/finance-tracker/commit/87709469faeb9c616e5cc39195047889008f3a5e))
+
+### Continuous Integration
+
+* **workflows:** added manual migrations ([775e1a5](https://github.com/georgezefko/finance-tracker/commit/775e1a5b58827d749783db0ba71f59b855d1b204))
+
 ## [1.0.3](https://github.com/georgezefko/finance-tracker/compare/v1.0.2...v1.0.3) (2026-01-26)
 
 ### Bug Fixes
