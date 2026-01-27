@@ -1,14 +1,28 @@
 import { AuthContext } from '../context/AuthContext';
 
-const BASE_URL =
+const RAW_BASE_URL =
   process.env.REACT_APP_BASE_URL || 'http://localhost:8000';
+
+// strip trailing slashes from base URL
+const BASE_URL = RAW_BASE_URL.replace(/\/+$/, '');
+
+
+function buildUrl(path: string): string {
+  // ensure path starts with exactly one leading slash
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${BASE_URL}${normalizedPath}`;
+}
+
 
 export async function apiFetch(
   path: string,
   options: RequestInit = {},
   authContext: React.ContextType<typeof AuthContext>
 ) {
-  const url = `${BASE_URL}${path}`;
+  const url = buildUrl(path);
+
+  // For debugging 
+  console.log('apiFetch -> path:', path, 'url:', url);
   const response = await fetch(url, options);
 
   if (response.status === 401 || response.status === 403 || response.status === 500) {
