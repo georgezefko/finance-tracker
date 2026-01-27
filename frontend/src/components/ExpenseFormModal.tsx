@@ -44,7 +44,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   mode = 'cashflow',
   onExpenseAdded,
 }) => {
-  const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
+  
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
@@ -64,13 +64,13 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   // Decide endpoints based on mode
   const categoriesEndpoint =
     mode === 'cashflow'
-      ? `${baseUrl}/api/cashflow/expense-categories`
-      : `${baseUrl}/api/networth/type-institutions`;
+      ? `/api/cashflow/expense-categories`
+      : `/api/networth/type-institutions`;
 
   const transactionEndpoint =
     mode === 'cashflow'
-      ? `${baseUrl}/api/cashflow/transaction`
-      : `${baseUrl}/api/networth/transactions`;
+      ? `/api/cashflow/transaction`
+      : `/api/networth/transactions`;
 
   const title = mode === 'cashflow' ? 'Add Expense' : 'Add Net Worth Value';
   const submitLabel = mode === 'cashflow' ? 'Add Expense' : 'Add Net Worth';

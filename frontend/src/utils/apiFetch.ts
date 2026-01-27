@@ -8,6 +8,10 @@ const BASE_URL = RAW_BASE_URL.replace(/\/+$/, '');
 
 
 function buildUrl(path: string): string {
+
+  if (/^https?:\/\//i.test(path)) {
+    throw new Error(`apiFetch expected a relative path but got full URL: ${path}`);
+  }
   // ensure path starts with exactly one leading slash
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   return `${BASE_URL}${normalizedPath}`;
