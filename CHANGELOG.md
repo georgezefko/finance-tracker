@@ -1,3 +1,9 @@
+## [1.0.8](https://github.com/georgezefko/finance-tracker/compare/v1.0.7...v1.0.8) (2026-01-27)
+
+### Bug Fixes
+
+* **baseUrl:** changes urls in frontend ([b5c992d](https://github.com/georgezefko/finance-tracker/commit/b5c992dc7dff68b4fc0060b28acbbb47c54b91c4))
+
 ## [1.0.7](https://github.com/georgezefko/finance-tracker/compare/v1.0.6...v1.0.7) (2026-01-27)
 
 ### Bug Fixes
