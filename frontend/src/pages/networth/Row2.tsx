@@ -19,7 +19,7 @@ import {
   LabelList,
 } from 'recharts';
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
+
 
 
 interface AllocationRecord {
@@ -118,7 +118,7 @@ const Row2: React.FC = () => {
 
       try {
         const allocationResp = await apiFetch(
-          `${baseUrl}/api/networth/allocation?year=${year}`,
+          `/api/networth/allocation?year=${year}`,
           { headers },
           authContext
         );
