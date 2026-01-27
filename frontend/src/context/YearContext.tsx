@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiFetch } from '../utils/apiFetch';
 import { AuthContext } from './AuthContext';
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
+
 
 interface YearContextValue {
   year: number;
@@ -30,7 +30,7 @@ export const YearProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
 
         const res = await apiFetch(
-          `${baseUrl}/api/cashflow/years`,
+          `/api/cashflow/years`,
           { headers },
           authContext
         );
