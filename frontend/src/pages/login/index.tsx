@@ -32,7 +32,7 @@ const LoginPage: React.FC = () => {
             return;
         }
 
-        const endpoint = isLogin ? 'api/auth/login' : 'api/auth/signup';
+        const endpoint = isLogin ? '/api/auth/login' : '/api/auth/signup';
         
 
         try {
