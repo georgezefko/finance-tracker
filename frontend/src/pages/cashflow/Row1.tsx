@@ -11,7 +11,6 @@ import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext'; 
 
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
 
 interface FinancialData {
     report_year: string;
@@ -100,11 +99,11 @@ const Row1: React.FC = () => {
             };
 
             try {
-                const response = await apiFetch(`${baseUrl}/api/cashflow/financial-overview?year=${year}`, { headers }, authContext);
+                const response = await apiFetch(`$/api/cashflow/financial-overview?year=${year}`, { headers }, authContext);
                 const data: FinancialData[] = await response.json();
                 setFinancialData(data);
 
-                const financialResponse = await apiFetch(`${baseUrl}/api/cashflow/financial-details?year=${year}`, { headers }, authContext);
+                const financialResponse = await apiFetch(`$/api/cashflow/financial-details?year=${year}`, { headers }, authContext);
                 const financialDetails: FinancialDetails[] = await financialResponse.json();
                 
                 if (Array.isArray(financialDetails)) {
@@ -112,7 +111,7 @@ const Row1: React.FC = () => {
                     setChartData(transformedChartData);
                 }
 
-                const financialExpense = await apiFetch(`${baseUrl}/api/cashflow/income-expenses?year=${year}`, { headers }, authContext);
+                const financialExpense = await apiFetch(`$/api/cashflow/income-expenses?year=${year}`, { headers }, authContext);
                 const financialDetailsExpense: FinancialDetails[] = await financialExpense.json();
                 
                 if (Array.isArray(financialDetailsExpense)) {
