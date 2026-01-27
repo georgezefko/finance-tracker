@@ -1,10 +1,14 @@
 import { AuthContext } from '../context/AuthContext';
 
+const BASE_URL =
+  process.env.REACT_APP_BASE_URL || 'http://localhost:8000';
+
 export async function apiFetch(
-  url: string,
+  path: string,
   options: RequestInit = {},
   authContext: React.ContextType<typeof AuthContext>
 ) {
+  const url = `${BASE_URL}${path}`;
   const response = await fetch(url, options);
 
   if (response.status === 401 || response.status === 403 || response.status === 500) {
