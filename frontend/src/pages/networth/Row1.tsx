@@ -18,7 +18,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:8000';
+
 
 
 interface NetworthSummary {
@@ -83,7 +83,7 @@ const Row1: React.FC = () => {
       try {
         // 1) Summary
         const response = await apiFetch(
-          `${baseUrl}/api/networth/summary?year=${year}`,
+          `/api/networth/summary?year=${year}`,
           { headers },
           authContext
         );
@@ -96,7 +96,7 @@ const Row1: React.FC = () => {
 
         // 2) Allocation for selected year
         const allocationResp = await apiFetch(
-          `${baseUrl}/api/networth/allocation?year=${year}`,
+          `/api/networth/allocation?year=${year}`,
           { headers },
           authContext
         );
