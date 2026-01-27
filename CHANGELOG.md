@@ -1,3 +1,9 @@
+## [1.0.6](https://github.com/georgezefko/finance-tracker/compare/v1.0.5...v1.0.6) (2026-01-27)
+
+### Bug Fixes
+
+* **login:** added missing slash ([765d27c](https://github.com/georgezefko/finance-tracker/commit/765d27cbf0444f7da4c6d3d0d11ef2cad3b1a919))
+
 ## [1.0.5](https://github.com/georgezefko/finance-tracker/compare/v1.0.4...v1.0.5) (2026-01-27)
 
 ### Bug Fixes
