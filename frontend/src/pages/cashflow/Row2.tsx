@@ -115,7 +115,7 @@ const Row2: React.FC = () => {
             };
 
             try {
-                const response = await apiFetch(`$/api/cashflow/timeseries?year=${year}`, { headers }, authContext);
+                const response = await apiFetch(`/api/cashflow/timeseries?year=${year}`, { headers }, authContext);
                 const data: RawDataItem[] = await response.json();
                 const transformedData = transformData(data);
                 setChartData(transformedData);
