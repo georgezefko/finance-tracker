@@ -1,3 +1,9 @@
+## [1.0.5](https://github.com/georgezefko/finance-tracker/compare/v1.0.4...v1.0.5) (2026-01-27)
+
+### Bug Fixes
+
+* **login:** remove hardcoded url ([4aaaf03](https://github.com/georgezefko/finance-tracker/commit/4aaaf032c33ad28147b654a4ae32643ea323e2bc))
+
 ## [1.0.4](https://github.com/georgezefko/finance-tracker/compare/v1.0.3...v1.0.4) (2026-01-27)
 
 ### Bug Fixes
