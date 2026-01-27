@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Box, TextField, Button, Typography, Paper } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { AuthContext } from '../../context/AuthContext'; // We will create this next
+import { apiFetch } from '../../utils/apiFetch';
 
 const LoginPage: React.FC = () => {
     const theme = useTheme();
@@ -31,17 +32,19 @@ const LoginPage: React.FC = () => {
             return;
         }
 
-        const endpoint = isLogin ? 'login' : 'signup';
-        const url = `http://localhost:8000/api/auth/${endpoint}`;
+        const endpoint = isLogin ? 'api/auth/login' : 'api/auth/signup';
+        
 
         try {
-            const response = await fetch(url, {
+            const response = await apiFetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
-            });
+            },
+            auth
+        );
 
             const data = await response.json();
 

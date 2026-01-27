@@ -20,7 +20,7 @@ services:
     ports:
       - "3001:80"
     environment:
-      - BASE_URL=${BASE_URL}
+      - REACT_APP_BASE_URL=${REACT_APP_BASE_URL}
     depends_on:
       - backend
 
