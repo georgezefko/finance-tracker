@@ -1,3 +1,9 @@
+## [1.0.7](https://github.com/georgezefko/finance-tracker/compare/v1.0.6...v1.0.7) (2026-01-27)
+
+### Bug Fixes
+
+* **apiFetch:** normalized api ([a54f1c4](https://github.com/georgezefko/finance-tracker/commit/a54f1c4981324c7b1cfc100aa0fc2215b6ecf156))
+
 ## [1.0.6](https://github.com/georgezefko/finance-tracker/compare/v1.0.5...v1.0.6) (2026-01-27)
 
 ### Bug Fixes
