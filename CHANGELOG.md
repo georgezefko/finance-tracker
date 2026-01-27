@@ -1,3 +1,9 @@
+## [1.0.9](https://github.com/georgezefko/finance-tracker/compare/v1.0.8...v1.0.9) (2026-01-27)
+
+### Bug Fixes
+
+* **frontend:** cleaned urls ([c910f73](https://github.com/georgezefko/finance-tracker/commit/c910f73412fa1ac7fc761e5564b53627c4404964))
+
 ## [1.0.8](https://github.com/georgezefko/finance-tracker/compare/v1.0.7...v1.0.8) (2026-01-27)
 
 ### Bug Fixes
