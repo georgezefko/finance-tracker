@@ -24,15 +24,15 @@ export const getNetworthCategories = async() => {
     const result = await query(
     `
     SELECT 
-        nt.id AS type_id,
-        nt.category_id,
+        nt.id          AS type_id,
         nt.type_name,
-        ni.id AS institution_id,
+        nt.category_id,
+        ni.id          AS institution_id,
         ni.institution_name
     FROM networth_types nt
     JOIN networth_institutions ni
-        ON nt.category_id = ni.category_id
-    ORDER BY nt.id, ni.id;
+    ON nt.id = ni.type_id     
+    ORDER BY nt.category_id, nt.id, ni.id;
    `
   );
   return result.rows;
