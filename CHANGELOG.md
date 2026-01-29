@@ -1,3 +1,9 @@
+## [1.0.11](https://github.com/georgezefko/finance-tracker/compare/v1.0.10...v1.0.11) (2026-01-29)
+
+### Bug Fixes
+
+* **migrations:** corrected drop duplicates ([880cc0d](https://github.com/georgezefko/finance-tracker/commit/880cc0d5066118b56f781066f26775319399f003))
+
 ## [1.0.10](https://github.com/georgezefko/finance-tracker/compare/v1.0.9...v1.0.10) (2026-01-29)
 
 ### Bug Fixes
