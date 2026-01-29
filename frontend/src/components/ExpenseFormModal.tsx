@@ -116,22 +116,47 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   // - networth: type_id -> category_id & institution_id
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
     const id = parseInt(event.target.value as string, 10);
-    setSelectedTypeId(id);
-
+  
+    console.log('mode:', mode, 'raw value from Select:', id);
+  
     if (mode === 'cashflow') {
+      // id = cashflow type id
+      setSelectedTypeId(id);
+  
       const cashflowCategories = categories as CashflowCategory[];
       const category = cashflowCategories.find((c) => c.id === id);
+  
       setSelectedCategoryId(category ? category.category_id : null);
       setSelectedInstitutionId(null);
+  
+      console.log('cashflow – state:', {
+        selectedTypeId: id,
+        selectedCategoryId: category?.category_id ?? null,
+        selectedInstitutionId: null,
+      });
     } else {
+      // id = networth institution_id
       const options = categories as NetworthTypeInstitutionOption[];
-      const opt = options.find((o) => o.type_id === id);
+      const opt = options.find((o) => o.institution_id === id);
+  
+      console.log('networth – matched option:', opt);
+  
       if (opt) {
+        setSelectedTypeId(opt.type_id);
         setSelectedCategoryId(opt.category_id);
         setSelectedInstitutionId(opt.institution_id);
+  
+        console.log('networth – state:', {
+          selectedTypeId: opt.type_id,
+          selectedCategoryId: opt.category_id,
+          selectedInstitutionId: opt.institution_id,
+        });
       } else {
+        setSelectedTypeId(null);
         setSelectedCategoryId(null);
         setSelectedInstitutionId(null);
+  
+        console.log('networth – NO MATCH, clearing state');
       }
     }
   };
@@ -259,7 +284,13 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
                 {mode === 'cashflow' ? 'Type' : 'Type / Institution'}
               </InputLabel>
               <Select
-                value={selectedTypeId !== null ? String(selectedTypeId) : ''}
+                value={mode === 'cashflow'
+                  ? selectedTypeId !== null
+                    ? String(selectedTypeId)
+                    : ''
+                  : selectedInstitutionId !== null
+                    ? String(selectedInstitutionId)
+                    : ''}
                 onChange={handleTypeChange}
                 label={mode === 'cashflow' ? 'Type' : 'Type / Institution'}
                 required
@@ -285,8 +316,8 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
                   : (categories as NetworthTypeInstitutionOption[]).map(
                       (opt) => (
                         <MenuItem
-                          key={`${opt.type_id}-${opt.institution_id}`}
-                          value={opt.type_id}
+                        key={opt.institution_id}
+                        value={opt.institution_id}
                         >
                           {opt.type_name} — {opt.institution_name}
                         </MenuItem>
