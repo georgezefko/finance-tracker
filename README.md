@@ -1,6 +1,6 @@
 # Personal Finance Tracker
 
-A full-stack, containerized personal finance management app built with React, Node.js/Express, TypeScript, PostgreSQL, and Docker Compose.
+A full-stack, containerized personal finance dashboard for **expense analytics** and **net worth tracking** built with React, Node.js/Express, TypeScript, PostgreSQL, and Docker Compose.
 
 ---
 
@@ -23,7 +23,12 @@ This project is a robust, user-friendly platform for tracking personal finances.
 - Learn and apply best practices in full-stack development, security, and DevOps.
 
 A detailed explanation of project's structure and core components are described in the following blogs:
-NOTE: The code has been updated and the content might not contain some new tables and features but the core parts are still there
+
+>NOTE: The codebase has since evolved with net worth tracking features.
+The blogs still describe the core architecture, authentication, and API patterns,
+but may not reflect the latest schema additions.
+
+
 - [Blog: Database Setup](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-database-setup-with-postgresql-and-docker-5075e283303e)
 - [Blog: REST API & Integration](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-integrating-rest-api-node-js-7a0f0f27bd4e)
 - [Blog: JWT Implementation](https://medium.com/gitconnected/building-a-personal-finance-management-app-secure-api-authentication-a-practical-guide-e9d936b6982b)
@@ -34,6 +39,7 @@ NOTE: The code has been updated and the content might not contain some new table
 - **User Authentication:** Secure signup/login with JWT and password hashing.
 - **User-specific Data:** Each user's data is isolated and protected.
 - **Expense & Income Tracking:** Add, view, and categorize transactions.
+- **Net Worth Tracking:** Track assets and liabilities by institution, category, and type
 - **Responsive Dashboard:** Modern UI with charts (Recharts, MUI) and mobile-friendly design.
 - **REST API:** Clean separation between frontend and backend.
 - **Dockerized:** One-command setup for local or production.
@@ -41,6 +47,10 @@ NOTE: The code has been updated and the content might not contain some new table
 ---
 
 ## System Architecture
+
+> Note: The architecture now also includes net worth–related routes, services,
+and database tables (categories, types, institutions, and transactions),
+following the same layered design shown below.
 
 ```mermaid
 graph TD
@@ -126,6 +136,7 @@ erDiagram
         varchar password_hash
         timestamp created_at
     }
+
     TRANSACTIONS {
         int id PK
         date date
@@ -134,24 +145,67 @@ erDiagram
         int category_id FK
         int user_id FK
     }
+
     EXPENSE_CATEGORIES {
         int id PK
         varchar category_name
     }
+
     EXPENSE_TYPES {
         int id PK
         varchar type_name
         int category_id FK
     }
-    
-    USERS ||--o{ TRANSACTIONS : "has"
-    EXPENSE_CATEGORIES ||--o{ EXPENSE_TYPES : "contains"
+
+    NETWORTH_CATEGORIES {
+        int id PK
+        varchar category_name
+    }
+
+    NETWORTH_TYPES {
+        int id PK
+        varchar type_name
+        int category_id FK
+    }
+
+    NETWORTH_INSTITUTIONS {
+        int id PK
+        varchar institution_name
+        int category_id FK
+        int type_id FK
+    }
+
+    NETWORTH_TRANSACTIONS {
+        int id PK
+        date date
+        decimal amount
+        int type_id FK
+        int category_id FK
+        int institution_id FK
+        int user_id FK
+    }
+
+    %% Expense relationships
+    USERS ||--o{ TRANSACTIONS : "has expenses"
+    EXPENSE_CATEGORIES ||--o{ EXPENSE_TYPES : "groups"
     EXPENSE_CATEGORIES ||--o{ TRANSACTIONS : "categorizes"
     EXPENSE_TYPES ||--o{ TRANSACTIONS : "typed by"
-    EXPENSE_TYPES }o--|| EXPENSE_CATEGORIES : "belongs to"
     TRANSACTIONS }o--|| USERS : "belongs to"
-    TRANSACTIONS }o--|| EXPENSE_CATEGORIES : "belongs to"
-    TRANSACTIONS }o--|| EXPENSE_TYPES : "belongs to"
+    TRANSACTIONS }o--|| EXPENSE_CATEGORIES : "in category"
+    TRANSACTIONS }o--|| EXPENSE_TYPES : "of type"
+
+    %% Net worth relationships
+    USERS ||--o{ NETWORTH_TRANSACTIONS : "has net worth events"
+    NETWORTH_CATEGORIES ||--o{ NETWORTH_TYPES : "groups"
+    NETWORTH_CATEGORIES ||--o{ NETWORTH_INSTITUTIONS : "classifies"
+    NETWORTH_CATEGORIES ||--o{ NETWORTH_TRANSACTIONS : "categorizes"
+    NETWORTH_TYPES ||--o{ NETWORTH_INSTITUTIONS : "allowed for"
+    NETWORTH_TYPES ||--o{ NETWORTH_TRANSACTIONS : "typed by"
+    NETWORTH_INSTITUTIONS ||--o{ NETWORTH_TRANSACTIONS : "held at"
+    NETWORTH_TRANSACTIONS }o--|| USERS : "belongs to"
+    NETWORTH_TRANSACTIONS }o--|| NETWORTH_CATEGORIES : "in category"
+    NETWORTH_TRANSACTIONS }o--|| NETWORTH_TYPES : "of type"
+    NETWORTH_TRANSACTIONS }o--|| NETWORTH_INSTITUTIONS : "at institution"
 ```
 
 **Table Descriptions:**
@@ -159,6 +213,10 @@ erDiagram
 - **transactions:** Records all income/expenses. Each transaction is linked to a user, a category, and a type.
 - **expense_categories:** High-level groupings (e.g., Housing, Personal Running Costs).
 - **expense_types:** Specific types within a category (e.g., Restaurants, Groceries).
+- **networth_categories:** Groupings of assets/liabilities (e.g. Cash, Investments, Pensions, Loans)
+- **networth_types:** Specific types within a net worth category (eg. Real Estate, Bank, Crypto)
+- **networth_institutions:** Banks/brokers/pension providers/etc.
+- **networth_transactions:** Changes in balances / positions contributing to net worth
 
 ---
 
@@ -187,6 +245,7 @@ erDiagram
 - **Sign up** for a new account.
 - **Log in** to access your dashboard.
 - **Add transactions** (income/expenses) via the dashboard modal.
+- **Add net worth** track total net worth and trends over time
 - **View analytics** and charts for your financial overview.
 - **Log out** securely; you'll be auto-logged out if your session expires.
 
