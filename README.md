@@ -8,7 +8,7 @@ Also because it runs on Render free tier it may take between 1-2 minutes for the
 
 Below is a short video on how the UI looks like
 <p align="center">
-  <video src="assets/finance-tracker-video.mov" controls width="700"></video>
+  <video src="https://github.com/georgezefko/finance-tracker/issues/64#issue-3934000352" controls width="700"></video>
 </p>
 ---
 
