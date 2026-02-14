@@ -11,9 +11,8 @@ Also because it runs on Render free tier it may take between 1-2 minutes for the
 
 
 Below is a short video on how the UI looks like
-<p align="center">
-  <video src="https://github.com/georgezefko/finance-tracker/issues/64#issue-3934000352" controls width="700"></video>
-</p>
+
+![Demo](https://private-user-images.githubusercontent.com/46191927/549069280-594056d2-95a7-4c0a-b6c1-37bb519a625e.gif?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzEwNjU3MjgsIm5iZiI6MTc3MTA2NTQyOCwicGF0aCI6Ii80NjE5MTkyNy81NDkwNjkyODAtNTk0MDU2ZDItOTVhNy00YzBhLWI2YzEtMzdiYjUxOWE2MjVlLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjAyMTQlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwMjE0VDEwMzcwOFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWM3MmQwODE0YzhlNmI3MGNjZjM4OTE2ZGVjMGM4OWRhMWZiZjNiYTYyYjFiNWRiNWFhN2ZiMzE3YTdhYWUyMzUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0._bN4SJ5TmCl8Nsh49VJMHq6rof8Y58t9ImIHRRFzFhk)
 ---
 
 ## Table of Contents
