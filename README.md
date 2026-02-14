@@ -2,6 +2,18 @@
 
 A full-stack, containerized personal finance dashboard for **expense analytics** and **net worth tracking** built with React, Node.js/Express, TypeScript, PostgreSQL, and Docker Compose.
 
+
+>IMPORTANT NOTE: If you use the app via the link then your data are stored to the neon database i have configured. If you want to keep the private the you can fork the repo and deploy your own services by following this guide(comming soon)
+
+
+>Practical NOTE: If you use the app for first time on the **Cashflow** page add first an income value for the app to work.
+Also because it runs on Render free tier it may take between 1-2 minutes for the server to start.
+
+
+Below is a short video on how the UI looks like
+<p align="center">
+  <video src="https://github.com/georgezefko/finance-tracker/issues/64#issue-3934000352" controls width="700"></video>
+</p>
 ---
 
 ## Table of Contents
