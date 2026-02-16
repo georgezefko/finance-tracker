@@ -3,11 +3,7 @@
 A full-stack, containerized personal finance dashboard for **expense analytics** and **net worth tracking** built with React, Node.js/Express, TypeScript, PostgreSQL, and Docker Compose.
 
 
->IMPORTANT NOTE: If you use the app via the link then your data are stored to the neon database i have configured. If you want to keep the private the you can fork the repo and deploy your own services by following this guide(comming soon)
-
-
->Practical NOTE: If you use the app for first time on the **Cashflow** page add first an income value for the app to work.
-Also because it runs on Render free tier it may take between 1-2 minutes for the server to start.
+>practical NOTE: Check how to use the app [here](#usage)
 
 
 Below is a short video on how the UI looks like
@@ -259,6 +255,13 @@ erDiagram
 - **Add net worth** track total net worth and trends over time
 - **View analytics** and charts for your financial overview.
 - **Log out** securely; you'll be auto-logged out if your session expires.
+
+**Practical notes**
+- First-time use / new month: You need to add an income entry first. Otherwise, the app may redirect you back to the login page.
+-  Where you can run it:
+    - Locally (as described above), or
+    - Using the hosted link provided. In this case, your data is stored in the deployed Neon database.
+- Deploying your own instance: You can fork the repository and deploy your own managed services by following the guide. This is useful if you want to keep the app private (e.g., only for you and your friends).
 
 ---
 
