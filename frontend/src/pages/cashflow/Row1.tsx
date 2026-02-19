@@ -152,8 +152,8 @@ const Row1: React.FC = () => {
                 <BoxHeader title="Financial Overview" subtitle="Avg annual values of main financial metrics" sideText={`Updated: ${latestMonth || ''}`} />
                 
                 <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
-                    <FinancialMetricBox title="Acc Income" value={parseFloat(total_income_value) || 0} unit="DKK" />
-                    <FinancialMetricBox title="Acc Net Income" value={(parseFloat(cumulative_net_income_value)) || 0} unit="DKK" />
+                    <FinancialMetricBox title="Acc Income" value={parseFloat(total_income_value) || 0} unit="" />
+                    <FinancialMetricBox title="Acc Net Income" value={(parseFloat(cumulative_net_income_value)) || 0} unit="" />
                     <FinancialMetricBox title="Savings Rate" value={parseFloat(parseFloat(savings_rate_value).toFixed(2)) || 0} unit="%" />
                     <FinancialMetricBox title="Total Expenses" value={parseFloat(parseFloat(total_yearly_expenses).toFixed(2)) || 0} unit="%" />
 
@@ -185,7 +185,7 @@ const Row1: React.FC = () => {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month"/>
                       <YAxis>
-                          <Label value="DKK" angle={-90} position="insideLeft"  />
+                          <Label value="" angle={-90} position="insideLeft"  />
                       </YAxis>
                       <Tooltip />
                       <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
