@@ -1,3 +1,15 @@
+## [1.0.12](https://github.com/georgezefko/finance-tracker/compare/v1.0.11...v1.0.12) (2026-02-19)
+
+### Bug Fixes
+
+* **backend/frontend:** show data in transactions and remove DKK from plots ([1ffe432](https://github.com/georgezefko/finance-tracker/commit/1ffe432110cba0d36f14d66a79f397e0ff1ddf3d))
+
+### Documentation
+
+* practical notes ([7e7337a](https://github.com/georgezefko/finance-tracker/commit/7e7337a8cb4a64d9ae0c12226a762a40856648d8))
+* **readme:** added networth additions ([40f1632](https://github.com/georgezefko/finance-tracker/commit/40f1632e70db58cc7b6253fb513884de1fddeb23))
+* **readme:** added short instructions and notes ([c2b8951](https://github.com/georgezefko/finance-tracker/commit/c2b89515a6c97a1a03e82f9cc6f4a0c1f0c65738))
+
 ## [1.0.11](https://github.com/georgezefko/finance-tracker/compare/v1.0.10...v1.0.11) (2026-01-29)
 
 ### Bug Fixes
