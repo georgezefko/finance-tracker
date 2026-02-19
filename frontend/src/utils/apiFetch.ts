@@ -30,21 +30,11 @@ export async function apiFetch(
   const response = await fetch(url, options);
 
   // Auth failures: logout + session message
-  if (response.status === 401 || response.status === 403) {
-    authContext?.logout?.();
+  if (response.status === 401 || response.status === 403 || response.status === 500) {
+    if (authContext && authContext.logout) {
+      authContext.logout();
+    }
     throw new Error('Session expired. Please log in again.');
-  }
-
-  // Server errors: keep 500 handling, but don't logout
-  if (response.status === 500) {
-    const text = await response.text().catch(() => '');
-    throw new Error(`Server error (500). ${text || 'Please try again later.'}`);
-  }
-
-  // Any other non-OK
-  if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(`Request failed (${response.status}). ${text}`);
   }
 
   return response;
