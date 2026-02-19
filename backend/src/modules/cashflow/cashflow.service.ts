@@ -77,7 +77,7 @@ export const getFinancialDetails = (userId: string, year:number) => {
 export const getExpenseTable = (userId: string, year: number) => {
     return query(
       `SELECT  
-        EXTRACT(YEAR FROM t.date)::int as date,
+        to_char(t.date, 'YYYY-MM-DD') AS date,
         t.amount,
         et.type_name as type,
         ec.category_name as category
@@ -87,7 +87,7 @@ export const getExpenseTable = (userId: string, year: number) => {
       WHERE ec.category_name != 'Income'
       AND EXTRACT(YEAR FROM t.date)::int = $2
       AND t.user_id = $1
-      ORDER BY EXTRACT(YEAR FROM t.date)::int desc`,
+      ORDER BY t.date DESC`,
       [userId, year]
     );
 }; 

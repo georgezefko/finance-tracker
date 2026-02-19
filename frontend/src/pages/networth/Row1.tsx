@@ -189,13 +189,13 @@ const Row1: React.FC = () => {
           <FinancialMetricBox
             title="Net Worth"
             value={currentNetworth || 0}
-            unit="DKK"
+            unit=""
             useSignColor
           />
           <FinancialMetricBox
             title="MoM Change"
             value={momChange ?? 0}
-            unit="DKK"
+            unit=""
             useSignColor
           />
           <FinancialMetricBox
@@ -207,7 +207,7 @@ const Row1: React.FC = () => {
           <FinancialMetricBox
             title="YTD Change"
             value={ytdChange ?? 0}
-            unit="DKK"
+            unit=""
             useSignColor
           />
           <FinancialMetricBox
@@ -233,7 +233,7 @@ const Row1: React.FC = () => {
       >
         <BoxHeader
           title="Net Worth Over Time"
-          subtitle="Total net worth per month (DKK)"
+          subtitle="Total net worth per month"
           sideText={String(year)}
         />
         <ResponsiveContainer width="100%" height="100%">
@@ -251,7 +251,7 @@ const Row1: React.FC = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis>
-              <Label value="DKK" angle={-90} position="insideLeft" />
+              <Label value="" angle={-90} position="insideLeft" />
             </YAxis>
             <Tooltip
               contentStyle={{
@@ -266,7 +266,7 @@ const Row1: React.FC = () => {
                 fontWeight: 700,
               }}
               formatter={(value: number) =>
-                `${(value as number).toLocaleString()} DKK`
+                `${(value as number).toLocaleString()} `
               }
             />
             <Legend wrapperStyle={{ paddingTop: '10px' }} />
