@@ -1,3 +1,9 @@
+## [1.0.13](https://github.com/georgezefko/finance-tracker/compare/v1.0.12...v1.0.13) (2026-02-19)
+
+### Bug Fixes
+
+* **apiFetch:** reversed to previous ([1832762](https://github.com/georgezefko/finance-tracker/commit/1832762b2eaf6362223577510b78ec54e3538970))
+
 ## [1.0.12](https://github.com/georgezefko/finance-tracker/compare/v1.0.11...v1.0.12) (2026-02-19)
 
 ### Bug Fixes
