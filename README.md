@@ -9,7 +9,7 @@ A full-stack, containerized personal finance dashboard for **expense analytics**
 Below is a short video on how the UI looks like
 
 ![Demo](https://private-user-images.githubusercontent.com/46191927/549069280-594056d2-95a7-4c0a-b6c1-37bb519a625e.gif?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzEwNjU3MjgsIm5iZiI6MTc3MTA2NTQyOCwicGF0aCI6Ii80NjE5MTkyNy81NDkwNjkyODAtNTk0MDU2ZDItOTVhNy00YzBhLWI2YzEtMzdiYjUxOWE2MjVlLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNjAyMTQlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjYwMjE0VDEwMzcwOFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWM3MmQwODE0YzhlNmI3MGNjZjM4OTE2ZGVjMGM4OWRhMWZiZjNiYTYyYjFiNWRiNWFhN2ZiMzE3YTdhYWUyMzUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0._bN4SJ5TmCl8Nsh49VJMHq6rof8Y58t9ImIHRRFzFhk)
----
+
 
 ## Table of Contents
 - [Overview](#overview)
@@ -39,6 +39,7 @@ but may not reflect the latest schema additions.
 - [Blog: Database Setup](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-database-setup-with-postgresql-and-docker-5075e283303e)
 - [Blog: REST API & Integration](https://medium.com/towards-data-engineering/building-a-personal-finance-management-app-integrating-rest-api-node-js-7a0f0f27bd4e)
 - [Blog: JWT Implementation](https://medium.com/gitconnected/building-a-personal-finance-management-app-secure-api-authentication-a-practical-guide-e9d936b6982b)
+- [Blog: Deployment](https://medium.com/gitconnected/building-a-personal-finance-management-app-deploying-to-production-with-vercel-render-and-neon-9ddeabca9aa2)
 
 ---
 
@@ -261,7 +262,7 @@ erDiagram
 -  Where you can run it:
     - Locally (as described above), or
     - Using the hosted link provided. In this case, your data is stored in the deployed Neon database.
-- Deploying your own instance: You can fork the repository and deploy your own managed services by following the guide. This is useful if you want to keep the app private (e.g., only for you and your friends).
+- Deploying your own instance: You can fork the repository and deploy your own managed services by following the [guide](https://medium.com/gitconnected/building-a-personal-finance-management-app-deploying-to-production-with-vercel-render-and-neon-9ddeabca9aa2). This is useful if you want to keep the app private (e.g., only for you and your friends).
 
 ---
 
