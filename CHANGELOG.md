@@ -1,3 +1,13 @@
+## [1.0.14](https://github.com/georgezefko/finance-tracker/compare/v1.0.13...v1.0.14) (2026-02-21)
+
+### Bug Fixes
+
+* **frontend:** corrected axis ([d8dfdad](https://github.com/georgezefko/finance-tracker/commit/d8dfdadbc41146a1d8c08e4364cdb2c850895d66))
+
+### Documentation
+
+* added article reference ([a0be223](https://github.com/georgezefko/finance-tracker/commit/a0be2232ee96a444464a629377a39ce351bf0bac))
+
 ## [1.0.13](https://github.com/georgezefko/finance-tracker/compare/v1.0.12...v1.0.13) (2026-02-19)
 
 ### Bug Fixes
