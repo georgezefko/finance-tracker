@@ -182,7 +182,7 @@ const Row2: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month"/>
                   <YAxis>
-                      <Label value="DKK" angle={-90} position="insideLeft"  />
+                      <Label value="" angle={-90} position="insideLeft"  />
                   </YAxis>
                   <Tooltip />
                   <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
