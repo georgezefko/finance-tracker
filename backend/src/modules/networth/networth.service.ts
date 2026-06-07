@@ -19,6 +19,52 @@ export const createNetworthTransaction = (date: string, amount: number, typeId: 
     );
 };
 
+// List a user's networth transactions for a year (LEFT JOINs so a row still
+// shows even if a lookup name is missing). type_id/category_id/institution_id
+// are returned so the edit form can prefill the selector.
+export const getNetworthTable = (userId: string, year: number) => {
+    return query(
+      `SELECT
+        t.id,
+        to_char(t.date, 'YYYY-MM-DD') AS date,
+        t.amount,
+        nt.type_name AS type,
+        t.type_id,
+        nc.category_name AS category,
+        t.category_id,
+        ni.institution_name AS institution,
+        t.institution_id
+      FROM networth_transactions t
+      LEFT JOIN networth_types nt ON nt.id = t.type_id
+      LEFT JOIN networth_categories nc ON nc.id = t.category_id
+      LEFT JOIN networth_institutions ni ON ni.id = t.institution_id
+      WHERE t.user_id = $1
+        AND t.date >= make_date($2, 1, 1)
+        AND t.date <  make_date($2 + 1, 1, 1)
+      ORDER BY t.date DESC`,
+      [userId, year]
+    );
+};
+
+// Scoped by user_id so a user can only update their own networth transactions.
+export const updateNetworthTransaction = (id: number, date: string, amount: number, typeId: number, categoryId: number, institutionId: number, userId: string) => {
+    return query(
+        `UPDATE networth_transactions
+         SET date = $1, amount = $2, type_id = $3, category_id = $4, institution_id = $5
+         WHERE id = $6 AND user_id = $7
+         RETURNING *`,
+        [date, amount, typeId, categoryId, institutionId, id, userId]
+    );
+};
+
+// Scoped by user_id so a user can only delete their own networth transactions.
+export const deleteNetworthTransaction = (id: number, userId: string) => {
+    return query(
+        'DELETE FROM networth_transactions WHERE id = $1 AND user_id = $2 RETURNING id',
+        [id, userId]
+    );
+};
+
 
 export const getNetworthCategories = async() => {
     const result = await query(

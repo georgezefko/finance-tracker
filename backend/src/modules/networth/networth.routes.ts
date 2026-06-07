@@ -9,6 +9,15 @@ const router = express.Router();
 // POST /api/networth/transactions
 router.post('/transactions', isAuth, networthController.createNetworthTransaction);
 
+// GET /api/networth/list-transactions
+router.get('/list-transactions', isAuth, networthController.getNetworthTable);
+
+// PATCH /api/networth/transactions/:id
+router.patch('/transactions/:id', isAuth, networthController.updateNetworthTransaction);
+
+// DELETE /api/networth/transactions/:id
+router.delete('/transactions/:id', isAuth, networthController.deleteNetworthTransaction);
+
 // GET /api/networth/summary
 router.get('/summary', isAuth, networthController.getNetworthSummary);
 

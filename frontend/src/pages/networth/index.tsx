@@ -2,7 +2,8 @@ import { Box, useMediaQuery } from "@mui/material";
 import Row1 from "./Row1";
 import Row2 from "./Row2";
 //import YearSelector from "../../components/YearSelector";
-import ExpenseFormModal from "../../components/ExpenseFormModal";
+import ExpenseFormModal, { EditableTransaction } from "../../components/ExpenseFormModal";
+import NetworthTransactions from "./Transactions";
 import { useState } from "react";
 
 const gridTemplateLargeScreens = `
@@ -20,6 +21,7 @@ const gridTemplateLargeScreens = `
 const NetWorth = () => {
     const isAboveMediumScreens = useMediaQuery("(min-width: 1200px)");
     const [refreshKey, setRefreshKey] = useState(0);
+    const [editTransaction, setEditTransaction] = useState<EditableTransaction | null>(null);
 
     const handleExpenseAdded = () => {
         // Trigger a refresh of the data by updating the key
@@ -56,8 +58,20 @@ const NetWorth = () => {
             >
             <Row1 key={`row1-${refreshKey}`} />
             <Row2 key={`row2-${refreshKey}`} />
-            <ExpenseFormModal mode="networth" onExpenseAdded={handleExpenseAdded} />
         </Box>
+
+        <NetworthTransactions
+            key={`tx-${refreshKey}`}
+            onEditTransaction={setEditTransaction}
+            onChanged={handleExpenseAdded}
+        />
+
+        <ExpenseFormModal
+            mode="networth"
+            onExpenseAdded={handleExpenseAdded}
+            editTransaction={editTransaction}
+            onEditClose={() => setEditTransaction(null)}
+        />
     </Box>
     );
 };

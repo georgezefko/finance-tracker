@@ -11,6 +11,25 @@ export const createTransaction = (date: string, amount: number, typeId: number, 
     );
 };
 
+// Scoped by user_id so a user can only update their own transactions.
+export const updateTransaction = (id: number, date: string, amount: number, typeId: number, categoryId: number, userId: string) => {
+    return query(
+        `UPDATE transactions
+         SET date = $1, amount = $2, type_id = $3, category_id = $4
+         WHERE id = $5 AND user_id = $6
+         RETURNING *`,
+        [date, amount, typeId, categoryId, id, userId]
+    );
+};
+
+// Scoped by user_id so a user can only delete their own transactions.
+export const deleteTransaction = (id: number, userId: string) => {
+    return query(
+        'DELETE FROM transactions WHERE id = $1 AND user_id = $2 RETURNING id',
+        [id, userId]
+    );
+};
+
 export const getTimeSeries = (userId: string, year:number) => {
     return query(
       `SELECT 
@@ -76,11 +95,14 @@ export const getFinancialDetails = (userId: string, year:number) => {
 
 export const getExpenseTable = (userId: string, year: number) => {
     return query(
-      `SELECT  
+      `SELECT
+        t.id,
         to_char(t.date, 'YYYY-MM-DD') AS date,
         t.amount,
         et.type_name as type,
-        ec.category_name as category
+        t.type_id,
+        ec.category_name as category,
+        t.category_id
       FROM transactions t
       INNER JOIN expense_categories ec ON ec.id = t.category_id 
       INNER JOIN expense_types et on et.id = t.type_id 

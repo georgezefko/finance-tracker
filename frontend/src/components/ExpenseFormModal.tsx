@@ -22,6 +22,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { AuthContext } from '../context/AuthContext';
 import { apiFetch } from '../utils/apiFetch';
+import { useYear } from '../context/YearContext';
 
 interface CashflowCategory {
   type_name: string;
@@ -37,9 +38,20 @@ interface NetworthTypeInstitutionOption {
   institution_name: string;
 }
 
+export interface EditableTransaction {
+  id: number;
+  date: string; // 'YYYY-MM-DD'
+  amount: number;
+  typeId: number;
+  categoryId: number;
+  institutionId?: number; // networth only
+}
+
 interface ExpenseFormModalProps {
   mode?: 'cashflow' | 'networth';
-  onExpenseAdded?: () => void; // Callback to refresh data after adding expense
+  onExpenseAdded?: () => void; // Callback to refresh data after adding/updating
+  editTransaction?: EditableTransaction | null; // when set, open prefilled in edit mode (cashflow)
+  onEditClose?: () => void; // called when an edit dialog closes, so the parent can clear its state
 }
 
 const getTodayStr = () => new Date().toISOString().slice(0, 10);
@@ -47,6 +59,8 @@ const getTodayStr = () => new Date().toISOString().slice(0, 10);
 const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   mode = 'cashflow',
   onExpenseAdded,
+  editTransaction,
+  onEditClose,
 }) => {
   
   const theme = useTheme();
@@ -66,7 +80,12 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [successOpen, setSuccessOpen] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
   const authContext = useContext(AuthContext);
+  const { year, setYear } = useYear();
+
+  const isEditing = editingId !== null;
 
   // Decide endpoints based on mode
   const categoriesEndpoint =
@@ -79,8 +98,16 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
       ? `/api/cashflow/transaction`
       : `/api/networth/transactions`;
 
-  const title = mode === 'cashflow' ? 'Add Expense' : 'Add Net Worth Value';
-  const submitLabel = mode === 'cashflow' ? 'Add Expense' : 'Add Net Worth';
+  const title = isEditing
+    ? 'Edit Transaction'
+    : mode === 'cashflow'
+      ? 'Add Expense'
+      : 'Add Net Worth Value';
+  const submitLabel = isEditing
+    ? 'Save Changes'
+    : mode === 'cashflow'
+      ? 'Add Expense'
+      : 'Add Net Worth';
 
   // Fetch categories (for cashflow) or type+institution options (for networth)
   useEffect(() => {
@@ -108,6 +135,19 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
     fetchCategories();
   }, [categoriesEndpoint, authContext]);
 
+  // Open prefilled when the parent requests an edit (cashflow only).
+  useEffect(() => {
+    if (!editTransaction) return;
+    setAmount(String(editTransaction.amount));
+    setSelectedDate(editTransaction.date);
+    setSelectedTypeId(editTransaction.typeId);
+    setSelectedCategoryId(editTransaction.categoryId);
+    setSelectedInstitutionId(editTransaction.institutionId ?? null);
+    setEditingId(editTransaction.id);
+    setFormError(null);
+    setOpen(true);
+  }, [editTransaction]);
+
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {
@@ -118,6 +158,10 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
     setSelectedCategoryId(null);
     setSelectedInstitutionId(null);
     setFormError(null);
+    if (editingId !== null) {
+      setEditingId(null);
+      onEditClose?.();
+    }
   };
 
   // When user picks an option:
@@ -181,9 +225,13 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
 
     try {
       const response = await apiFetch(
-        transactionEndpoint,
+        isEditing
+          ? mode === 'cashflow'
+            ? `/api/cashflow/transaction/${editingId}`
+            : `/api/networth/transactions/${editingId}`
+          : transactionEndpoint,
         {
-          method: 'POST',
+          method: isEditing ? 'PATCH' : 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${authContext?.token}`,
@@ -204,7 +252,22 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
         return;
       }
 
+      setSuccessMsg(
+        isEditing
+          ? 'Transaction updated'
+          : mode === 'cashflow'
+            ? 'Transaction added'
+            : 'Net worth value added'
+      );
       setSuccessOpen(true);
+
+      // If the saved date falls in a different year than the one being viewed,
+      // switch to it so the new/edited row stays visible instead of vanishing
+      // from the year-scoped dashboard.
+      const savedYear = Number(selectedDate.slice(0, 4));
+      if (savedYear && savedYear !== year) {
+        setYear(savedYear);
+      }
 
       if (onExpenseAdded) {
         onExpenseAdded();
@@ -418,7 +481,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
           variant="filled"
           sx={{ width: '100%' }}
         >
-          {mode === 'cashflow' ? 'Transaction added' : 'Net worth value added'}
+          {successMsg}
         </Alert>
       </Snackbar>
     </>

@@ -1,14 +1,28 @@
 import DashboardBox from '../../components/DashboardBox';
 import React, { useMemo, useEffect, useState, useContext } from 'react';
-import { useTheme, Box } from '@mui/material';
+import {
+    useTheme,
+    Box,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    Typography,
+    Snackbar,
+    Alert,
+} from '@mui/material';
 import BoxHeader from '../../components/BoxHeader';
 import StateMessage from '../../components/StateMessage';
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Label } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext';
 import { formatCurrency, formatCompactCurrency, formatMonthTick } from '../../utils/format';
+import type { EditableTransaction } from '../../components/ExpenseFormModal';
 
 
 
@@ -36,10 +50,18 @@ interface TransformedDataItem {
 
 
 interface TransformedList {
+    id: number;
     date: string;
     type: string;
+    type_id: number;
     category: string;
-    amount: number
+    category_id: number;
+    amount: number;
+}
+
+interface Row2Props {
+    onEditTransaction?: (tx: EditableTransaction) => void;
+    onChanged?: () => void; // refresh after a delete
 }
 
 
@@ -79,28 +101,90 @@ const generateColor = (index: number) => {
     return `hsl(${index * 137.508}, 50%, 60%)`; 
 };
 
-const Row2: React.FC = () => {
+const Row2: React.FC<Row2Props> = ({ onEditTransaction, onChanged }) => {
     const { palette } = useTheme();
     const [chartData, setChartData] = useState<ChartData[]>([]);
-    const { year } = useYear(); 
+    const { year } = useYear();
     const [stuckData, setStuckData] = useState<TransformedDataItem[]>([]);
     const [listData, setListData] = useState<TransformedList[]>([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
     const [retryKey, setRetryKey] = useState(0);
     const [isolatedCategory, setIsolatedCategory] = useState<string | null>(null);
+    const [pendingDelete, setPendingDelete] = useState<TransformedList | null>(null);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
     const authContext = useContext(AuthContext);
     const token = authContext?.token;
 
+    const handleEdit = (row: TransformedList) => {
+        onEditTransaction?.({
+            id: row.id,
+            date: row.date,
+            amount: Number(row.amount),
+            typeId: row.type_id,
+            categoryId: row.category_id,
+        });
+    };
 
-    const columns = [
-        { field: 'id', headerName: 'ID', width: 50 },
+    const confirmDelete = async () => {
+        if (!pendingDelete || !authContext) return;
+        setDeleting(true);
+        try {
+            const response = await apiFetch(
+                `/api/cashflow/transaction/${pendingDelete.id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${authContext.token}`,
+                    },
+                },
+                authContext
+            );
+            if (!response.ok) {
+                if (response.status === 404) {
+                    // Already gone (e.g. deleted in another tab) — drop it from the grid.
+                    setPendingDelete(null);
+                    onChanged?.();
+                    return;
+                }
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data?.message || 'Could not delete the transaction.');
+            }
+            setPendingDelete(null);
+            onChanged?.();
+        } catch (err) {
+            setDeleteError(err instanceof Error ? err.message : 'Could not delete the transaction.');
+            setPendingDelete(null);
+        } finally {
+            setDeleting(false);
+        }
+    };
+
+    const columns: GridColDef[] = [
         { field: 'date', headerName: 'Date', width: 100 },
         { field: 'amount', headerName: 'Amount', type: 'number', width: 110, valueFormatter: (params: any) => formatCurrency(Number(params.value)) },
         { field: 'type', headerName: 'Type', width: 100 },
-        { field: 'category', headerName: 'Category', width: 150 },
-      
-        
+        { field: 'category', headerName: 'Category', width: 140 },
+        {
+            field: 'actions',
+            type: 'actions',
+            headerName: '',
+            width: 90,
+            getActions: (params: any) => [
+                <GridActionsCellItem
+                    icon={<EditIcon fontSize="small" />}
+                    label="Edit"
+                    onClick={() => handleEdit(params.row as TransformedList)}
+                />,
+                <GridActionsCellItem
+                    icon={<DeleteIcon fontSize="small" />}
+                    label="Delete"
+                    onClick={() => setPendingDelete(params.row as TransformedList)}
+                />,
+            ],
+        },
     ];
 
     const handleLegendClick = (o: any) => {
@@ -134,11 +218,8 @@ const Row2: React.FC = () => {
 
                 const tableResponse = await apiFetch(`/api/cashflow/list-expenses?year=${year}`, { headers }, authContext);
                 const listExpenses: TransformedList[] = await tableResponse.json();
-                const formattedData = listExpenses.map((item, index) => ({
-                ...item,
-                id: index, // Adding an ID for each item
-                }));
-                setListData(formattedData);
+                // Each row already carries its real DB id (used by the grid and for edit/delete).
+                setListData(listExpenses);
 
                 setLoading(false);
             } catch (error) {
@@ -158,7 +239,7 @@ const Row2: React.FC = () => {
 
     if (isLoading) return <StateMessage variant="loading" message="Loading transactions…" />;
     if (error) return <StateMessage variant="error" title="Couldn't load data" message="Something went wrong loading your transactions." onRetry={() => setRetryKey((k) => k + 1)} />;
-    if (!chartData.length || !stuckData.length || !listData.length) return <StateMessage variant="empty" title="No transactions yet" message="Add a transaction with the + button to see your charts and history." />;
+    if (!listData.length) return <StateMessage variant="empty" title="No transactions yet" message="Add a transaction with the + button to see your charts and history." />;
 
     const latestStuckDataMonth = stuckData.length > 0 ? stuckData[stuckData.length - 1].month : '';
     const latestChartDataTime = chartData.length > 0 ? chartData[chartData.length - 1].time : '';
@@ -273,6 +354,48 @@ const Row2: React.FC = () => {
                     />
                 </Box>
             </DashboardBox>
+
+            {/* Delete confirmation */}
+            <Dialog
+                open={pendingDelete !== null}
+                onClose={() => !deleting && setPendingDelete(null)}
+            >
+                <DialogTitle>Delete transaction?</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2">
+                        {pendingDelete
+                            ? `Delete the ${pendingDelete.category} transaction of ${formatCurrency(
+                                  Number(pendingDelete.amount)
+                              )} on ${pendingDelete.date}? This can't be undone.`
+                            : ''}
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setPendingDelete(null)} color="inherit" disabled={deleting}>
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmDelete} color="error" variant="contained" disabled={deleting}>
+                        {deleting ? 'Deleting…' : 'Delete'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete error feedback */}
+            <Snackbar
+                open={!!deleteError}
+                autoHideDuration={4000}
+                onClose={() => setDeleteError(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    severity="error"
+                    variant="filled"
+                    onClose={() => setDeleteError(null)}
+                    sx={{ width: '100%' }}
+                >
+                    {deleteError}
+                </Alert>
+            </Snackbar>
     </>
     );
 };
