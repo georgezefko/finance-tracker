@@ -1,12 +1,29 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import { formatCurrency } from '../utils/format';
 
 type FinancialMetricBoxProps = {
     title: string;
     value: number;
-    unit: string;
+    unit?: string;
+    format?: 'currency' | 'percent' | 'number';
     useSignColor?: boolean;
 };
+
+// Titles that have a defined target. Anything not listed here is shown in a
+// neutral colour rather than red, so a renamed/new category doesn't "scream bad".
+const KNOWN_TARGETS = new Set([
+    'Acc Income',
+    'Acc Net Income',
+    'Savings Rate',
+    'Total Expenses',
+    'Housing Fixed Costs',
+    'Personal Fixed Costs',
+    'Personal Running Costs',
+    'Travel Costs',
+]);
+
+const NEUTRAL = '#90A4AE'; // blue-grey
 
 const getColorByCategory = (category: string, value:number) => {
     if (category === 'Acc Income' && value > 50000) {
@@ -33,7 +50,9 @@ const getColorByCategory = (category: string, value:number) => {
     if (category === 'Travel Costs' && value < 11) {
         return 'lightgreen';
     }
-    return '#ff6666' //light red;
+    // A known metric below its target is a warning (red); an unknown metric is
+    // simply uncoloured (neutral) instead of misleadingly red.
+    return KNOWN_TARGETS.has(category) ? '#ff6666' : NEUTRAL;
 };
 
 const getSignColor = (value: number) => {
@@ -43,8 +62,14 @@ const getSignColor = (value: number) => {
     };
 
 
-const FinancialMetricBox: React.FC<FinancialMetricBoxProps> = ({ title, value, unit, useSignColor, }) => {
+const FinancialMetricBox: React.FC<FinancialMetricBoxProps> = ({ title, value, unit, format, useSignColor, }) => {
     const color = useSignColor ? getSignColor(value) : getColorByCategory(title, value);
+
+    const displayValue =
+        format === 'currency'
+            ? formatCurrency(value)
+            : `${value.toLocaleString()}${unit ?? ''}`;
+
     return (
         <Box sx={{
             padding: 1,
@@ -55,7 +80,7 @@ const FinancialMetricBox: React.FC<FinancialMetricBoxProps> = ({ title, value, u
         }}>
             <Typography variant="h5" sx={{ fontWeight: 'bold' }}>{title}</Typography>
             <Typography variant="h4" sx={{ color: color }}>
-                {value.toLocaleString()}{unit}
+                {displayValue}
             </Typography>
         </Box>
     );
