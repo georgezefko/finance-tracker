@@ -9,6 +9,8 @@ import Navbar from "./pages/navbar";
 import Sidebar from "./pages/sidebar";
 import LoginPage from "./pages/login";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
+import ErrorBoundary from "./components/ErrorBoundary";
+import RouteTitle from "./components/RouteTitle";
 import { YearProvider } from "./context/YearContext"; 
 
 const AppRoutes: React.FC = () => {
@@ -61,13 +63,16 @@ function App() {
 }
 
 const AppWrapper: React.FC = () => (
-    <BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <RouteTitle />
         <AuthProvider>
           <YearProvider>
             <App />
             </YearProvider>
         </AuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </ErrorBoundary>
 );
 
 export default AppWrapper;
