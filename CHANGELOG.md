@@ -1,3 +1,15 @@
+## [1.1.0](https://github.com/georgezefko/finance-tracker/compare/v1.0.14...v1.1.0) (2026-06-07)
+
+### Features
+
+* **auth:** auto-login after signup ([83212d2](https://github.com/georgezefko/finance-tracker/commit/83212d24a91256e5509edb2e017263e70cb9a2a2))
+* **nav:** add account menu with one-click logout ([4965cdb](https://github.com/georgezefko/finance-tracker/commit/4965cdb664d0c0f517ab93747d4652ba88d7f124))
+* **transactions:** add date field and add/save feedback ([be45f78](https://github.com/georgezefko/finance-tracker/commit/be45f78600d8b4dbea5ffe4ece74839162ccf6ab))
+
+### Bug Fixes
+
+* **auth:** stop forcing logout on transient server errors ([f5c5a4c](https://github.com/georgezefko/finance-tracker/commit/f5c5a4ca0378ec8ede2b72689b794a2917cb9ac9))
+
 ## [1.0.14](https://github.com/georgezefko/finance-tracker/compare/v1.0.13...v1.0.14) (2026-02-21)
 
 ### Bug Fixes
