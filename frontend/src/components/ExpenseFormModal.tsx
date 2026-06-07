@@ -269,6 +269,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
             <FormControl fullWidth sx={{ marginBottom: theme.spacing(2) }}>
               <TextField
                 type="number"
+                autoFocus
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 variant="outlined"
@@ -377,6 +378,9 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
                     )}
               </Select>
             </FormControl>
+
+            {/* Hidden submit so pressing Enter in any field submits the form */}
+            <button type="submit" style={{ display: 'none' }} aria-hidden="true" tabIndex={-1} />
           </Box>
         </DialogContent>
 
