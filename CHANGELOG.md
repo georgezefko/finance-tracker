@@ -1,3 +1,11 @@
+## [1.3.0](https://github.com/georgezefko/finance-tracker/compare/v1.2.0...v1.3.0) (2026-06-07)
+
+### Features
+
+* **app:** top-level error boundary and per-route page titles ([cbcf8a1](https://github.com/georgezefko/finance-tracker/commit/cbcf8a17bd9a35ab10d69e79432c78c244e05557))
+* **dashboard:** styled, retryable loading/error/empty states ([5fb2991](https://github.com/georgezefko/finance-tracker/commit/5fb299145d1b2fea8182e8e2b66a2d70ade5ee56))
+* **forms:** quicker entry and clearer validation ([487e226](https://github.com/georgezefko/finance-tracker/commit/487e2268390d634306265709e428fe31c47135ae))
+
 ## [1.2.0](https://github.com/georgezefko/finance-tracker/compare/v1.1.0...v1.2.0) (2026-06-07)
 
 ### Features
