@@ -10,6 +10,12 @@ router.get('/expense-categories', feedController.getExpenseCategories);
 // POST /api/cashflow/transaction
 router.post('/transaction', isAuth, feedController.createTransaction);
 
+// PATCH /api/cashflow/transaction/:id
+router.patch('/transaction/:id', isAuth, feedController.updateTransaction);
+
+// DELETE /api/cashflow/transaction/:id
+router.delete('/transaction/:id', isAuth, feedController.deleteTransaction);
+
 // Get /api/cashflow/timeseries
 router.get('/timeseries', isAuth, feedController.getTimeSeries);
 
