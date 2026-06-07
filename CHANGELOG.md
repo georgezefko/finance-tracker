@@ -1,3 +1,12 @@
+## [1.4.0](https://github.com/georgezefko/finance-tracker/compare/v1.3.0...v1.4.0) (2026-06-07)
+
+### Features
+
+* **backend:** cashflow transaction edit & delete endpoints ([8e817c1](https://github.com/georgezefko/finance-tracker/commit/8e817c1919d25df9155e04d293528df60fac2bca))
+* **backend:** networth transaction list + edit & delete endpoints ([7723d2b](https://github.com/georgezefko/finance-tracker/commit/7723d2bcb150411fffdcb3f490fd8689cdff7a5e))
+* **frontend:** edit & delete cashflow transactions ([a22dd70](https://github.com/georgezefko/finance-tracker/commit/a22dd70b9f760eb090b9d074a6a571bcfb10432e))
+* **frontend:** networth transactions list with edit & delete ([f0a92ac](https://github.com/georgezefko/finance-tracker/commit/f0a92ac4d64deb15bea805952a74d0b9da53c4c5))
+
 ## [1.3.0](https://github.com/georgezefko/finance-tracker/compare/v1.2.0...v1.3.0) (2026-06-07)
 
 ### Features
