@@ -14,6 +14,9 @@ const transactionSchema = z.object({
     institutionId: z.number(),
 });
 
+// Bounded to the int4 range so an out-of-range id is a clean 4xx, not a DB 500.
+const idParamSchema = z.coerce.number().int().positive().max(2147483647);
+
 
 // function to add networth trasaction
 export const createNetworthTransaction = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -39,6 +42,75 @@ export const createNetworthTransaction = async (req: AuthenticatedRequest, res: 
         }
         return next(err);
       }
+};
+
+// function to list a user's networth transactions for a year
+export const getNetworthTable = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ message: 'Not authenticated.' });
+        }
+        const year =
+            typeof req.query.year === 'string'
+                ? parseInt(req.query.year, 10)
+                : new Date().getFullYear();
+        const result = await networthService.getNetworthTable(userId, year);
+        return res.status(200).json(result.rows);
+    } catch (err) {
+        next(err);
+        return;
+    }
+};
+
+// function to update an existing networth transaction (scoped to the owner)
+export const updateNetworthTransaction = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ message: 'Not authenticated.' });
+        }
+        const id = idParamSchema.parse(req.params.id);
+        const { date, amount, typeId, categoryId, institutionId } = transactionSchema.parse(req.body);
+
+        const result = await networthService.updateNetworthTransaction(id, date, amount, typeId, categoryId, institutionId, userId);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'Transaction not found.' });
+        }
+
+        return res.status(200).json({
+            message: 'Transaction updated successfully!',
+            transaction: result.rows[0],
+        });
+    } catch (err) {
+        if (err instanceof ZodError) {
+            return res.status(400).json({ message: 'Invalid request body', errors: err.errors });
+        }
+        return next(err);
+    }
+};
+
+// function to delete a networth transaction (scoped to the owner)
+export const deleteNetworthTransaction = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ message: 'Not authenticated.' });
+        }
+        const id = idParamSchema.parse(req.params.id);
+
+        const result = await networthService.deleteNetworthTransaction(id, userId);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'Transaction not found.' });
+        }
+
+        return res.status(200).json({ message: 'Transaction deleted successfully!' });
+    } catch (err) {
+        if (err instanceof ZodError) {
+            return res.status(400).json({ message: 'Invalid request', errors: err.errors });
+        }
+        return next(err);
+    }
 };
 
 // function to get the categories
