@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
 import FinancialMetricBox from '../../components/FinancialMetricsBox';
+import StateMessage from '../../components/StateMessage';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer
 } from 'recharts';
@@ -84,16 +85,18 @@ const Row1: React.FC = () => {
     const [chartExpense, setChartExpense] = useState<TransformedDataItem[]>([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const [retryKey, setRetryKey] = useState(0);
     const authContext = useContext(AuthContext);
     const token = authContext?.token;
-   
+
 
 
     useEffect(() => {
         if (!token || !authContext) return;
-        
+
         const fetchData = async () => {
             setLoading(true);
+            setError(null);
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authContext.token}`
@@ -129,13 +132,11 @@ const Row1: React.FC = () => {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
         fetchData();
-    }, [authContext, token, year]);
+    }, [authContext, token, year, retryKey]);
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error loading data.</div>;
-    if (!financialData.length) return <div>No data available.</div>;
-    if (!chartData.length) return <div>No data available.</div>;
-    if (!chartExpense.length) return <div>No data available.</div>;
+    if (isLoading) return <StateMessage variant="loading" message="Loading your dashboard…" />;
+    if (error) return <StateMessage variant="error" title="Couldn't load data" message="Something went wrong loading your dashboard." onRetry={() => setRetryKey((k) => k + 1)} />;
+    if (!financialData.length || !chartData.length || !chartExpense.length) return <StateMessage variant="empty" title="No data yet" message="Add a transaction with the + button to see your cashflow." />;
     const latestMonth = financialData[financialData.length - 1]?.report_year;
     const latestMonthData = financialData.filter(data => data.report_year === latestMonth);
     const { total_income_value, savings_rate_value,total_yearly_expenses,cumulative_net_income_value } = latestMonthData[0] || {};

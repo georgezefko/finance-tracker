@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
 import FinancialMetricBox from '../../components/FinancialMetricsBox';
+import StateMessage from '../../components/StateMessage';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext';
@@ -71,11 +72,14 @@ const Row1: React.FC = () => {
   const [allocationAbsolute, setAllocationAbsolute] = useState<AllocationChartItem[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     if (!token || !authContext) return;
 
     const fetchSummaryAndAllocation = async () => {
+      setLoading(true);
+      setError(null);
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${authContext.token}`,
@@ -125,11 +129,11 @@ const Row1: React.FC = () => {
     };
 // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchSummaryAndAllocation();
-  }, [authContext, token, year]);
+  }, [authContext, token, year, retryKey]);
 
-  if (isLoading) return <div>Loading net worth...</div>;
-  if (error) return <div>Error loading net worth.</div>;
-  if (!summary) return <div>No net worth data available.</div>;
+  if (isLoading) return <StateMessage variant="loading" message="Loading net worth…" />;
+  if (error) return <StateMessage variant="error" title="Couldn't load net worth" message="Something went wrong loading your net worth." onRetry={() => setRetryKey((k) => k + 1)} />;
+  if (!summary) return <StateMessage variant="empty" title="No net worth data yet" message="Add a net worth value with the + button to get started." />;
 
   const {
     currentNetworth,

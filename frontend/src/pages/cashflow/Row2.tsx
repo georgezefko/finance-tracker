@@ -2,6 +2,7 @@ import DashboardBox from '../../components/DashboardBox';
 import React, { useMemo, useEffect, useState, useContext } from 'react';
 import { useTheme, Box } from '@mui/material';
 import BoxHeader from '../../components/BoxHeader';
+import StateMessage from '../../components/StateMessage';
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Label } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
@@ -86,6 +87,7 @@ const Row2: React.FC = () => {
     const [listData, setListData] = useState<TransformedList[]>([]);
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const [retryKey, setRetryKey] = useState(0);
     const [isolatedCategory, setIsolatedCategory] = useState<string | null>(null);
     const authContext = useContext(AuthContext);
     const token = authContext?.token;
@@ -110,6 +112,8 @@ const Row2: React.FC = () => {
         if (!token || !authContext) return;
 
         const fetchData = async () => {
+            setLoading(true);
+            setError(null);
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authContext.token}`
@@ -145,18 +149,16 @@ const Row2: React.FC = () => {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
         fetchData();
-    }, [authContext, token, year]);
+    }, [authContext, token, year, retryKey]);
 
     const categoryKeys = useMemo(() => {
         if (chartData.length === 0) return [];
         return Object.keys(chartData[0]).filter(key => key !== 'time');
     }, [chartData]);
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error loading data.</div>;
-    if (!chartData.length) return <div>No data available.</div>;
-    if (!stuckData.length) return <div>No data available.</div>;
-    if (!listData.length) return <div>No data available.</div>;
+    if (isLoading) return <StateMessage variant="loading" message="Loading transactions…" />;
+    if (error) return <StateMessage variant="error" title="Couldn't load data" message="Something went wrong loading your transactions." onRetry={() => setRetryKey((k) => k + 1)} />;
+    if (!chartData.length || !stuckData.length || !listData.length) return <StateMessage variant="empty" title="No transactions yet" message="Add a transaction with the + button to see your charts and history." />;
 
     const latestStuckDataMonth = stuckData.length > 0 ? stuckData[stuckData.length - 1].month : '';
     const latestChartDataTime = chartData.length > 0 ? chartData[chartData.length - 1].time : '';
