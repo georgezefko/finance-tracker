@@ -1,3 +1,14 @@
+## [1.2.0](https://github.com/georgezefko/finance-tracker/compare/v1.1.0...v1.2.0) (2026-06-07)
+
+### Features
+
+* **charts:** readable money, axes, month labels + searchable grid ([c078fe2](https://github.com/georgezefko/finance-tracker/commit/c078fe22510d661e1930aa2b675a16e2b54214a3))
+* **ui:** add shared money formatting and currency metric tiles ([df8edc7](https://github.com/georgezefko/finance-tracker/commit/df8edc73abb48d1144c439bbb02623e07c43ab1e))
+
+### Bug Fixes
+
+* **mobile:** stop the add button overlapping the bottom card ([ab810a4](https://github.com/georgezefko/finance-tracker/commit/ab810a4d1cb0f99c5fb3a66306be4620f2ceea33))
+
 ## [1.1.0](https://github.com/georgezefko/finance-tracker/compare/v1.0.14...v1.1.0) (2026-06-07)
 
 ### Features
