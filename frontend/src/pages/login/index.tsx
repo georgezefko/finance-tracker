@@ -52,13 +52,9 @@ const LoginPage: React.FC = () => {
                 throw new Error(data.message || 'Something went wrong!');
             }
 
-            if (isLogin) {
-                login(data.token, data.userId); // This will come from our AuthContext
-            } else {
-                // Automatically switch to login mode after successful signup
-                setIsLogin(true);
-                setError('Signup successful! Please log in.');
-            }
+            // Both login and signup now return a token, so log the user straight in
+            // instead of forcing a second, redundant manual login after signup.
+            login(data.token, data.userId);
 
         } catch (err: any) {
             setError(err.message);

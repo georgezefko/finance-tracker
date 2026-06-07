@@ -9,6 +9,14 @@ const userSchema = z.object({
     password: z.string().min(6),
 });
 
+const signToken = (userId: number, email: string) => {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+        throw new Error('JWT_SECRET is not set in environment variables.');
+    }
+    return jwt.sign({ userId, email }, secret, { expiresIn: '1h' });
+};
+
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email, password } = userSchema.parse(req.body);
@@ -19,7 +27,13 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
         }
 
         const user = await authService.createUser(email, password);
-        return res.status(201).json({ message: 'User created successfully!', user });
+
+        // Issue a token immediately so the client can log the user in without
+        // forcing a second, redundant manual login.
+        const token = signToken(user.id, user.email);
+        return res
+            .status(201)
+            .json({ message: 'User created successfully!', token, userId: user.id });
 
     } catch (error) {
         next(error);
@@ -41,19 +55,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
-        const secret = process.env.JWT_SECRET;
-        if (!secret) {
-            throw new Error('JWT_SECRET is not set in environment variables.');
-        }
-
-        const token = jwt.sign(
-            {
-                userId: user.id,
-                email: user.email,
-            },
-            secret,
-            { expiresIn: '1h' }
-        );
+        const token = signToken(user.id, user.email);
 
         return res.status(200).json({ token, userId: user.id });
         
