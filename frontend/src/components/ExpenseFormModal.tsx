@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { 
-  Box, 
-  TextField, 
-  Button, 
-  MenuItem, 
-  InputLabel, 
-  FormControl, 
+import {
+  Box,
+  TextField,
+  Button,
+  MenuItem,
+  InputLabel,
+  FormControl,
   Typography,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   IconButton,
-  Fab
+  Fab,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -40,6 +42,8 @@ interface ExpenseFormModalProps {
   onExpenseAdded?: () => void; // Callback to refresh data after adding expense
 }
 
+const getTodayStr = () => new Date().toISOString().slice(0, 10);
+
 const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   mode = 'cashflow',
   onExpenseAdded,
@@ -48,6 +52,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
+  const [selectedDate, setSelectedDate] = useState<string>(getTodayStr());
   const [categories, setCategories] = useState<
     CashflowCategory[] | NetworthTypeInstitutionOption[]
   >([]);
@@ -59,6 +64,8 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
     number | null
   >(null); // used only for networth
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [successOpen, setSuccessOpen] = useState(false);
   const authContext = useContext(AuthContext);
 
   // Decide endpoints based on mode
@@ -106,9 +113,11 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   const handleClose = () => {
     setOpen(false);
     setAmount('');
+    setSelectedDate(getTodayStr());
     setSelectedTypeId(null);
     setSelectedCategoryId(null);
     setSelectedInstitutionId(null);
+    setFormError(null);
   };
 
   // When user picks an option:
@@ -116,68 +125,51 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   // - networth: type_id -> category_id & institution_id
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
     const id = parseInt(event.target.value as string, 10);
-  
-    console.log('mode:', mode, 'raw value from Select:', id);
-  
+
     if (mode === 'cashflow') {
       // id = cashflow type id
       setSelectedTypeId(id);
-  
+
       const cashflowCategories = categories as CashflowCategory[];
       const category = cashflowCategories.find((c) => c.id === id);
-  
+
       setSelectedCategoryId(category ? category.category_id : null);
       setSelectedInstitutionId(null);
-  
-      console.log('cashflow – state:', {
-        selectedTypeId: id,
-        selectedCategoryId: category?.category_id ?? null,
-        selectedInstitutionId: null,
-      });
     } else {
       // id = networth institution_id
       const options = categories as NetworthTypeInstitutionOption[];
       const opt = options.find((o) => o.institution_id === id);
-  
-      console.log('networth – matched option:', opt);
-  
+
       if (opt) {
         setSelectedTypeId(opt.type_id);
         setSelectedCategoryId(opt.category_id);
         setSelectedInstitutionId(opt.institution_id);
-  
-        console.log('networth – state:', {
-          selectedTypeId: opt.type_id,
-          selectedCategoryId: opt.category_id,
-          selectedInstitutionId: opt.institution_id,
-        });
       } else {
         setSelectedTypeId(null);
         setSelectedCategoryId(null);
         setSelectedInstitutionId(null);
-  
-        console.log('networth – NO MATCH, clearing state');
       }
     }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setFormError(null);
 
     if (selectedTypeId === null || selectedCategoryId === null) {
-      console.error('Type or category not selected');
+      setFormError('Please select a type.');
       return;
     }
 
     if (mode === 'networth' && selectedInstitutionId === null) {
-      console.error('Institution not selected for networth');
+      setFormError('Please select an institution.');
       return;
     }
 
     setIsSubmitting(true);
 
     const transactionData: any = {
-      date: new Date().toISOString().slice(0, 10),
+      date: selectedDate,
       amount: parseFloat(amount),
       typeId: selectedTypeId,
       categoryId: selectedCategoryId,
@@ -201,8 +193,18 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
         authContext
       );
 
-      const data = await response.json();
-      console.log('Transaction response:', data);
+      const data = await response.json().catch(() => ({}));
+
+      // Only treat a 2xx as success — a validation (422/400) error must NOT
+      // close the dialog as if the transaction was saved.
+      if (!response.ok) {
+        setFormError(
+          data?.message || 'Could not save the transaction. Please try again.'
+        );
+        return;
+      }
+
+      setSuccessOpen(true);
 
       if (onExpenseAdded) {
         onExpenseAdded();
@@ -210,7 +212,13 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
 
       handleClose();
     } catch (error) {
-      console.error('Error submitting transaction:', error);
+      // Network / server error (apiFetch surfaces these). Keep the dialog open
+      // so the user's input isn't lost.
+      setFormError(
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong. Please try again.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -246,6 +254,17 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
 
         <DialogContent>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+            {/* Inline error feedback */}
+            {formError && (
+              <Alert
+                severity="error"
+                sx={{ mb: 2 }}
+                onClose={() => setFormError(null)}
+              >
+                {formError}
+              </Alert>
+            )}
+
             {/* Amount */}
             <FormControl fullWidth sx={{ marginBottom: theme.spacing(2) }}>
               <TextField
@@ -260,6 +279,39 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
                   style: { color: theme.palette.grey[500] },
                 }}
                 inputProps={{
+                  style: { color: theme.palette.grey[600] },
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: theme.palette.grey[400],
+                    },
+                    '&:hover fieldset': {
+                      borderColor: theme.palette.grey[500],
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: theme.palette.primary.main,
+                    },
+                  },
+                }}
+              />
+            </FormControl>
+
+            {/* Date — defaults to today but can be backdated */}
+            <FormControl fullWidth sx={{ marginBottom: theme.spacing(2) }}>
+              <TextField
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                variant="outlined"
+                label="Date"
+                required
+                InputLabelProps={{
+                  shrink: true,
+                  style: { color: theme.palette.grey[500] },
+                }}
+                inputProps={{
+                  max: getTodayStr(),
                   style: { color: theme.palette.grey[600] },
                 }}
                 sx={{
@@ -348,6 +400,23 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Success feedback */}
+      <Snackbar
+        open={successOpen}
+        autoHideDuration={3000}
+        onClose={() => setSuccessOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSuccessOpen(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {mode === 'cashflow' ? 'Transaction added' : 'Net worth value added'}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
