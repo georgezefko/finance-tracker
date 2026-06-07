@@ -2,11 +2,12 @@ import DashboardBox from '../../components/DashboardBox';
 import React, { useMemo, useEffect, useState, useContext } from 'react';
 import { useTheme, Box } from '@mui/material';
 import BoxHeader from '../../components/BoxHeader';
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Label } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
-import { useYear } from '../../context/YearContext'; 
+import { useYear } from '../../context/YearContext';
+import { formatCurrency, formatCompactCurrency, formatMonthTick } from '../../utils/format';
 
 
 
@@ -93,7 +94,7 @@ const Row2: React.FC = () => {
     const columns = [
         { field: 'id', headerName: 'ID', width: 50 },
         { field: 'date', headerName: 'Date', width: 100 },
-        { field: 'amount', headerName: 'Amount', type: 'number', width: 90 },
+        { field: 'amount', headerName: 'Amount', type: 'number', width: 110, valueFormatter: (params: any) => formatCurrency(Number(params.value)) },
         { field: 'type', headerName: 'Type', width: 100 },
         { field: 'category', headerName: 'Category', width: 150 },
       
@@ -180,12 +181,12 @@ const Row2: React.FC = () => {
                   barCategoryGap={0}
                   >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month"/>
-                  <YAxis>
-                      <Label value="" angle={-90} position="insideLeft"  />
+                  <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
+                  <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={70}>
+                      <Label value="Amount" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
                   </YAxis>
-                  <Tooltip />
-                  <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
+                  <Tooltip formatter={(value: number) => formatCurrency(Number(value))} />
+                  <Legend wrapperStyle={{ paddingTop: "10px" }} />
                   {Object.keys(stuckData[0] || {}).filter(key => key !== 'month').map((key, idx) => (
                       <Bar 
                           key={idx} 
@@ -216,9 +217,9 @@ const Row2: React.FC = () => {
           onClick={(e) => e?.activePayload?.[0] && handleLegendClick(e.activePayload[0])}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="time" />
-          <YAxis />
-          <Tooltip />
+          <XAxis dataKey="time" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
+          <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={70} />
+          <Tooltip formatter={(value: number) => formatCurrency(Number(value))} />
           <Legend onClick={handleLegendClick} wrapperStyle={{ cursor: 'pointer' }} />
           {categoryKeys.map((key, index) => (
             <Line
@@ -265,6 +266,8 @@ const Row2: React.FC = () => {
                         hideFooter={true}
                         rows={listData}
                         columns={columns}
+                        slots={{ toolbar: GridToolbar }}
+                        slotProps={{ toolbar: { showQuickFilter: true, csvOptions: { fileName: 'transactions' } } }}
                     />
                 </Box>
             </DashboardBox>

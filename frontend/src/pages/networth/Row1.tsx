@@ -5,7 +5,8 @@ import BoxHeader from '../../components/BoxHeader';
 import FinancialMetricBox from '../../components/FinancialMetricsBox';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
-import { useYear } from '../../context/YearContext'; 
+import { useYear } from '../../context/YearContext';
+import { formatCurrency, formatCompactCurrency, formatMonthTick } from '../../utils/format';
 import {
   BarChart,
   Bar,
@@ -189,13 +190,13 @@ const Row1: React.FC = () => {
           <FinancialMetricBox
             title="Net Worth"
             value={currentNetworth || 0}
-            unit=""
+            format="currency"
             useSignColor
           />
           <FinancialMetricBox
             title="MoM Change"
             value={momChange ?? 0}
-            unit=""
+            format="currency"
             useSignColor
           />
           <FinancialMetricBox
@@ -207,7 +208,7 @@ const Row1: React.FC = () => {
           <FinancialMetricBox
             title="YTD Change"
             value={ytdChange ?? 0}
-            unit=""
+            format="currency"
             useSignColor
           />
           <FinancialMetricBox
@@ -249,9 +250,9 @@ const Row1: React.FC = () => {
             barCategoryGap={20}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis>
-              <Label value="" angle={-90} position="insideLeft" />
+            <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
+            <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={70}>
+              <Label value="Net worth" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
             </YAxis>
             <Tooltip
               contentStyle={{
@@ -265,9 +266,7 @@ const Row1: React.FC = () => {
                 color: '#37474F',
                 fontWeight: 700,
               }}
-              formatter={(value: number) =>
-                `${(value as number).toLocaleString()} `
-              }
+              formatter={(value: number) => formatCurrency(Number(value))}
             />
             <Legend wrapperStyle={{ paddingTop: '10px' }} />
             <Bar

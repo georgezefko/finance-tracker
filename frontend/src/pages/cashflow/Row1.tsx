@@ -8,7 +8,8 @@ import {
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
-import { useYear } from '../../context/YearContext'; 
+import { useYear } from '../../context/YearContext';
+import { formatCurrency, formatCompactCurrency, formatMonthTick } from '../../utils/format';
 
 
 
@@ -151,15 +152,15 @@ const Row1: React.FC = () => {
             }}>
                 <BoxHeader title="Financial Overview" subtitle="Avg annual values of main financial metrics" sideText={`Updated: ${latestMonth || ''}`} />
                 
-                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
-                    <FinancialMetricBox title="Acc Income" value={parseFloat(total_income_value) || 0} unit="" />
-                    <FinancialMetricBox title="Acc Net Income" value={(parseFloat(cumulative_net_income_value)) || 0} unit="" />
+                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: '1rem' }}>
+                    <FinancialMetricBox title="Acc Income" value={parseFloat(total_income_value) || 0} format="currency" />
+                    <FinancialMetricBox title="Acc Net Income" value={(parseFloat(cumulative_net_income_value)) || 0} format="currency" />
                     <FinancialMetricBox title="Savings Rate" value={parseFloat(parseFloat(savings_rate_value).toFixed(2)) || 0} unit="%" />
                     <FinancialMetricBox title="Total Expenses" value={parseFloat(parseFloat(total_yearly_expenses).toFixed(2)) || 0} unit="%" />
 
                 </Box>
 
-                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+                <Box sx={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: '1rem' }}>
                     {latestMonthData.map((data, index) => (
                         <FinancialMetricBox key={index} title={data.expense_category} value={parseFloat(parseFloat(data.total_expense_value).toFixed(2)) || 0} unit="%" />
                     ))}
@@ -183,12 +184,12 @@ const Row1: React.FC = () => {
                       barCategoryGap={20}
                   >
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month"/>
-                      <YAxis>
-                          <Label value="" angle={-90} position="insideLeft"  />
+                      <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
+                      <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={70}>
+                          <Label value="Amount" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
                       </YAxis>
-                      <Tooltip />
-                      <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
+                      <Tooltip formatter={(value: number) => formatCurrency(Number(value))} />
+                      <Legend wrapperStyle={{ paddingTop: "10px" }} />
                       {Object.keys(chartExpense[0] || {}).filter(key => key !== 'month' && key !== 'Savings').map((key, idx) => (
                           <Bar 
                               key={idx} 
@@ -219,12 +220,12 @@ const Row1: React.FC = () => {
                       barCategoryGap={20}
                   >
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month"/>
-                      <YAxis>
-                          <Label value="Percentage (%)" angle={-90} position="insideLeft"  />
+                      <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
+                      <YAxis tickFormatter={(v) => `${v}%`}>
+                          <Label value="Percentage (%)" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
                       </YAxis>
-                      <Tooltip />
-                      <Legend wrapperStyle={{ paddingTop: "10px" }} /> 
+                      <Tooltip formatter={(value: number) => `${Number(value).toFixed(1)}%`} />
+                      <Legend wrapperStyle={{ paddingTop: "10px" }} />
                       {chartExpense.some(data => data.Savings) && (
                           <Bar 
                               dataKey="Savings" 

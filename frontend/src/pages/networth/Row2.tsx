@@ -3,7 +3,8 @@ import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
-import { useYear } from '../../context/YearContext'; 
+import { useYear } from '../../context/YearContext';
+import { formatMonthTick } from '../../utils/format';
 import {
   LineChart,
   Line,
@@ -238,7 +239,9 @@ const Row2: React.FC = () => {
             <XAxis
               dataKey="month"
               stroke="#546E7A"
-              tickFormatter={(v) => v.slice(5)} // "01", "02", ...
+              tickFormatter={formatMonthTick}
+              tick={{ fontSize: 11 }}
+              interval="preserveStartEnd"
             />
             <YAxis
               stroke="#546E7A"
@@ -322,7 +325,7 @@ const Row2: React.FC = () => {
             barCategoryGap={20}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
+            <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
             <YAxis domain={[0, 100]}>
               <Label value="%" angle={-90} position="insideLeft" />
             </YAxis>

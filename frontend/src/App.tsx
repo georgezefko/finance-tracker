@@ -48,7 +48,11 @@ function App() {
                 <CssBaseline />
                 <Navbar onToggleSidebar={toggleSidebar} />
                 <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
-                <Box width="100%" height="100%" padding="1rem 2rem 4rem 2rem">
+                <Box
+                    width="100%"
+                    height="100%"
+                    sx={{ padding: { xs: '1rem 1rem 96px 1rem', md: '1rem 2rem 4rem 2rem' } }}
+                >
                     <AppRoutes />
                 </Box>
             </ThemeProvider>
