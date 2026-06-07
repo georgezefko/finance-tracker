@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import DashboardBox from '../../components/DashboardBox';
 import BoxHeader from '../../components/BoxHeader';
+import StateMessage from '../../components/StateMessage';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext';
@@ -107,11 +108,14 @@ const Row2: React.FC = () => {
   const [allocationPercent, setAllocationPercent] = useState<AllocationChartItem[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     if (!token || !authContext) return;
 
     const fetchMetrics = async () => {
+      setLoading(true);
+      setError(null);
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${authContext.token}`,
@@ -200,11 +204,11 @@ const Row2: React.FC = () => {
     };
 // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchMetrics();
-  }, [authContext, token, year]);
+  }, [authContext, token, year, retryKey]);
 
-  if (isLoading) return <div>Loading performance...</div>;
-  if (error) return <div>Error loading performance data.</div>;
-  if (!metrics.length) return <div>No performance data available.</div>;
+  if (isLoading) return <StateMessage variant="loading" message="Loading performance…" />;
+  if (error) return <StateMessage variant="error" title="Couldn't load performance" message="Something went wrong loading your net worth performance." onRetry={() => setRetryKey((k) => k + 1)} />;
+  if (!metrics.length) return <StateMessage variant="empty" title="No performance data yet" message="Add net worth values across a few months to see performance." />;
 
   const allocationKeys =
     allocationPercent.length > 0

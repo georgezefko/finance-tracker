@@ -102,6 +102,8 @@ const LoginPage: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        helperText={!isLogin ? 'At least 6 characters' : undefined}
+                        inputProps={{ minLength: !isLogin ? 6 : undefined }}
                     />
                     {error && (
                         <Typography color="error" variant="body2" align="center" sx={{ mt: 2 }}>

@@ -28,9 +28,17 @@ app.use((error: any, _req: Request, res: Response, _next: NextFunction) => {
     console.error(error);
 
     if (error instanceof z.ZodError) {
-        res.status(422).json({ 
-            message: 'Validation failed.',
-            errors: error.errors 
+        // Surface the first field-level problem so the client can show something
+        // actionable (e.g. "Password: ...") instead of a generic "Validation failed.".
+        const first = error.errors[0];
+        const field = first?.path?.length ? String(first.path[0]) : '';
+        const label = field ? field.charAt(0).toUpperCase() + field.slice(1) : '';
+        const message = first
+            ? (label ? `${label}: ${first.message}` : first.message)
+            : 'Validation failed.';
+        res.status(422).json({
+            message,
+            errors: error.errors,
         });
         return;
     }
