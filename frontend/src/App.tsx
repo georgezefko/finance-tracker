@@ -26,9 +26,6 @@ const AppRoutes: React.FC = () => {
                     <Route path="/" element={<CashFlow />} />
                     <Route path="/cashflow" element={<CashFlow />} />
                     <Route path="/networth" element={<NetWorth />} />
-                    <Route path="/logout" element={
-                        <button onClick={authContext.logout}>Logout</button> // A simple logout button
-                    } />
                     <Route path="*" element={<Navigate to="/" />} />
                 </>
             )}
