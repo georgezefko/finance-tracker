@@ -4,3 +4,4 @@ dist
 .env
 build
 .env.prod
+.claude/settings.local.json
