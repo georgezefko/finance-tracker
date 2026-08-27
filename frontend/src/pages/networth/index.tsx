@@ -9,6 +9,7 @@ import { useState } from "react";
 const gridTemplateLargeScreens = `
   "a b"
   "c d"
+  "e f"
 `;
 
 // const gridTemplateSmallScreens = `
@@ -34,14 +35,14 @@ const NetWorth = () => {
     <Box width="100%" height="100%" display="flex" flexDirection="column" gap="1rem">
         <Box
             width="100%"
-            height="100%"
+            minHeight="100%"
             display="grid"
             gap="1.5rem"
             sx={
                 isAboveMediumScreens
                 ? {
                     gridTemplateColumns: "repeat(2, minmax(370px, 1fr))",
-                    gridTemplateRows: "repeat(2, minmax(300px, 1fr))",
+                    gridTemplateRows: "repeat(3, 400px)",
                     gridTemplateAreas: gridTemplateLargeScreens,
                     }
                 : {
@@ -52,19 +53,22 @@ const NetWorth = () => {
                         "b"
                         "c"
                         "d"
+                        "e"
+                        "f"
                     `,
                     }
             }
             >
             <Row1 key={`row1-${refreshKey}`} />
             <Row2 key={`row2-${refreshKey}`} />
+            <Box sx={{ gridArea: 'f', minWidth: 0, overflow: 'hidden' }}>
+                <NetworthTransactions
+                    key={`tx-${refreshKey}`}
+                    onEditTransaction={setEditTransaction}
+                    onChanged={handleExpenseAdded}
+                />
+            </Box>
         </Box>
-
-        <NetworthTransactions
-            key={`tx-${refreshKey}`}
-            onEditTransaction={setEditTransaction}
-            onChanged={handleExpenseAdded}
-        />
 
         <ExpenseFormModal
             mode="networth"
