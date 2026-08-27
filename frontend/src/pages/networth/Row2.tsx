@@ -5,7 +5,7 @@ import StateMessage from '../../components/StateMessage';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext';
-import { formatMonthTick } from '../../utils/format';
+import { formatMonthTick, formatCompactCurrency, formatCurrency } from '../../utils/format';
 import {
   LineChart,
   Line,
@@ -14,7 +14,6 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  Label,
   ResponsiveContainer,
   BarChart,
   Bar,
@@ -106,6 +105,7 @@ const Row2: React.FC = () => {
   const { year } = useYear();
   const [metrics, setMetrics] = useState<MonthlyMetric[]>([]);
   const [allocationPercent, setAllocationPercent] = useState<AllocationChartItem[]>([]);
+  const [allocationAbsolute, setAllocationAbsolute] = useState<AllocationChartItem[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [retryKey, setRetryKey] = useState(0);
@@ -139,6 +139,7 @@ const Row2: React.FC = () => {
         if (!Array.isArray(allocationRecords) || allocationRecords.length === 0) {
           setMetrics([]);
           setAllocationPercent([]);
+          setAllocationAbsolute([]);
           setLoading(false);
           return;
         }
@@ -159,6 +160,7 @@ const Row2: React.FC = () => {
         if (totalNetworthPerMonth.length === 0) {
           setMetrics([]);
           setAllocationPercent([]);
+          setAllocationAbsolute([]);
           setLoading(false);
           return;
         }
@@ -195,6 +197,7 @@ const Row2: React.FC = () => {
 
         setMetrics(monthlyMetrics);
         setAllocationPercent(percentData);
+        setAllocationAbsolute(allocationAbsolute);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching networth time series/allocation:', err);
@@ -251,9 +254,8 @@ const Row2: React.FC = () => {
               stroke="#546E7A"
               tickFormatter={(v) => `${v.toFixed(0)}%`}
               domain={['auto', 'auto']}
-            >
-              <Label value="%" angle={-90} position="insideLeft" />
-            </YAxis>
+              width={50}
+            />
             <Tooltip
               contentStyle={{
                 backgroundColor: '#FFFFFF',
@@ -330,9 +332,13 @@ const Row2: React.FC = () => {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
-            <YAxis domain={[0, 100]}>
-              <Label value="%" angle={-90} position="insideLeft" />
-            </YAxis>
+            <YAxis
+              domain={[0, 100]}
+              allowDataOverflow
+              ticks={[0, 25, 50, 75, 100]}
+              tickFormatter={(v) => `${v}%`}
+              width={50}
+            />
             <Tooltip
               contentStyle={{
                 backgroundColor: '#FFFFFF',
@@ -372,6 +378,71 @@ const Row2: React.FC = () => {
               </Bar>
             ))}
           </BarChart>
+        </ResponsiveContainer>
+      </DashboardBox>
+
+      {/* Box E: Category value over time (absolute) — one line per asset type */}
+      <DashboardBox
+        sx={{
+          gridArea: 'e',
+          display: 'grid',
+          gap: '0rem',
+          padding: '1rem',
+          height: { xs: 250, md: 400 },
+          width: '100%',
+        }}
+      >
+        <BoxHeader
+          title="Category Trend"
+          subtitle="Value per asset type over time"
+          sideText={String(year)}
+        />
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={allocationAbsolute}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#CFD8DC" />
+            <XAxis
+              dataKey="month"
+              stroke="#546E7A"
+              tickFormatter={formatMonthTick}
+              tick={{ fontSize: 11 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              stroke="#546E7A"
+              tickFormatter={formatCompactCurrency}
+              domain={['auto', 'auto']}
+              width={80}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #B0BEC5',
+                borderRadius: 6,
+                color: '#263238',
+                fontWeight: 500,
+              }}
+              labelStyle={{ color: '#37474F', fontWeight: 700 }}
+              labelFormatter={formatMonthTick}
+              formatter={(value: number, name: string) => [formatCurrency(value), name]}
+            />
+            <Legend wrapperStyle={{ paddingTop: '10px' }} />
+            {allocationKeys.map((key, idx) => (
+              <Line
+                key={key}
+                type="monotone"
+                dataKey={key}
+                name={key}
+                stroke={allocationColors[idx % allocationColors.length]}
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+                connectNulls
+              />
+            ))}
+          </LineChart>
         </ResponsiveContainer>
       </DashboardBox>
     </>

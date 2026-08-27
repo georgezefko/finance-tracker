@@ -16,7 +16,6 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  Label,
   ResponsiveContainer,
 } from 'recharts';
 
@@ -255,9 +254,7 @@ const Row1: React.FC = () => {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
-            <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={70}>
-              <Label value="Net worth" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
-            </YAxis>
+            <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={75} />
             <Tooltip
               contentStyle={{
                 backgroundColor: '#FFFFFF',
