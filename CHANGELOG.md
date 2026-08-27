@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/georgezefko/finance-tracker/compare/v1.4.0...v1.5.0) (2026-08-27)
+
+### Features
+
+* **frontend:** net worth category trend line chart ([8a20578](https://github.com/georgezefko/finance-tracker/commit/8a205782a0b68a92157f3aae1d4ab242af25b026))
+
 ## [1.4.0](https://github.com/georgezefko/finance-tracker/compare/v1.3.0...v1.4.0) (2026-06-07)
 
 ### Features
