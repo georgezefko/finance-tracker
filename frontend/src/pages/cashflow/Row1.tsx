@@ -10,7 +10,8 @@ import {
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext';
-import { formatCurrency, formatCompactCurrency, formatMonthTick } from '../../utils/format';
+import { formatMonthTick } from '../../utils/format';
+import { useMoney } from '../../context/CurrencyContext';
 
 
 
@@ -79,6 +80,8 @@ const transformDataForChart = (
 const expenseColors = ["#82ca9d", "#8884d8", "#ffc658"]; // Add more colors as needed
 
 const Row1: React.FC = () => {
+  const { money, moneyCompact } = useMoney();
+
     const [financialData, setFinancialData] = useState<FinancialData[]>([]);
     const { year } = useYear(); 
     const [chartData, setChartData] = useState<TransformedDataItem[]>([]);
@@ -186,10 +189,10 @@ const Row1: React.FC = () => {
                   >
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
-                      <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={70}>
+                      <YAxis tickFormatter={(v) => moneyCompact(Number(v))} width={70}>
                           <Label value="Amount" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
                       </YAxis>
-                      <Tooltip formatter={(value: number) => formatCurrency(Number(value))} />
+                      <Tooltip formatter={(value: number) => money(Number(value))} />
                       <Legend wrapperStyle={{ paddingTop: "10px" }} />
                       {Object.keys(chartExpense[0] || {}).filter(key => key !== 'month' && key !== 'Savings').map((key, idx) => (
                           <Bar 

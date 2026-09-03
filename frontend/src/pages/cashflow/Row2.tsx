@@ -21,7 +21,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext';
-import { formatCurrency, formatCompactCurrency, formatMonthTick } from '../../utils/format';
+import { formatMonthTick } from '../../utils/format';
+import { useMoney } from '../../context/CurrencyContext';
 import type { EditableTransaction } from '../../components/ExpenseFormModal';
 
 
@@ -102,6 +103,8 @@ const generateColor = (index: number) => {
 };
 
 const Row2: React.FC<Row2Props> = ({ onEditTransaction, onChanged }) => {
+  const { money, moneyCompact } = useMoney();
+
     const { palette } = useTheme();
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const { year } = useYear();
@@ -164,7 +167,7 @@ const Row2: React.FC<Row2Props> = ({ onEditTransaction, onChanged }) => {
 
     const columns: GridColDef[] = [
         { field: 'date', headerName: 'Date', width: 100 },
-        { field: 'amount', headerName: 'Amount', type: 'number', width: 110, valueFormatter: (params: any) => formatCurrency(Number(params.value)) },
+        { field: 'amount', headerName: 'Amount', type: 'number', width: 110, valueFormatter: (params: any) => money(Number(params.value)) },
         { field: 'type', headerName: 'Type', width: 100 },
         { field: 'category', headerName: 'Category', width: 140 },
         {
@@ -265,10 +268,10 @@ const Row2: React.FC<Row2Props> = ({ onEditTransaction, onChanged }) => {
                   >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
-                  <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={70}>
+                  <YAxis tickFormatter={(v) => moneyCompact(Number(v))} width={70}>
                       <Label value="Amount" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
                   </YAxis>
-                  <Tooltip formatter={(value: number) => formatCurrency(Number(value))} />
+                  <Tooltip formatter={(value: number) => money(Number(value))} />
                   <Legend wrapperStyle={{ paddingTop: "10px" }} />
                   {Object.keys(stuckData[0] || {}).filter(key => key !== 'month').map((key, idx) => (
                       <Bar 
@@ -301,8 +304,8 @@ const Row2: React.FC<Row2Props> = ({ onEditTransaction, onChanged }) => {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="time" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
-          <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={70} />
-          <Tooltip formatter={(value: number) => formatCurrency(Number(value))} />
+          <YAxis tickFormatter={(v) => moneyCompact(Number(v))} width={70} />
+          <Tooltip formatter={(value: number) => money(Number(value))} />
           <Legend onClick={handleLegendClick} wrapperStyle={{ cursor: 'pointer' }} />
           {categoryKeys.map((key, index) => (
             <Line
@@ -364,7 +367,7 @@ const Row2: React.FC<Row2Props> = ({ onEditTransaction, onChanged }) => {
                 <DialogContent>
                     <Typography variant="body2">
                         {pendingDelete
-                            ? `Delete the ${pendingDelete.category} transaction of ${formatCurrency(
+                            ? `Delete the ${pendingDelete.category} transaction of ${money(
                                   Number(pendingDelete.amount)
                               )} on ${pendingDelete.date}? This can't be undone.`
                             : ''}

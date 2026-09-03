@@ -7,7 +7,8 @@ import StateMessage from '../../components/StateMessage';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext';
-import { formatCurrency, formatCompactCurrency, formatMonthTick } from '../../utils/format';
+import { formatMonthTick } from '../../utils/format';
+import { useMoney } from '../../context/CurrencyContext';
 import {
   BarChart,
   Bar,
@@ -64,6 +65,8 @@ const transformAllocationForAbsolute = (
 };
 
 const Row1: React.FC = () => {
+  const { money, moneyCompact } = useMoney();
+
   const authContext = useContext(AuthContext);
   const token = authContext?.token;
   const { year } = useYear(); 
@@ -254,7 +257,7 @@ const Row1: React.FC = () => {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" tickFormatter={formatMonthTick} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
-            <YAxis tickFormatter={(v) => formatCompactCurrency(Number(v))} width={75} />
+            <YAxis tickFormatter={(v) => moneyCompact(Number(v))} width={75} />
             <Tooltip
               contentStyle={{
                 backgroundColor: '#FFFFFF',
@@ -267,7 +270,7 @@ const Row1: React.FC = () => {
                 color: '#37474F',
                 fontWeight: 700,
               }}
-              formatter={(value: number) => formatCurrency(Number(value))}
+              formatter={(value: number) => money(Number(value))}
             />
             <Legend wrapperStyle={{ paddingTop: '10px' }} />
             <Bar
