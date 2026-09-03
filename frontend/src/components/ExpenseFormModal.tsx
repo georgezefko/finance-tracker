@@ -23,8 +23,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { AuthContext } from '../context/AuthContext';
 import { apiFetch } from '../utils/apiFetch';
 import { useYear } from '../context/YearContext';
-import { useCurrency } from '../context/CurrencyContext';
-import { CURRENCIES, Currency, fromDkk, toDkk } from '../utils/format';
+import { CURRENCIES, Currency, toDkk } from '../utils/format';
 
 interface CashflowCategory {
   type_name: string;
@@ -67,9 +66,9 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const { currency: displayCurrency } = useCurrency();
   const [amount, setAmount] = useState('');
-  const [entryCurrency, setEntryCurrency] = useState<Currency>(displayCurrency);
+  // Entry is DKK-first — the storage currency. Switch the select to type in another.
+  const [entryCurrency, setEntryCurrency] = useState<Currency>('DKK');
   const [selectedDate, setSelectedDate] = useState<string>(getTodayStr());
   const [categories, setCategories] = useState<
     CashflowCategory[] | NetworthTypeInstitutionOption[]
@@ -142,8 +141,8 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   // Open prefilled when the parent requests an edit (cashflow only).
   useEffect(() => {
     if (!editTransaction) return;
-    setEntryCurrency(displayCurrency);
-    setAmount(fromDkk(editTransaction.amount, displayCurrency).toFixed(2));
+    setEntryCurrency('DKK');
+    setAmount(String(editTransaction.amount));
     setSelectedDate(editTransaction.date);
     setSelectedTypeId(editTransaction.typeId);
     setSelectedCategoryId(editTransaction.categoryId);
@@ -151,14 +150,14 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
     setEditingId(editTransaction.id);
     setFormError(null);
     setOpen(true);
-  }, [editTransaction, displayCurrency]);
+  }, [editTransaction]);
 
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {
     setOpen(false);
     setAmount('');
-    setEntryCurrency(displayCurrency);
+    setEntryCurrency('DKK');
     setSelectedDate(getTodayStr());
     setSelectedTypeId(null);
     setSelectedCategoryId(null);
