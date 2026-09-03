@@ -1,3 +1,13 @@
+## [1.6.0](https://github.com/georgezefko/finance-tracker/compare/v1.5.0...v1.6.0) (2026-09-03)
+
+### Features
+
+* **frontend:** currency selection for entry and display ([273f489](https://github.com/georgezefko/finance-tracker/commit/273f489abb801073193cad38d5c7f72c407b207c))
+
+### Bug Fixes
+
+* **frontend:** default entry currency to DKK ([c735a67](https://github.com/georgezefko/finance-tracker/commit/c735a673385f413b3f0539c0170196a69ea372eb))
+
 ## [1.5.0](https://github.com/georgezefko/finance-tracker/compare/v1.4.0...v1.5.0) (2026-08-27)
 
 ### Features
