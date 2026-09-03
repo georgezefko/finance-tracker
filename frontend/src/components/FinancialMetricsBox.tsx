@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { formatCurrency } from '../utils/format';
+import { useMoney } from '../context/CurrencyContext';
 
 type FinancialMetricBoxProps = {
     title: string;
@@ -63,11 +63,12 @@ const getSignColor = (value: number) => {
 
 
 const FinancialMetricBox: React.FC<FinancialMetricBoxProps> = ({ title, value, unit, format, useSignColor, }) => {
+    const { money } = useMoney();
     const color = useSignColor ? getSignColor(value) : getColorByCategory(title, value);
 
     const displayValue =
         format === 'currency'
-            ? formatCurrency(value)
+            ? money(value)
             : `${value.toLocaleString()}${unit ?? ''}`;
 
     return (

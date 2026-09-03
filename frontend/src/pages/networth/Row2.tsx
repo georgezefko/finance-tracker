@@ -5,7 +5,8 @@ import StateMessage from '../../components/StateMessage';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext';
-import { formatMonthTick, formatCompactCurrency, formatCurrency } from '../../utils/format';
+import { formatMonthTick } from '../../utils/format';
+import { useMoney } from '../../context/CurrencyContext';
 import {
   LineChart,
   Line,
@@ -100,6 +101,8 @@ const allocationColors = [
 ];
 
 const Row2: React.FC = () => {
+  const { money, moneyCompact } = useMoney();
+
   const authContext = useContext(AuthContext);
   const token = authContext?.token;
   const { year } = useYear();
@@ -412,7 +415,7 @@ const Row2: React.FC = () => {
             />
             <YAxis
               stroke="#546E7A"
-              tickFormatter={formatCompactCurrency}
+              tickFormatter={moneyCompact}
               domain={['auto', 'auto']}
               width={80}
             />
@@ -426,7 +429,7 @@ const Row2: React.FC = () => {
               }}
               labelStyle={{ color: '#37474F', fontWeight: 700 }}
               labelFormatter={formatMonthTick}
-              formatter={(value: number, name: string) => [formatCurrency(value), name]}
+              formatter={(value: number, name: string) => [money(value), name]}
             />
             <Legend wrapperStyle={{ paddingTop: '10px' }} />
             {allocationKeys.map((key, idx) => (

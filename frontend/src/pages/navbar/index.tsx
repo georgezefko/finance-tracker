@@ -13,6 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import YearSelector from '../../components/YearSelector';
+import CurrencySelector from '../../components/CurrencySelector';
 import { AuthContext } from '../../context/AuthContext';
 
 type NavbarProps = {
@@ -56,6 +57,7 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
       {/* RIGHT SIDE: year selector + account menu */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <YearSelector />
+        <CurrencySelector />
 
         <IconButton
           onClick={handleOpenMenu}

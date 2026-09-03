@@ -11,7 +11,8 @@ import LoginPage from "./pages/login";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import RouteTitle from "./components/RouteTitle";
-import { YearProvider } from "./context/YearContext"; 
+import { YearProvider } from "./context/YearContext";
+import { CurrencyProvider } from "./context/CurrencyContext";
 
 const AppRoutes: React.FC = () => {
     const authContext = useContext(AuthContext);
@@ -68,8 +69,10 @@ const AppWrapper: React.FC = () => (
         <RouteTitle />
         <AuthProvider>
           <YearProvider>
-            <App />
-            </YearProvider>
+            <CurrencyProvider>
+              <App />
+            </CurrencyProvider>
+          </YearProvider>
         </AuthProvider>
       </BrowserRouter>
     </ErrorBoundary>

@@ -20,7 +20,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { AuthContext } from '../../context/AuthContext';
 import { apiFetch } from '../../utils/apiFetch';
 import { useYear } from '../../context/YearContext';
-import { formatCurrency } from '../../utils/format';
+import { useMoney } from '../../context/CurrencyContext';
 import type { EditableTransaction } from '../../components/ExpenseFormModal';
 
 interface NetworthRow {
@@ -41,11 +41,13 @@ interface NetworthTransactionsProps {
 }
 
 const NetworthTransactions: React.FC<NetworthTransactionsProps> = ({
+
   onEditTransaction,
   onChanged,
 }) => {
   const { palette } = useTheme();
   const { year } = useYear();
+  const { money } = useMoney();
   const authContext = useContext(AuthContext);
   const token = authContext?.token;
 
@@ -138,7 +140,7 @@ const NetworthTransactions: React.FC<NetworthTransactionsProps> = ({
       headerName: 'Amount',
       type: 'number',
       width: 120,
-      valueFormatter: (params: any) => formatCurrency(Number(params.value)),
+      valueFormatter: (params: any) => money(Number(params.value)),
     },
     { field: 'type', headerName: 'Type', width: 120 },
     { field: 'institution', headerName: 'Institution', width: 140 },
@@ -221,7 +223,7 @@ const NetworthTransactions: React.FC<NetworthTransactionsProps> = ({
         <DialogContent>
           <Typography variant="body2">
             {pendingDelete
-              ? `Delete the ${pendingDelete.institution} value of ${formatCurrency(
+              ? `Delete the ${pendingDelete.institution} value of ${money(
                   Number(pendingDelete.amount)
                 )} on ${pendingDelete.date}? This can't be undone.`
               : ''}

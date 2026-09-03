@@ -23,6 +23,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { AuthContext } from '../context/AuthContext';
 import { apiFetch } from '../utils/apiFetch';
 import { useYear } from '../context/YearContext';
+import { CURRENCIES, Currency, toDkk } from '../utils/format';
 
 interface CashflowCategory {
   type_name: string;
@@ -66,6 +67,8 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
+  // Entry is DKK-first — the storage currency. Switch the select to type in another.
+  const [entryCurrency, setEntryCurrency] = useState<Currency>('DKK');
   const [selectedDate, setSelectedDate] = useState<string>(getTodayStr());
   const [categories, setCategories] = useState<
     CashflowCategory[] | NetworthTypeInstitutionOption[]
@@ -138,6 +141,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   // Open prefilled when the parent requests an edit (cashflow only).
   useEffect(() => {
     if (!editTransaction) return;
+    setEntryCurrency('DKK');
     setAmount(String(editTransaction.amount));
     setSelectedDate(editTransaction.date);
     setSelectedTypeId(editTransaction.typeId);
@@ -153,6 +157,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   const handleClose = () => {
     setOpen(false);
     setAmount('');
+    setEntryCurrency('DKK');
     setSelectedDate(getTodayStr());
     setSelectedTypeId(null);
     setSelectedCategoryId(null);
@@ -214,7 +219,7 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
 
     const transactionData: any = {
       date: selectedDate,
-      amount: parseFloat(amount),
+      amount: Number(toDkk(parseFloat(amount), entryCurrency).toFixed(2)),
       typeId: selectedTypeId,
       categoryId: selectedCategoryId,
     };
@@ -328,8 +333,9 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
               </Alert>
             )}
 
-            {/* Amount */}
-            <FormControl fullWidth sx={{ marginBottom: theme.spacing(2) }}>
+            {/* Amount — entered in any currency, stored as DKK */}
+            <Box sx={{ display: 'flex', gap: 1, marginBottom: theme.spacing(2) }}>
+            <FormControl fullWidth>
               <TextField
                 type="number"
                 autoFocus
@@ -360,6 +366,25 @@ const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
                 }}
               />
             </FormControl>
+            <FormControl sx={{ minWidth: 100 }}>
+              <InputLabel id="entry-currency-label" shrink>
+                Currency
+              </InputLabel>
+              <Select
+                labelId="entry-currency-label"
+                value={entryCurrency}
+                label="Currency"
+                notched
+                onChange={(e: SelectChangeEvent) => setEntryCurrency(e.target.value as Currency)}
+              >
+                {CURRENCIES.map((c) => (
+                  <MenuItem key={c} value={c}>
+                    {c}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            </Box>
 
             {/* Date — defaults to today but can be backdated */}
             <FormControl fullWidth sx={{ marginBottom: theme.spacing(2) }}>
