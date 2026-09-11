@@ -254,7 +254,7 @@ const Row2: React.FC<Row2Props> = ({ onEditTransaction, onChanged }) => {
                     display: 'grid',
                     gap: '1rem',
                     padding: '1rem',
-                    height: { xs: 250, md: 400 }, // Responsive height
+                    height: { xs: 340, md: 400 }, // Responsive height
                     width: '100%', }}>
             <BoxHeader title="Expense Types" subtitle="Monthly values of expense types" sideText={`Updated: ${latestStuckDataMonth}`} />
             <ResponsiveContainer width="100%" height="100%">
@@ -291,7 +291,10 @@ const Row2: React.FC<Row2Props> = ({ onEditTransaction, onChanged }) => {
             display: 'grid',
             gap: '1rem',
             padding: '1rem',
-            height: { xs: 250, md: 400 }, // Responsive height
+            // This chart sets an explicit height={300} below, which never fitted the
+            // 250px xs card — so it always spilled out. The fixed chart height keeps
+            // ResponsiveContainer happy, so the card can just size to it.
+            height: { xs: 'auto', md: 400 },
             width: '100%',
         }}>
             <BoxHeader title="Expense Categories" subtitle="Monthly values of expense categories" sideText={`Updated: ${latestChartDataTime}`} />

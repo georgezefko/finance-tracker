@@ -151,7 +151,10 @@ const Row1: React.FC = () => {
                 display: 'grid',
                 gap: '1rem',
                 padding: '1rem',
-                height: { xs: 300, md: 400 }, // Responsive height
+                // The metric tiles reflow from 4 columns to 2 on a phone, so the 8
+                // of them need four rows rather than two and no longer fit a fixed
+                // height — they spilled outside the card. Size to content instead.
+                height: { xs: 'auto', md: 400 },
                 width: '100%',
             }}>
                 <BoxHeader title="Financial Overview" subtitle="Avg annual values of main financial metrics" sideText={`Updated: ${latestMonth || ''}`} />
@@ -175,7 +178,7 @@ const Row1: React.FC = () => {
                     display: 'grid',
                     gap: '0rem',
                     padding: '1rem', 
-                    height: { xs: 250, md: 400 }, // Responsive height
+                    height: { xs: 340, md: 400 }, // Responsive height
                     width: '100%', }}>
                 <BoxHeader title="Expense/Income" subtitle="Monthly cashflow" sideText={`Updated: ${latestMonth || ''}`} />
                 <ResponsiveContainer width="100%" height="100%">
@@ -211,7 +214,7 @@ const Row1: React.FC = () => {
                     display: 'grid',
                     gap: '1rem',
                     padding: '1rem', 
-                    height: { xs: 250, md: 400 }, // Responsive height
+                    height: { xs: 340, md: 400 }, // Responsive height
                     width: '100%', }}>
                 <BoxHeader title="Savings Rate" subtitle="Monthly savings rate" sideText={`Updated: ${latestMonth || ''}`} />
                 <ResponsiveContainer width="100%" height="100%">

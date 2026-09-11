@@ -171,7 +171,9 @@ const Row1: React.FC = () => {
           display: 'grid',
           gap: '1rem',
           padding: '1rem',
-          height: { xs: 220, md: 260 },
+          // Same as cashflow: 5 tiles over 2 columns need three rows on a phone,
+          // which a fixed height clipped. minHeight keeps the floor.
+          height: { xs: 'auto', md: 260 },
           minHeight: { xs: 250, md: 280 },
           width: '100%',
         }}

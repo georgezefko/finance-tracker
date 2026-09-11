@@ -47,7 +47,7 @@ const NetWorth = () => {
                     }
                 : {
                     gridAutoColumns: "1fr",
-                    gridAutoRows: "320px",
+                    gridAutoRows: "minmax(320px, auto)",
                     gridTemplateAreas: `
                         "a"
                         "b"

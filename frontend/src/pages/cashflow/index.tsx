@@ -61,7 +61,7 @@ const CashFlow = () => {
                       }
                     : {
                           gridAutoColumns: "1fr",
-                          gridAutoRows: "80px",
+                          gridAutoRows: "minmax(80px, auto)",
                           gridTemplateAreas: gridTemplateSmallScreens,
                       }
             }

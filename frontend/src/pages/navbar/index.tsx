@@ -55,7 +55,9 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
       </Box>
 
       {/* RIGHT SIDE: year selector + account menu */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      {/* Both selectors at their desktop width overflow a 390px phone once
+          logged in, so tighten the gap on xs (see also their minWidth). */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: '0.5rem', sm: '1rem' } }}>
         <YearSelector />
         <CurrencySelector />
 
