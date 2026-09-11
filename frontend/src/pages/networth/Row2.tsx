@@ -230,7 +230,7 @@ const Row2: React.FC = () => {
           display: 'grid',
           gap: '0rem',
           padding: '1rem',
-          height: { xs: 250, md: 400 },
+          height: { xs: 340, md: 400 },
           width: '100%',
         }}
       >
@@ -312,7 +312,7 @@ const Row2: React.FC = () => {
           display: 'grid',
           gap: '0rem',
           padding: '1rem',
-          height: { xs: 250, md: 400 },
+          height: { xs: 340, md: 400 },
           width: '100%',
         }}
       >
@@ -391,7 +391,7 @@ const Row2: React.FC = () => {
           display: 'grid',
           gap: '0rem',
           padding: '1rem',
-          height: { xs: 250, md: 400 },
+          height: { xs: 340, md: 400 },
           width: '100%',
         }}
       >
