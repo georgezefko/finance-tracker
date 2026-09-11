@@ -21,7 +21,7 @@ const CurrencySelector: React.FC = () => {
       size="small"
       variant="outlined"
       sx={{
-        minWidth: 110,
+        minWidth: { xs: 90, sm: 110 },
         borderRadius: 1,
         // softer than pure white, works on dark navbar
         backgroundColor: 'rgba(255,255,255,0.12)',

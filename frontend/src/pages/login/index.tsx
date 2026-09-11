@@ -67,7 +67,10 @@ const LoginPage: React.FC = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: 'calc(100vh - 100px)', // Adjust height as needed
+                // iOS reports 100vh as the *large* viewport (toolbars hidden), so a
+                // 100vh box is taller than the screen and pushes the card below the
+                // fold. dvh tracks the real viewport; on phones just sit at the top.
+                minHeight: { xs: 'auto', md: 'calc(100dvh - 100px)' },
             }}
         >
             <Paper
