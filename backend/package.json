@@ -22,9 +22,10 @@
     "jest": "^29.7.0",
     "nodemon": "^3.0.2",
     "rimraf": "^5.0.5",
-    "typescript": "^5.3.3"
+    "typescript": "~5.6.3"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",

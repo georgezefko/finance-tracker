@@ -4,7 +4,7 @@ const RAW_BASE_URL =
   process.env.REACT_APP_BASE_URL || 'http://localhost:8000';
 
 // strip trailing slashes from base URL
-const BASE_URL = RAW_BASE_URL.replace(/\/+$/, '');
+export const BASE_URL = RAW_BASE_URL.replace(/\/+$/, '');
 
 
 function buildUrl(path: string): string {

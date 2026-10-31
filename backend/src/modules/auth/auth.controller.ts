@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { z } from 'zod';
 import * as authService from './auth.service';
 
@@ -64,3 +65,19 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         return;
     }
 }; 
+
+export const hashMcpToken = (token: string) =>
+    crypto.createHash('sha256').update(token).digest('hex');
+
+// POST /api/auth/mcp-token — issues a long-lived token for MCP clients.
+// The plaintext is returned once; only its hash is stored.
+export const createMcpToken = async (req: Request & { userId?: string }, res: Response, next: NextFunction) => {
+    try {
+        const token = `ft_${crypto.randomBytes(32).toString('hex')}`;
+        await authService.setMcpTokenHash(req.userId!, hashMcpToken(token));
+        return res.status(201).json({ token });
+    } catch (error) {
+        next(error);
+        return;
+    }
+};

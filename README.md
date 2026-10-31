@@ -18,6 +18,7 @@ Below is a short video on how the UI looks like
 - [Data Model](#data-model)
 - [Setup & Installation](#setup--installation)
 - [Usage](#usage)
+- [Ask Claude about your finances (MCP)](#ask-claude-about-your-finances-mcp)
 - [Credits & Resources](#credits--resources)
 
 ---
@@ -263,6 +264,23 @@ erDiagram
     - Locally (as described above), or
     - Using the hosted link provided. In this case, your data is stored in the deployed Neon database.
 - Deploying your own instance: You can fork the repository and deploy your own managed services by following the [guide](https://medium.com/gitconnected/building-a-personal-finance-management-app-deploying-to-production-with-vercel-render-and-neon-9ddeabca9aa2). This is useful if you want to keep the app private (e.g., only for you and your friends).
+
+---
+
+## Ask Claude about your finances (MCP)
+The backend exposes a read-only [MCP](https://modelcontextprotocol.io) server at `/mcp`, so an AI assistant can answer questions like "what did I spend on groceries each month in 2025?" using your data only.
+
+1. Log in, open the account menu (top right), and click **Connect AI assistant**.
+2. Copy the command it shows and run it in a terminal. It looks like this:
+   ```bash
+   claude mcp add --transport http finance http://localhost:8000/mcp --header "Authorization: Bearer ft_..."
+   ```
+3. Start `claude` and ask away.
+
+Notes:
+- The token is shown once. Clicking **Connect AI assistant** again issues a new token and revokes the old one.
+- The tools are read-only and scoped to your user, and amounts are in DKK. See `backend/src/modules/mcp/mcp.routes.ts` for the tool list.
+- Any MCP client that can send a custom header works, e.g. Cursor or `npx @modelcontextprotocol/inspector`. Claude.ai / Claude Desktop connectors need OAuth, which isn't supported yet.
 
 ---
 
